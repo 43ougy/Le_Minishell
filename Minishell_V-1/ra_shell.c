@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 14:54:26 by abougy            #+#    #+#             */
-/*   Updated: 2023/07/13 09:14:21 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/24 15:42:54 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "ra_shell.h"
@@ -25,14 +25,14 @@ int	running(s_shell *data, char **env)
 		return (0);
 	if (!data->pid)
 	{
-		if (ft_strcomp("exit", data->p))
+		if (data->p[0] != '\0' && ft_strcomp("exit", data->p))
 			exit (1);
 		printf("enfant\n");
 		run_command(data->path, env, data->p);
 	}
 	else if (data->pid)
 	{
-		if (ft_strcomp("exit", data->p))
+		if (data->p[0] != '\0' && ft_strcomp("exit", data->p))
 			return (0);
 		printf("parent\n");
 		wait(NULL);
