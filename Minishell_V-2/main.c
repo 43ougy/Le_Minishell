@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/25 17:50:54 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/25 18:05:32 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,8 @@ void	execute(t_prompt *data)
 	while (data->path[++i])
 	{
 		if (!access(arg[0], F_OK | X_OK))
-		{
 			if (execve(arg[0], arg, data->d_env) != -1)
 				verif = 1;
-		}
 		else
 		{
 			if (!access(ft_strjoin(data->path[i], arg[0]), F_OK | X_OK))
@@ -37,7 +35,10 @@ void	execute(t_prompt *data)
 		}
 	}
 	if (!verif)
+	{
+		//verifier le lancement d'autre commandes
 		printf("%s: command not found\n", arg[0]);
+	}
 	i = -1;
 	while (arg[++i])
 		free(arg[i]);
@@ -64,6 +65,8 @@ int	running(t_prompt *data)
 	{
 	//	printf("proc parent\n");
 		wait(NULL);
+		//if (exit_status(data))
+		//	exit(0);
 	}
 }
 
