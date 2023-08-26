@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/26 10:47:02 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/26 13:24:21 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,64 +16,69 @@ void	execute(t_prompt *data)
 {
 	int		i;
 	int		verif;
-	char	**arg;
 
 	i = -1;
 	verif = 0;
-	arg = ft_split(data->prompt, ' ');
+	data->cmd = ft_split(data->prompt, ' ');
+	signal(SIGINT, SIG_DFL);
 	while (data->path[++i])
 	{
-		if (!access(arg[0], F_OK | X_OK))
+		if (!access(data->cmd[0], F_OK | X_OK))
 		{
-			if (execve(arg[0], arg, data->d_env) != -1)
+			if (execve(data->cmd[0], data->cmd, data->d_env) != -1)
 				verif = 1;
 		}
 		else
 		{
-			if (!access(ft_strjoin(data->path[i], arg[0]), F_OK | X_OK))
-				if (execve(ft_strjoin(data->path[i], arg[0]),
-							arg, data->d_env) != -1)
+			if (!access(ft_strjoin(data->path[i], data->cmd[0]), F_OK | X_OK))
+			{
+				if (execve(ft_strjoin(data->path[i], data->cmd[0]),
+							data->cmd, data->d_env) == -1)
+				{
+					perror("Command 'execve' didn't work\n");
+					exit(0);
+				}
+				else
 					verif = 1;
+			}
 		}
 	}
+	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
+		verif = 1;
 	if (!verif)
-	{
-		//verifier le lancement d'autre commandes
-		printf("%s: command not found\n", arg[0]);
-	}
+		printf("%s: command not found\n", data->cmd[0]);
 	i = -1;
-	while (arg[++i])
-		free(arg[i]);
-	free(arg);
+	while (data->cmd[++i])
+		free(data->cmd[i]);
+	free(data->cmd);
 }
 
 int	running(t_prompt *data)
 {
 	if (isatty(0) && isatty(2))
 		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
-	if (!data->prompt)
-	{
-		printf("\n");
-		return (0);
-	}
 	add_history(data->prompt);
 	data->proc = fork();
 	if (data->proc == -1)
 		return (0);
 	if (!data->proc)
 	{
-		printf("proc enfant\n");
+	//	printf("proc enfant\n");
 	//	printf("[%s]\n", data->prompt);
 		execute(data);
 	//	printf("[%s]\n", data->prompt);
 	}
 	else
 	{
-		printf("proc parent\n");
+	//	printf("proc parent\n");
 		wait(NULL);
-		//if (exit_status(data))
-		//	return (0);
-			exit(0);
+		if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
+			return (0);
+		if (!data->prompt)
+		{
+			printf("\n");
+			return (0);
+		}
 	}
 }
 
@@ -129,10 +134,10 @@ int	main(int ac, char **av, char **env)
 	data.d_env = env;
 	data.path = ft_getenv(env);
 	printf("launching...\n");
-	if (signal(SIGINT, handle_signal) == SIG_ERR)
-		printf("failed to catch signal\n");
 	while (1)
 	{
+		if (signal(SIGINT, handle_signal) == SIG_ERR)
+			printf("failed to catch signal\n");
 		if (!running(&data))
 			break ;
 	}
