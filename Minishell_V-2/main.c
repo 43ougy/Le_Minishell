@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/25 18:05:32 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/26 10:47:02 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ void	execute(t_prompt *data)
 	while (data->path[++i])
 	{
 		if (!access(arg[0], F_OK | X_OK))
+		{
 			if (execve(arg[0], arg, data->d_env) != -1)
 				verif = 1;
+		}
 		else
 		{
 			if (!access(ft_strjoin(data->path[i], arg[0]), F_OK | X_OK))
@@ -50,23 +52,28 @@ int	running(t_prompt *data)
 	if (isatty(0) && isatty(2))
 		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
 	if (!data->prompt)
+	{
+		printf("\n");
 		return (0);
+	}
+	add_history(data->prompt);
 	data->proc = fork();
 	if (data->proc == -1)
 		return (0);
 	if (!data->proc)
 	{
-	//	printf("proc enfant\n");
+		printf("proc enfant\n");
 	//	printf("[%s]\n", data->prompt);
 		execute(data);
 	//	printf("[%s]\n", data->prompt);
 	}
 	else
 	{
-	//	printf("proc parent\n");
+		printf("proc parent\n");
 		wait(NULL);
 		//if (exit_status(data))
-		//	exit(0);
+		//	return (0);
+			exit(0);
 	}
 }
 
@@ -102,6 +109,17 @@ char	**ft_getenv(char **env)
 	return (split_path);
 }
 
+void	handle_signal(int signo)
+{
+	if (signo == SIGINT)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
@@ -111,6 +129,8 @@ int	main(int ac, char **av, char **env)
 	data.d_env = env;
 	data.path = ft_getenv(env);
 	printf("launching...\n");
+	if (signal(SIGINT, handle_signal) == SIG_ERR)
+		printf("failed to catch signal\n");
 	while (1)
 	{
 		if (!running(&data))
