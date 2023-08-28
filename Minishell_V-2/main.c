@@ -6,11 +6,22 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/26 13:24:21 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/28 10:43:49 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
+
+void	handle_signal(int signo)
+{
+	if (signo == SIGINT)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
 
 void	execute(t_prompt *data)
 {
@@ -19,8 +30,8 @@ void	execute(t_prompt *data)
 
 	i = -1;
 	verif = 0;
+	//FAIRE UN SPLIT SPECIALE POUR LES ARGUMENTS
 	data->cmd = ft_split(data->prompt, ' ');
-	signal(SIGINT, SIG_DFL);
 	while (data->path[++i])
 	{
 		if (!access(data->cmd[0], F_OK | X_OK))
@@ -35,7 +46,7 @@ void	execute(t_prompt *data)
 				if (execve(ft_strjoin(data->path[i], data->cmd[0]),
 							data->cmd, data->d_env) == -1)
 				{
-					perror("Command 'execve' didn't work\n");
+					perror("Command 'execve' didn't work");
 					exit(0);
 				}
 				else
@@ -63,17 +74,14 @@ int	running(t_prompt *data)
 		return (0);
 	if (!data->proc)
 	{
-	//	printf("proc enfant\n");
-	//	printf("[%s]\n", data->prompt);
 		execute(data);
-	//	printf("[%s]\n", data->prompt);
+	//	signal(SIGINT, SIG_DFL);
 	}
 	else
 	{
-	//	printf("proc parent\n");
 		wait(NULL);
-		if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
-			return (0);
+		//if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
+		//	return (0);
 		if (!data->prompt)
 		{
 			printf("\n");
@@ -114,17 +122,6 @@ char	**ft_getenv(char **env)
 	return (split_path);
 }
 
-void	handle_signal(int signo)
-{
-	if (signo == SIGINT)
-	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
@@ -134,10 +131,10 @@ int	main(int ac, char **av, char **env)
 	data.d_env = env;
 	data.path = ft_getenv(env);
 	printf("launching...\n");
+	if (signal(SIGINT, handle_signal) == SIG_ERR)
+		printf("failed to catch signal\n");
 	while (1)
 	{
-		if (signal(SIGINT, handle_signal) == SIG_ERR)
-			printf("failed to catch signal\n");
 		if (!running(&data))
 			break ;
 	}
