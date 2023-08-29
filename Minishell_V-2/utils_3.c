@@ -43,3 +43,18 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
+
+char	*ft_strncpy(char *dest, char *src, int n)
+{
+	int	i;
+
+	i = -1;
+	while (++i < n)
+		dest[i] = src[i];
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}

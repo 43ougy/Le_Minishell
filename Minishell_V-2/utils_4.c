@@ -25,7 +25,21 @@ char	**get_args(char *args, int nb_args, char **ret)
 			while (args[ver] != '"' && args[ver])
 				ver++;
 			if (args[ver] == '"')
-				ret[i] = malloc(sizeof(char) * ver - j - 1);
+			{
+				if (ver - j - 1 > 0)
+				{
+					ret[i] = malloc(sizeof(char) * (ver - j - 1) + 1);
+					ret[i] = ft_strncpy(ret[i], args + j + 1, ver - j - 1);
+					ret[i][ver - j - 1] = '\0';
+				}
+				else
+					printf("Espace alloue negatif ou egal a zero\n");
+			}
+			else
+			{
+				ret[i] = malloc(1);
+				ret[0] = '\0';
+			}
 			j = ver + 1;
 		}
 		else
@@ -36,47 +50,13 @@ char	**get_args(char *args, int nb_args, char **ret)
 				j++;
 			}
 			ret[i] = malloc(sizeof(char) * w + 1);
+			ret[i] = ft_strncpy(ret[i], args + j - w, w);
+			ret[i][w] = '\0';
 		}
 		while (args[j] == ' ' && args[j])
 			j++;
-		if (!ret)
+		if (!ret[i])
 			return (NULL);
-	}
-	i = -1;
-	j = 0;
-	while (++i < nb_args)
-	{
-		if (args[j] == '"')
-		{
-			w = 0;
-			ver = j + 1;
-			while (args[ver] != '"' && args[ver])
-				ver++;
-			if (args[ver] == '"')
-			{
-				j++;
-				while (args[j] != '"')
-				{
-					ret[i][w] = args[j];
-					w++;
-					j++;
-				}
-			}
-			j = ver + 1;
-		}
-		else
-		{
-			w = 0;
-			while (args[j] != ' ' && args[j] != '"' && args[j])
-			{
-				ret[i][w] = args[j];
-				w++;
-				j++;
-			}
-		}
-		while (args[j] == ' ' && args[j])
-			j++;
-		ret[i][w] = '\0';
 	}
 	return (ret);
 }
@@ -116,37 +96,34 @@ int	number_of_args(char *args)
 	return (nb_args);
 }
 
-char **split_args(char *args)
+char	**split_args(char *args)
 {
 	char	**ret;
 	int		nb_args;
 
 	//printf("%s\n", args);
 	nb_args = number_of_args(args);
-	ret = malloc(sizeof(char *) * nb_args);
+	ret = malloc(sizeof(char *) * (nb_args + 1));
+	ret[nb_args] = '\0';
 	if (!ret)
 		return (NULL);
 	ret = get_args(args, nb_args, ret);
-	if (!ret)
-	{
-		printf("Renvoie NULL\n");
-		return (NULL);
-	}
 	//printf("%d\n", nb_args);
 	return (ret);
 }
-
+/*
 int	main()
 {
-	int		i = -1;
+	int		i = 0;
 	char	**test = split_args("ech \"[  t ]\"   \"  \"");
-	for (int i = 0; test[i]; i++)
+	//test = split_args("echo -n \"test1     tset2\" autretest \"\" \" \"");
+	while (test[i])
 	{
 		printf("%s\n", test[i]);
-	}
-	//test = split_args("echo -n \"test1     tset2\" autretest \"\" \" \"");
-	while (test[++i])
 		free(test[i]);
+		i++;
+//	printf("test\n");
+	}
 	free(test);
 	return (0);
-}
+}*/
