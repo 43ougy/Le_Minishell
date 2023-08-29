@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/29 13:50:22 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/29 15:02:21 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,41 @@ void	handle_signal(int signo)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+}
+
+char	*ft_getenv(char **env, char *path_name)
+{
+	int		li;
+	int		ch;
+	char	*path;
+
+	li = 0;
+	while (env[li])
+	{
+		ch = 0;
+		while (env[li][ch] && env[li][ch] != '=')
+			ch++;
+		path = ft_substr(env[li], 0, ch);
+		if (ft_strcomp(path_name, path))
+		{
+			path = env[li] + ch + 1;
+			break ;
+		}
+		free(path);
+		li++;
+	}
+	return (path);
+}
+
+void	run_cd(t_prompt *data)
+{
+	if (!data->cmd[1])
+	{
+		if (chdir(ft_getenv(data->d_env, "HOME")) != 0)
+			printf("%s is not a directory or doesn't exist", data->cmd[1]);
+	}
+	else if (chdir(data->cmd[1]) != 0)
+		printf("%s is not a directory or doesn't exist", data->cmd[1]);
 }
 
 void	execute(t_prompt *data)
@@ -53,10 +88,18 @@ void	execute(t_prompt *data)
 			}
 		}
 	}
-	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
+	if (ft_strcomp("cd", data->cmd[0]))
+	{
+		run_cd(data);
+		verif = 1;
+	}
+	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt))
 		verif = 1;
 	if (!verif)
+	{
 		printf("%s: command not found\n", data->cmd[0]);
+		exit(0);
+	}
 	i = -1;
 	while (data->cmd[++i])
 		free(data->cmd[i]);
@@ -107,31 +150,12 @@ int	running(t_prompt *data)
 	return (1);
 }
 
-char	**ft_getenv(char **env)
+char	**give_path(char *path)
 {
-	int		li;
-	int		ch;
 	int		i;
 	char	**split_path;
-	char	*path;
 
-	li = 0;
 	i = 0;
-
-	while (env[li])
-	{
-		ch = 0;
-		while (env[li][ch] && env[li][ch] != '=')
-			ch++;
-		path = ft_substr(env[li], 0, ch);
-		if (ft_strcomp("PATH", path))
-		{
-			path = env[li] + ch + 1;
-			break ;
-		}
-		free(path);
-		li++;
-	}
 	split_path = ft_split(path, ':');
 	i = -1;
 	while (split_path[++i])
@@ -146,7 +170,7 @@ int	main(int ac, char **av, char **env)
 
 	i = -1;
 	data.d_env = env;
-	data.path = ft_getenv(env);
+	data.path = give_path(ft_getenv(env, "PATH"));
 	printf("launching...\n");
 	if (signal(SIGINT, handle_signal) == SIG_ERR
 			|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
