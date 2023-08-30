@@ -7,13 +7,13 @@ The goal is to re-create a little shell.
 
 ### WHAT WE HAVE
 
--Handle 'CTRL + C', 'CTRL + D', 'CTRL + \'
--PATHFINDING --> 'pwd', 'ls', '...'
+-Handle 'CTRL + C', 'CTRL + D', 'CTRL + \'<br/>
+-PATHFINDING --> 'pwd', 'ls', '...'<br/>
 -Commands 'cd', 'exit'
 
 ### WHAT WE HAVE TO DO
 
--Handle lot of errors
--Re-code more built in commands
--Re-code pipe
+-Handle lot of errors<br/>
+-Re-code more built in commands<br/>
+-Re-code pipe<br/>
 -Add and re-code redirection
