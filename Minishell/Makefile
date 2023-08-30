@@ -14,9 +14,6 @@ all : $(NAME)
 $(NAME) : $(OBJ)
 	$(CC) $(FLAG) -o $(NAME) $(OBJ) -lreadline
 	@printf "\e[33mCompile...\n\e[0m"
-#	@printf "\e[33mCompile\e[0m \e[31mFAILED\n\e[0m"
-#	@sleep 2
-#	@printf "\e[33mHAHA get prank bro !\n\e[0m"
 	@printf "\e[33mCompile\e[0m \e[32mSUCCESS\n\e[0m"
 
 clean :
