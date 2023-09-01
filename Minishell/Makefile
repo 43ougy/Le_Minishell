@@ -5,8 +5,11 @@ NAME = minishell
 SRC = main.c			\
 		utils_1.c		\
 		utils_2.c		\
-		utils_3.c		\
-		utils_4.c
+		ft_split.c		\
+		path_env.c		\
+		command.c		\
+		handle.c		\
+		split_args.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)

@@ -1,74 +1,72 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_2.c                                          :+:      :+:    :+:   */
+/*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/12 08:50:28 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/25 10:57:53 by abougy           ###   ########.fr       */
+/*   Created: 2023/08/30 08:25:14 by abougy            #+#    #+#             */
+/*   Updated: 2023/08/30 08:25:16 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
-static int	len_sep_string(const char *s, char c)
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+{
+	size_t	i;
+
+	i = 0;
+	if (!dst && !src)
+		return (0);
+	if (size == 0)
+		return (ft_strlen(src));
+	while (i < size - 1 && src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = 0;
+	return (ft_strlen(src));
+}
+
+char	*ft_strdup(const char *s)
+{
+	size_t			i;
+	char			*dest;
+
+	i = 0;
+	dest = malloc(sizeof(char) * (ft_strlen(s) + 1));
+	while (i < ft_strlen(s))
+	{
+		dest[i] = s[i];
+		i++;
+	}
+	dest[i] = 0;
+	return (dest);
+}
+
+size_t	ft_strlen(const char *s)
 {
 	int	i;
-	int	counter;
 
 	i = 0;
-	counter = 0;
 	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strncpy(char *dest, char *src, int n)
+{
+	int	i;
+
+	i = -1;
+	while (++i < n)
+		dest[i] = src[i];
+	while (i < n)
 	{
-		while (s[i] == c)
-			i++;
-		if (s[i] != c && s[i])
-		{
-			counter++;
-			while (s[i] != c && s[i])
-				i++;
-		}
+		dest[i] = '\0';
+		i++;
 	}
-	return (counter + 1);
-}
-
-static char	*get_next_word(int *index, const char *s, char c)
-{
-	int		i;
-	int		len;
-	char	*ret;
-
-	i = 0;
-	len = 0;
-	while (s[*index] == c)
-		(*index)++;
-	while (s[*index + len] != c && s[*index + len])
-		len++;
-	ret = malloc((len + 1) * sizeof(char));
-	if (!ret)
-		return (NULL);
-	while (i < len)
-		ret[i++] = s[(*index)++];
-	ret[i] = 0;
-	return (ret);
-}
-
-char	**ft_split(char const *s, char c)
-{
-	int		i;
-	int		j;
-	int		ac;
-	char	**ret;
-
-	i = 0;
-	j = 0;
-	ac = len_sep_string(s, c);
-	ret = malloc(ac * sizeof(char *));
-	if (!ret)
-		return (NULL);
-	while (i < ac - 1)
-		ret[i++] = get_next_word(&j, s, c);
-	ret[i] = NULL;
-	return (ret);
+	return (dest);
 }

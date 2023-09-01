@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/31 14:40:28 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/01 22:42:03 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 # include <sys/types.h>
 # include <dirent.h>
 
-//STRUCTURES A FAIRE
 typedef struct	t_shell
 {
 		char	*prompt;
@@ -51,5 +50,12 @@ char	*ft_strdup(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_strncpy(char *dest, char *src, int n);
 char	**split_args(char *args);
+int		running(t_prompt *data);
+void	execute(t_prompt *data);
+void	run_cd(t_prompt *data);
+void	exit_exec(t_prompt *data);
+void	handle_signal(int signo);
+char	*ft_getenv(char **env, char *path_name);
+char	**give_path(char *path);
 
 #endif
