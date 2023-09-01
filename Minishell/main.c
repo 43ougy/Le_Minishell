@@ -6,20 +6,38 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/29 15:23:36 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/01 10:54:48 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
+int	sig_check;
+
+void	exit_exec(t_prompt *data)
+{
+	int	i;
+
+	i = -1;
+	while (data->cmd[++i])
+		free(data->cmd[i]);
+	free(data->cmd);
+	exit (0);
+}
+
 void	handle_signal(int signo)
 {
+	t_signal	sig_act;
 	if (signo == SIGINT)
 	{
-		printf("\n");
-		rl_on_new_line();
 		rl_replace_line("", 0);
-		rl_redisplay();
+		write(1, "\n", 1);
+		if (!sig_check)
+		{
+		//	printf("--> %d, test", sig_check);
+			rl_on_new_line();
+			rl_redisplay();
+		}
 	}
 }
 
@@ -65,7 +83,6 @@ void	execute(t_prompt *data)
 
 	i = -1;
 	verif = 0;
-	data->cmd = split_args(data->prompt);
 	while (data->path[++i])
 	{
 		if (!access(data->cmd[0], F_OK | X_OK))
@@ -81,7 +98,7 @@ void	execute(t_prompt *data)
 							data->cmd, data->d_env) == -1)
 				{
 					perror("Command 'execve' didn't work");
-					exit(0);
+					exit_exec(data);
 				}
 				else
 					verif = 1;
@@ -94,16 +111,10 @@ void	execute(t_prompt *data)
 		verif = 1;
 	}
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt))
-		verif = 1;
+		exit_exec(data);
 	if (!verif)
-	{
 		printf("%s: command not found\n", data->cmd[0]);
-		exit(0);
-	}
-	i = -1;
-	while (data->cmd[++i])
-		free(data->cmd[i]);
-	free(data->cmd);
+	exit_exec(data);
 }
 
 int	running(t_prompt *data)
@@ -127,22 +138,24 @@ int	running(t_prompt *data)
 		if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 			exit(0);
 		add_history(data->prompt);
+		data->cmd = split_args(data->prompt);
 		data->proc = fork();
 		if (data->proc == -1)
 			return (0);
 		if (!data->proc)
 		{
+		//	write(1, "test\n", 5);
 			execute(data);
-		//	signal(SIGINT, SIG_DFL);
 		}
 		else
 		{
+			sig_check = 1;
 			wait(NULL);
-			//if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
-			//	return (0);
+			sig_check = 0;
+		//	write(1, "test2\n", 6);
 			if (!data->prompt)
 			{
-				printf("\n");
+				write(1, "\n", 1);
 				return (0);
 			}
 		}
@@ -166,17 +179,22 @@ char	**give_path(char *path)
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
+	t_signal	sig_act;
 	int		i;
 
 	i = -1;
 	data.d_env = env;
 	data.path = give_path(ft_getenv(env, "PATH"));
-	printf("launching...\n");
-	if (signal(SIGINT, handle_signal) == SIG_ERR
-			|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-		printf("failed to catch signal\n");
+	pipe(data.fd);
+	write(1, "launching...\n", 13);
 	while (1)
 	{
+	if (signal(SIGINT, handle_signal) == SIG_ERR
+			|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+	{
+		sigaction(SIGINT, &sig_act.ctrl_c, NULL);
+		sigaction(SIGQUIT, &sig_act.ctrl_b, NULL);
+	}
 		if (!running(&data))
 			break ;
 	}

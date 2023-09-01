@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/29 14:56:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/08/31 14:40:28 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,16 @@ typedef struct	t_shell
 		char	**path;
 		char	**d_env;
 		char	**cmd;
+		int		fd[2];
 		int		check_exit;
 		pid_t	proc;
 }	t_prompt;
+
+typedef struct	t_signal
+{
+	const struct sigaction	ctrl_c;
+	const struct sigaction	ctrl_b;
+}	t_signal;
 
 size_t	ft_strlen(const char *s);
 int		ft_strcomp(char *s1, char *s2);
