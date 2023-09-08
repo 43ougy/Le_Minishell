@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/01 22:43:04 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/06 16:13:02 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ int	main(int ac, char **av, char **env)
 	write(1, "launching...\n", 13);
 	while (1)
 	{
-	if (signal(SIGINT, handle_signal) == SIG_ERR
-			|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-	{
-		sigaction(SIGINT, &sig_act.ctrl_c, NULL);
-		sigaction(SIGQUIT, &sig_act.ctrl_b, NULL);
-	}
+		if (signal(SIGINT, handle_signal) == SIG_ERR
+				|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
+		{
+			sigaction(SIGINT, &sig_act.ctrl_c, NULL);
+			sigaction(SIGQUIT, &sig_act.ctrl_b, NULL);
+		}
 		if (!running(&data))
 			break ;
 	}

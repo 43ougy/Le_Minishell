@@ -4,13 +4,25 @@ extern	int	sig_check;
 
 void	run_cd(t_prompt *data)
 {
+	int	i;
+
+	i = -1;
+	while (data->cmd[++i])
+	{
+		if (i > 1)
+		{
+			write(1, "cd: too many arguments\n", 23);
+			return ;
+		}
+	}
 	if (!data->cmd[1])
 	{
 		if (chdir(ft_getenv(data->d_env, "HOME")) != 0)
-			printf("%s is not a directory or doesn't exist", data->cmd[1]);
+			printf("%s is not a directory or doesn't exist\n", data->cmd[1]);
+		write(1, "tset2\n", 6);
 	}
 	else if (chdir(data->cmd[1]) != 0)
-		printf("%s is not a directory or doesn't exist", data->cmd[1]);
+		printf("%s is not a directory or doesn't exist\n", data->cmd[1]);
 }
 
 void	execute(t_prompt *data)
@@ -44,6 +56,7 @@ void	execute(t_prompt *data)
 	}
 	if (ft_strcomp("cd", data->cmd[0]))
 	{
+		write(1, "test\n", 5);
 		run_cd(data);
 		verif = 1;
 	}
@@ -51,6 +64,7 @@ void	execute(t_prompt *data)
 		exit_exec(data);
 	if (!verif)
 		printf("%s: command not found\n", data->cmd[0]);
+	exit_exec(data);
 }
 
 int	running(t_prompt *data)
@@ -81,7 +95,6 @@ int	running(t_prompt *data)
 		if (!data->proc)
 		{
 			execute(data);
-			exit_exec(data);
 		}
 		else
 		{
