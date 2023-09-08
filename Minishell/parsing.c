@@ -106,26 +106,70 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 		while (is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
 			ch++;
 	}
+	ret[i] = NULL;
 	return (ret);
 }
 
-char	**check_args(char *input)//check args from the stdin (data->prompt)
+void	args_check(int *check, char **args)
+{
+	int	i;
+	
+	i = -1;
+	while (args[++i])
+	{
+		if (ft_strcomp("|", args[i]))
+			check[0] += 1;
+		else if (ft_strcomp("<", args[i]))
+		{
+			if (args[i][1] == '<')
+				check[2] += 1;
+			else
+				check[1] += 1;
+		}
+		else if (ft_strcomp(">", args[i]))
+		{
+			if (args[i][1] == '>')
+				check[3] += 1;
+			else
+				check[4] += 1;
+		}
+		else if (ft_strcomp("$", args[i]))
+			check[5] += 1;
+	}
+}
+
+// Variable check[6] :
+// 0 = |
+// 1-4 = < << >> >
+// 5 = $
+
+char	**parsing(char *input)//check args from the stdin (data->prompt)
 {
 	int		nb_args;
 	char	**args;
+	int		check[6];
+	int		i;
 
 	args = NULL;
+	i = -1;
 	nb_args = get_nb_args(input);
-	args = malloc(sizeof(char *) * nb_args + 1);
+	args = malloc(sizeof(char *) * (nb_args + 1));
 	if (!args)
 		return (NULL);
 	args = get_args(args, input, nb_args);
+	while (++i < 6)
+		check[i] = 0;
+	args_check(check, args);
+	for(int j = 0; j < 6; j++)
+	{
+		printf("%d -> %d\n", j, check[j]);
+	}
 	return (args);
 }
 
 int	main()
 {
-	char	**args = check_args("test arg 'fhuwfuie     fjwie'   autres arguments\n");
+	char	**args = parsing("un | puis < et << et encore >> pour continuer sur > et enfin pour conclure $");
 	int		i = 0;
 	while (args[i])
 	{
