@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
+/*   Updated: 2023/09/09 11:13:53 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ra_shell.h"
 
 int	is_white_space(char c)
@@ -143,15 +155,74 @@ void	args_check(int *check, char **args)
 // 1-4 = < << >> >
 // 5 = $
 
-char	**parsing(char *input)//check args from the stdin (data->prompt)
+int	access_check(char **args, int pipe, t_prompt *data)
 {
-	int		nb_args;
-	char	**args;
-	int		check[6];
-	int		i;
+	int	i;
+	int	j;
+	int	check;
+
+	i = -1;
+	check = 0;
+	if (!pipe)
+	{
+		if (!access(args[0], F_OK | X_OK))
+			return (1);
+		else
+		{
+			while (data->path[++i])
+				if (!access(ft_strjoin(data->path[i], args[0]), F_OK | X_OK))
+					return (1);
+		}
+	}
+	i = 0;
+	while (pipe >= 0)
+	{
+		printf("cmd --> %s\n", args[i]);
+		if (!access(args[i], F_OK | X_OK))
+		{
+			check = 1;;
+		}
+		else
+		{
+			j = -1;
+			while (data->path[++j])
+			{
+				if (!access(ft_strjoin(data->path[j], args[i]), F_OK | X_OK))
+				{
+					check = 1;
+					break ;
+				}
+				else
+					check = 0;
+			}
+		}
+		if (!check)
+		{
+			printf("%s: command not found\n", args[i]);
+			return (0);
+		}
+		while (!ft_strcomp(args[i], "|") && pipe)
+			i++;
+		i++;
+		pipe--;
+	}
+	if (!check)
+		return (0);
+	return (1);
+}
+
+char	**parsing(char *input, char **env, t_prompt *data)//check args from the stdin (data->prompt)
+{
+	int			nb_args;
+	char		**args;
+	int			check[6];
+	int			i;
+	char		*path;
 
 	args = NULL;
 	i = -1;
+	path = ft_getenv(env, "PATH");
+	data->path = give_path(path);
 	nb_args = get_nb_args(input);
 	args = malloc(sizeof(char *) * (nb_args + 1));
 	if (!args)
@@ -164,19 +235,34 @@ char	**parsing(char *input)//check args from the stdin (data->prompt)
 	{
 		printf("%d -> %d\n", j, check[j]);
 	}
+	if (!access_check(args, check[0], data))
+		printf("stop\n");
+	else
+		printf("command found\n");
 	return (args);
 }
 
-int	main()
+int	main(int ac, char **av, char **env)
 {
-	char	**args = parsing("un | puis < et << et encore >> pour continuer sur > et enfin pour conclure $");
+	t_prompt	data;
+	char	**args = parsing("env | pwd | ls | fhwehfuew | cat | wc -l < et << et encore >> pour continuer sur > et enfin pour conclure $", env, &data);
 	int		i = 0;
+	(void)ac;
+	(void)av;
 	while (args[i])
 	{
-		printf("%s\n", args[i]);
+	//	printf("%s\n", args[i]);
 		free(args[i]);
 		i++;
 	}
 	free(args);
+	i = 0;
+	while (data.path[i])
+	{
+	//	printf("%s\n", args[i]);
+		free(data.path[i]);
+		i++;
+	}
+	free(data.path);
 	return (0);
 }
