@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:32:48 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/11 09:56:59 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,8 @@ int	access_check(char **args, int nb_pipe, t_prompt *data)
 	check = 0;
 	if (!nb_pipe)
 	{
+		data->cmd_path = malloc(sizeof(char *) * 2);
+		data->cmd_path[1] = NULL;
 		if (!access(args[0], F_OK | X_OK))
 			return (1);
 		else
@@ -180,6 +182,7 @@ int	access_check(char **args, int nb_pipe, t_prompt *data)
 				if (!access(path_cmd, F_OK | X_OK))
 				{
 					free(path_cmd);
+					data->cmd_path[0] = data->path[i];
 					return (1);
 				}
 				free(path_cmd);
@@ -225,19 +228,15 @@ int	access_check(char **args, int nb_pipe, t_prompt *data)
 	return (1);
 }
 
-char	**parsing(char *input, char **env, t_prompt *data)//check args from the stdin (data->prompt)
+char	**parsing(char *input, t_prompt *data)//check args from the stdin (data->prompt)
 {
 	int			nb_args;
 	char		**args;
 	int			check[6];
 	int			i;
-	char		*path_env;
 
 	args = NULL;
 	i = -1;
-//	path_env = ft_getenv(env, "PATH");
-//	data->path = give_path(path_env);
-//	free(path_env);
 	nb_args = get_nb_args(input);
 	args = malloc(sizeof(char *) * (nb_args + 1));
 	if (!args)
@@ -258,15 +257,13 @@ char	**parsing(char *input, char **env, t_prompt *data)//check args from the std
 		free(args);
 		return (NULL);
 	}
-	else
-		printf("command found\n");
 	return (args);
 }
 /*
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
-	char	**args = parsing("env | pwd | ls | fhwehfuew | cat | wc -l < et << et encore >> pour continuer sur > et enfin pour conclure $", env, &data);
+	char	**args = parsing("ls", env, &data);
 	int		i = 0;
 	(void)ac;
 	(void)av;
