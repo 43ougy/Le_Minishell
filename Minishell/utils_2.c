@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_3.c                                          :+:      :+:    :+:   */
+/*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 08:25:14 by abougy            #+#    #+#             */
-/*   Updated: 2023/08/30 08:25:16 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/11 09:06:27 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*ft_strdup(const char *s)
 
 size_t	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (s[i])
@@ -61,7 +61,7 @@ char	*ft_strncpy(char *dest, char *src, int n)
 	int	i;
 
 	i = -1;
-	while (++i < n)
+	while (++i < n && src[i])
 		dest[i] = src[i];
 	while (i < n)
 	{
