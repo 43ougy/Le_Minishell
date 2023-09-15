@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:48:35 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/15 17:05:08 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct	t_shell
 		char	**d_env;
 		char	**cmd;
 		char	**cmd_path;
+		char	***args;
 		int		fd[2];
 		int		check_exit;
 		int		nb_pipe;
@@ -59,6 +60,6 @@ void	exit_exec(t_prompt *data);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
-char	**parsing(char *input, t_prompt *data);
+//char	**parsing(char *input, t_prompt *data);
 
 #endif

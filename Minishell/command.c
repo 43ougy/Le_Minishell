@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:54:39 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/14 13:33:06 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	execute(t_prompt *data)
 			verif = 1;
 		else
 		{
-			//if (!access(ft_strjoin(data->path[i], data->cmd[0]), F_OK | X_OK))
+			//if (!builtin)
 			//{
 				if (execve(ft_strjoin(data->cmd_path[0], data->cmd[0]),
 							data->cmd, data->d_env) == -1)

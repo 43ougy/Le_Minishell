@@ -5,6 +5,9 @@ The goal is to re-create a little shell.
 
 ## WIP
 
+ -->PARSING<--
+Almost finished
+
 ### WHAT WE HAVE
 
 -Handle 'CTRL + C', 'CTRL + D', 'CTRL + \'<br/>

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:56:59 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/15 17:15:39 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,48 +19,52 @@ int	is_white_space(char c)
 	return (0);
 }
 
-int	get_nb_args(char *input)
+int	get_nb_args(char *input, int *i)
 {
-	int	i;
 	int	ret;
 	int	j;
 
-	i = 0;
 	ret = 0;
-	while (input[i])
+	while (input[*i] && input[*i] != '|')
 	{
-		if (!is_white_space(input[i]) && input[i] != 39 && input[i] != 34 && input[i])//39 = ' & 34 = "
+		if (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])//39 = ' & 34 = "
 		{
 			ret++;
-			while (!is_white_space(input[i]) && input[i] != 39 && input[i] != 34 && input[i])
-				i++;
+			while (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])
+				(*i)++;
 		}
-		while (is_white_space(input[i]) && input[i] != 39 && input[i] != 34 && input[i])
-			i++;
-		if (input[i] == 39 || input[i] == 34)
+		while (is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])
+			(*i)++;
+		if (input[*i] == 39 || input[*i] == 34)
 		{
-			j = i;
-			i++;
+			j = *i;
+			(*i)++;
 			if (input[j] == 39)
 			{
-				while (input[i] != 39 && input[i])
-					i++;
+				while (input[*i] != 39 && input[*i])
+					(*i)++;
 			}
 			else if (input[j] == 34)
 			{
-				while (input[i] != 34 && input[i])
-					i++;
+				while (input[*i] != 34 && input[*i])
+					(*i)++;
 			}
-			if (i - j > 1 && (input[i] == 34 || input[i] == 39))
+			if (*i - j > 1 && (input[*i] == 34 || input[*i] == 39))
 				ret++;
-			else if (input[i] != 34 && input[i] != 39)
+			else if (input[*i] != 34 && input[*i] != 39)
 			{
-				write(1, "Bad argument value\n", 19);
+				write(1, "quotes are open\n", 16);
 				return (-1);
 			}
-			i++;
+			(*i)++;
 		}
 	}
+	if (!input[*i])
+		return (ret);
+	if (input[*i] == '|' && input[*i + 1] != '|')
+		*i += 2;
+	else
+		return (-1);
 	return (ret);
 }
 
@@ -85,7 +89,7 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 				ar++;
 			}
 			ret[i] = malloc(sizeof(char) * ar + 1);
-			if (!ret)
+			if (!ret[i])
 				return (NULL);
 			ret[i] = ft_strncpy(ret[i], input + ch - ar, ar);
 			ret[i][ar] = '\0';
@@ -111,7 +115,7 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 				}
 			}
 			ret[i] = malloc(sizeof(char) * ar + 1);
-			if (!ret)
+			if (!ret[i])
 				return (NULL);
 			ret[i] = ft_strncpy(ret[i], input + ch - ar, ar);
 			ret[i][ar] = '\0';
@@ -126,7 +130,7 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 	return (ret);
 }
 
-void	args_check(int *check, char **args)
+void	args_check(int *check, char **args, int *builtin)
 {
 	int	i;
 	
@@ -151,6 +155,14 @@ void	args_check(int *check, char **args)
 		}
 		else if (ft_strcomp("$", args[i]))
 			check[5] += 1;
+		else if (ft_strcomp("=", args[i]))
+			check[6] += 1;
+		if (ft_strcomp("cd", args[i]))
+			builtin[0] += 1;
+		else if (ft_strcomp("export", args[i]))
+			builtin[1] += 1;
+		else if (ft_strcomp("unset", args[i]))
+			builtin[2] += 1;
 	}
 }
 
@@ -158,112 +170,154 @@ void	args_check(int *check, char **args)
 // 0 = |
 // 1-4 = < << >> >
 // 5 = $
+// Variable builtin[3] :
+// 0 = cd
+// 1 = export
+// 2 = unset
 
-int	access_check(char **args, int nb_pipe, t_prompt *data)
+int	access_check(char **args, t_prompt *data, int *cmd_iter)
 {
 	int		i;
-	int		j;
-	int		check;
 	char	*path_cmd;
 
 	i = -1;
-	check = 0;
-	if (!nb_pipe)
+	if (!access(args[0], F_OK | X_OK))
+		return (1);
+	else
 	{
-		data->cmd_path = malloc(sizeof(char *) * 2);
-		data->cmd_path[1] = NULL;
-		if (!access(args[0], F_OK | X_OK))
-			return (1);
-		else
+		while (data->path[++i])
 		{
-			while (data->path[++i])
+			path_cmd = ft_strjoin(data->path[i], args[0]);
+			if (!access(path_cmd, F_OK | X_OK))
 			{
-				path_cmd = ft_strjoin(data->path[i], args[0]);
-				if (!access(path_cmd, F_OK | X_OK))
-				{
-					free(path_cmd);
-					data->cmd_path[0] = data->path[i];
-					return (1);
-				}
 				free(path_cmd);
+				data->cmd_path[*cmd_iter] = data->path[i];
+				return (1);
 			}
+			free(path_cmd);
 		}
 	}
-	i = 0;
-	while (nb_pipe >= 0)
+	return (0);
+}
+
+int	mall_args_check(char *input)
+{
+	int	i;
+	int	pipe;
+
+	i = -1;
+	pipe = 0;
+	while (input[++i])
 	{
-		if (!access(args[i], F_OK | X_OK))
+		if (input[i] == '|')
 		{
-			check = 1;;
+			pipe++;
+			if (input[i + 1] == '|')
+				return (-1);
 		}
-		else
+	}
+	return (pipe + 1);
+}
+
+void	exit_pars(char ***input)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	if (input[i + 1])
+	{
+		while (input[++i])
 		{
 			j = -1;
-			while (data->path[++j])
-			{
-				path_cmd = ft_strjoin(data->path[j], args[i]);
-				if (!access(path_cmd, F_OK | X_OK))
-				{
-					check = 1;
-					free(path_cmd);
-					break ;
-				}
-				else
-					check = 0;
-				free(path_cmd);
-			}
+			if (input[i][j + 1])
+				while (input[i][++j])
+					free(input[i][j]);
+			free(input[i]);
 		}
-		if (!check)
-		{
-			printf("%s: command not found\n", args[i]);
-			return (0);
-		}
-		while (!ft_strcomp(args[i], "|") && nb_pipe)
-			i++;
-		i++;
-		nb_pipe--;
 	}
-	if (!check)
-		return (0);
-	return (1);
+	free(input);
 }
 
-char	**parsing(char *input, t_prompt *data)//check args from the stdin (data->prompt)
+char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->prompt)
 {
 	int			nb_args;
-	char		**args;
-	int			check[6];
+	char		***new_arg;
+	int			check[7];
+	int			builtin[3];
 	int			i;
+	int			j;
+	int			iter;
+	int			cmd_iter;
+	int			tmp;
+	int			len;
 
-	args = NULL;
 	i = -1;
-	nb_args = get_nb_args(input);
-	args = malloc(sizeof(char *) * (nb_args + 1));
-	if (!args)
+	iter = 0;
+	cmd_iter = 0;
+	len = mall_args_check(input) + 1;
+	new_arg = malloc(sizeof(char **) * len);
+	if (!new_arg)
 		return (NULL);
-	args = get_args(args, input, nb_args);
-	while (++i < 6)
-		check[i] = 0;
-	args_check(check, args);
-	data->nb_pipe = check[0];
-	if (!access_check(args, data->nb_pipe, data))
+	new_arg[len - 1] = NULL;
+	data->cmd_path = malloc(sizeof(char *) * len);
+	if (!data->cmd_path)
 	{
-		i = 0;
-		while (args[i])
-		{
-			free(args[i]);
-			i++;
-		}
-		free(args);
+		exit_pars(new_arg);
 		return (NULL);
 	}
-	return (args);
+	data->cmd_path[len - 1] = NULL;
+	while (++i < mall_args_check(input))
+	{
+		tmp = iter;
+		j = -1;
+		nb_args = get_nb_args(input, &iter);
+		if (nb_args == -1)
+			exit_pars(new_arg);
+		new_arg[i] = malloc(sizeof(char *) * (nb_args + 1));
+		if (!new_arg[i])
+		{
+			exit_pars(new_arg);
+			return (NULL);
+		}
+		new_arg[i] = get_args(new_arg[i], input + tmp, nb_args);
+		while (++j < 7)
+			check[j] = 0;
+		j = -1;
+		while (++j < 3)
+			builtin[j] = 0;
+		args_check(check, new_arg[i], builtin);
+		if (!access_check(new_arg[i], data, &cmd_iter))
+		{
+			exit_pars(new_arg);
+			return (NULL);
+		}
+	}
+	return (new_arg);
 }
-/*
+//	return la commande si builtin, return : cd, export ou unset
+//						si commande du path, return : "cmd"
+//	faire un comp de la chaine return dans execute
+//	stocker les arguments dans une chaine place en structure
+// 	faire un tableau en 3d pour stocker chaque commandes separe par des pipes
+// export / unset, env var
+// chercher un '=' ex: poulet=kfc --> prendre la string et la save
+// si export implementer cette string dans env[i] (i a determiner)
+// si unset retirer string a env[i]
+// possibilite d'export une string --> poulet=
+// si '=' seul, traite comme une commande
+// erreur pour ls si on retire PATH --> bash: ls: No such file or directory
+
+
+
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
-	char	**args = parsing("ls", env, &data);
+	char *path = ft_getenv(env, "PATH");
+
+	data.path = give_path(path);
+	free(path);
+	char	***args = parsing("echo -n \"test\" | cat -e", &data);
 	int		i = 0;
 	(void)ac;
 	(void)av;
@@ -271,27 +325,29 @@ int	main(int ac, char **av, char **env)
 	{
 		while (data.path[i])
 		{
-		//	printf("%s\n", args[i]);
 			free(data.path[i]);
 			i++;
 		}
 		free(data.path);
 		return (0);
 	}
-	while (args[i])
+	for (int i = 0; args[i]; i++)
 	{
-	//	printf("%s\n", args[i]);
-		free(args[i]);
-		i++;
+		for (int j = 0; args[i][j]; j++)
+		{
+			printf("%s\n", args[i][j]);
+		}
+		printf("------------\n");
 	}
-	free(args);
+	exit_pars(args);
 	i = 0;
 	while (data.path[i])
 	{
-	//	printf("%s\n", args[i]);
 		free(data.path[i]);
 		i++;
 	}
 	free(data.path);
+	i = 0;
+	free(data.cmd_path);
 	return (0);
-}*/
+}
