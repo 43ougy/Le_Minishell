@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/15 17:15:39 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/16 11:18:03 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	get_nb_args(char *input, int *i)
 		if (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])//39 = ' & 34 = "
 		{
 			ret++;
-			while (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])
+			while (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i] && input[*i] != '|')
 				(*i)++;
 		}
 		while (is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])
@@ -62,8 +62,14 @@ int	get_nb_args(char *input, int *i)
 	if (!input[*i])
 		return (ret);
 	if (input[*i] == '|' && input[*i + 1] != '|')
-		*i += 2;
+	{
+		(*i)++;
+		while (is_white_space(input[*i]))
+			(*i)++;
+	}
 	else
+		return (-1);
+	if (input[*i] == '|')
 		return (-1);
 	return (ret);
 }
@@ -175,19 +181,19 @@ void	args_check(int *check, char **args, int *builtin)
 // 1 = export
 // 2 = unset
 
-int	access_check(char **args, t_prompt *data, int *cmd_iter)
+int	access_check(char *cmd, t_prompt *data, int *cmd_iter)
 {
 	int		i;
 	char	*path_cmd;
 
 	i = -1;
-	if (!access(args[0], F_OK | X_OK))
+	if (!access(cmd, F_OK | X_OK))
 		return (1);
 	else
 	{
 		while (data->path[++i])
 		{
-			path_cmd = ft_strjoin(data->path[i], args[0]);
+			path_cmd = ft_strjoin(data->path[i], cmd);
 			if (!access(path_cmd, F_OK | X_OK))
 			{
 				free(path_cmd);
@@ -196,6 +202,16 @@ int	access_check(char **args, t_prompt *data, int *cmd_iter)
 			}
 			free(path_cmd);
 		}
+	}
+	if (ft_strcomp(cmd, "cd") || ft_strcomp(cmd, "export") || ft_strcomp(cmd, "unset"))
+	{
+		if (ft_strcomp(cmd, "cd"))
+			data->cmd_path[*cmd_iter] = "CD_CMD";
+		else if (ft_strcomp(cmd, "export"))
+			data->cmd_path[*cmd_iter] = "EXPORT_CMD";
+		else if (ft_strcomp(cmd, "UNSET"))
+			data->cmd_path[*cmd_iter] = "UNSET_CMD";
+		return (1);
 	}
 	return (0);
 }
@@ -273,7 +289,10 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 		j = -1;
 		nb_args = get_nb_args(input, &iter);
 		if (nb_args == -1)
+		{
 			exit_pars(new_arg);
+			return (NULL);
+		}
 		new_arg[i] = malloc(sizeof(char *) * (nb_args + 1));
 		if (!new_arg[i])
 		{
@@ -287,11 +306,12 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 		while (++j < 3)
 			builtin[j] = 0;
 		args_check(check, new_arg[i], builtin);
-		if (!access_check(new_arg[i], data, &cmd_iter))
+		if (!access_check(new_arg[i][0], data, &cmd_iter))
 		{
 			exit_pars(new_arg);
 			return (NULL);
 		}
+		cmd_iter++;
 	}
 	return (new_arg);
 }
@@ -313,14 +333,17 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
+	if (ac != 2)
+	{
+		printf("Error\n");
+		return (0);
+	}
 	char *path = ft_getenv(env, "PATH");
 
 	data.path = give_path(path);
 	free(path);
-	char	***args = parsing("echo -n \"test\" | cat -e", &data);
+	char	***args = parsing(av[1], &data);
 	int		i = 0;
-	(void)ac;
-	(void)av;
 	if (!args)
 	{
 		while (data.path[i])
@@ -333,9 +356,14 @@ int	main(int ac, char **av, char **env)
 	}
 	for (int i = 0; args[i]; i++)
 	{
+		printf("%s ", data.cmd_path[i]);
 		for (int j = 0; args[i][j]; j++)
 		{
-			printf("%s\n", args[i][j]);
+			printf("%s", args[i][j]);
+			if (!args[i][j+1])
+				printf("\n");
+			else
+				printf(" ");
 		}
 		printf("------------\n");
 	}
