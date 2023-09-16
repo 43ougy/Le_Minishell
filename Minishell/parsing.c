@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/16 11:18:03 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/16 16:09:34 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,23 +266,22 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 	int			iter;
 	int			cmd_iter;
 	int			tmp;
-	int			len;
 
 	i = -1;
 	iter = 0;
 	cmd_iter = 0;
-	len = mall_args_check(input) + 1;
-	new_arg = malloc(sizeof(char **) * len);
+	data->nb_cmd = mall_args_check(input) + 1;
+	new_arg = malloc(sizeof(char **) * data->nb_cmd);
 	if (!new_arg)
 		return (NULL);
-	new_arg[len - 1] = NULL;
-	data->cmd_path = malloc(sizeof(char *) * len);
+	new_arg[data->nb_cmd - 1] = NULL;
+	data->cmd_path = malloc(sizeof(char *) * data->nb_cmd);
 	if (!data->cmd_path)
 	{
 		exit_pars(new_arg);
 		return (NULL);
 	}
-	data->cmd_path[len - 1] = NULL;
+	data->cmd_path[data->nb_cmd - 1] = NULL;
 	while (++i < mall_args_check(input))
 	{
 		tmp = iter;
@@ -329,7 +328,7 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 // erreur pour ls si on retire PATH --> bash: ls: No such file or directory
 
 
-
+/*
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
@@ -378,4 +377,4 @@ int	main(int ac, char **av, char **env)
 	i = 0;
 	free(data.cmd_path);
 	return (0);
-}
+}*/

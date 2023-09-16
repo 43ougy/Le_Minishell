@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:40 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/09 10:00:42 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/16 16:08:07 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,16 @@ extern int	sig_check;
 void	exit_exec(t_prompt *data)
 {
 	int	i;
+	int	j;
 
 	i = -1;
 	while (data->cmd[++i])
+	{
+		j = -1;
+		while (data->cmd[i][++j])
+			free(data->cmd[i][j]);
 		free(data->cmd[i]);
+	}
 	free(data->cmd);
 	exit (0);
 }

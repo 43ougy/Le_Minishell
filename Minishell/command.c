@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/14 13:33:06 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/16 16:11:25 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 extern	int	sig_check;
 
-void	run_cd(t_prompt *data)
+void	run_cd(t_prompt *data, char **cmd)
 {
 	int	i;
 
 	i = -1;
-	while (data->cmd[++i])
+	while (cmd[++i])
 	{
 		if (i > 1)
 		{
@@ -27,16 +27,40 @@ void	run_cd(t_prompt *data)
 			return ;
 		}
 	}
-	if (!data->cmd[1])
+	if (!cmd[1])
 	{
 		if (chdir(ft_getenv(data->d_env, "HOME")) != 0)
-			printf("%s is not a directory or doesn't exist\n", data->cmd[1]);
-		write(1, "tset2\n", 6);
+			printf("%s is not a directory or doesn't exist\n", cmd[1]);
 	}
-	else if (chdir(data->cmd[1]) != 0)
-		printf("%s is not a directory or doesn't exist\n", data->cmd[1]);
+	else if (chdir(cmd[1]) != 0)
+		printf("%s is not a directory or doesn't exist\n", cmd[1]);
 }
 
+void	execute(t_prompt *data, int i)
+{
+	int	check;
+
+	check = 0;
+	if (execve(data->cmd[i][0], data->cmd[i], data->d_env) != -1)
+		check = 1;
+	else if (execve(ft_strjoin(data->cmd_path[i], data->cmd[i][0]), data->cmd[i], data->d_env) != -1)
+		check = 1;
+	else if (data->cmd_path[i])
+	{
+		if (ft_strcomp(data->cmd_path[i], "CD_CMD"))
+		{
+			run_cd(data, data->cmd[i]);
+			check = 1;
+		}
+	}
+	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt))
+		exit_exec(data);
+	if (!check)
+		printf("%s: command not found\n", data->cmd[i][0]);
+	exit_exec(data);
+}
+
+/*
 void	execute(t_prompt *data)
 {
 	int		i;
@@ -74,10 +98,13 @@ void	execute(t_prompt *data)
 	if (!verif)
 		printf("%s: command not found\n", data->cmd[0]);
 	exit_exec(data);
-}
+}*/
 
 int	running(t_prompt *data)
 {
+	int	i;
+
+	i = -1;
 	if (isatty(0) && isatty(2))
 	{
 		if (!(data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m")))
@@ -103,7 +130,8 @@ int	running(t_prompt *data)
 			return (0);
 		if (!data->proc)
 		{
-			execute(data);
+			while (++i < data->nb_cmd)
+				execute(data, i);
 		}
 		else
 		{
