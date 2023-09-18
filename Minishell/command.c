@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/16 16:11:25 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/18 10:22:36 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,65 +40,23 @@ void	execute(t_prompt *data, int i)
 {
 	int	check;
 
-	check = 0;
-	if (execve(data->cmd[i][0], data->cmd[i], data->d_env) != -1)
-		check = 1;
-	else if (execve(ft_strjoin(data->cmd_path[i], data->cmd[i][0]), data->cmd[i], data->d_env) != -1)
-		check = 1;
-	else if (data->cmd_path[i])
+	if (data->cmd_path[i])
 	{
 		if (ft_strcomp(data->cmd_path[i], "CD_CMD"))
 		{
 			run_cd(data, data->cmd[i]);
-			check = 1;
+			exit_exec(data);
 		}
 	}
+	check = 0;
+	check = execve(data->cmd[i][0], data->cmd[i], data->d_env);
+	check = (execve(ft_strjoin(data->cmd_path[i], data->cmd[i][0]), data->cmd[i], data->d_env));
+	if (check == -1);
+		printf("Error: execve didn't work\n");
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt))
 		exit_exec(data);
-	if (!check)
-		printf("%s: command not found\n", data->cmd[i][0]);
 	exit_exec(data);
 }
-
-/*
-void	execute(t_prompt *data)
-{
-	int		i;
-	int		verif;
-
-	i = -1;
-	verif = 0;
-	while (data->path[++i])
-	{
-		if (execve(data->cmd[0], data->cmd, data->d_env) != -1)
-			verif = 1;
-		else
-		{
-			//if (!builtin)
-			//{
-				if (execve(ft_strjoin(data->cmd_path[0], data->cmd[0]),
-							data->cmd, data->d_env) == -1)
-				{
-					perror("Command 'execve' didn't work");
-					exit_exec(data);
-				}
-				else
-					verif = 1;
-			//}
-		}
-	}
-	if (ft_strcomp("cd", data->cmd[0]))
-	{
-		write(1, "test\n", 5);
-		run_cd(data);
-		verif = 1;
-	}
-	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt))
-		exit_exec(data);
-	if (!verif)
-		printf("%s: command not found\n", data->cmd[0]);
-	exit_exec(data);
-}*/
 
 int	running(t_prompt *data)
 {

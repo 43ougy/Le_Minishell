@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/06 16:13:02 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/18 08:49:56 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	main(int ac, char **av, char **env)
 	i = -1;
 	data.d_env = env;
 	data.path = give_path(ft_getenv(env, "PATH"));
-	pipe(data.fd);
+//	pipe(data.fd);
 	write(1, "launching...\n", 13);
 	while (1)
 	{

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/16 16:09:34 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/18 10:19:33 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,15 @@ int	get_nb_args(char *input, int *i)
 			(*i)++;
 	}
 	else
+	{
+		printf("Error: pipe\n");
 		return (-1);
+	}
 	if (input[*i] == '|')
+	{
+		printf("Error: pipe\n");
 		return (-1);
+	}
 	return (ret);
 }
 
@@ -87,6 +93,8 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 	while (++i < nb_args)
 	{
 		ar = 0;
+		while (is_white_space(input[ch]) && input[ch])
+			ch++;
 		if (!is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
 		{
 			while (!is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
@@ -209,10 +217,11 @@ int	access_check(char *cmd, t_prompt *data, int *cmd_iter)
 			data->cmd_path[*cmd_iter] = "CD_CMD";
 		else if (ft_strcomp(cmd, "export"))
 			data->cmd_path[*cmd_iter] = "EXPORT_CMD";
-		else if (ft_strcomp(cmd, "UNSET"))
+		else if (ft_strcomp(cmd, "unset"))
 			data->cmd_path[*cmd_iter] = "UNSET_CMD";
 		return (1);
 	}
+	printf("%s: command not found\n", cmd);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 08:49:06 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:04:20 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/18 09:35:55 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,14 @@
 int	ft_strcomp(char *s1, char *s2)
 {
 	int	i;
+	int	len;
 
 	i = 0;
-	while (s1[i] && s2[i])
+	if (ft_strlen(s1) > ft_strlen(s2))
+		len = ft_strlen(s1);
+	else
+		len = ft_strlen(s2);
+	while (i < len)
 	{
 		if (s1[i] != s2[i])
 			return (0);
