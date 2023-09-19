@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/18 10:19:33 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/19 11:35:03 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,10 @@ int	access_check(char *cmd, t_prompt *data, int *cmd_iter)
 
 	i = -1;
 	if (!access(cmd, F_OK | X_OK))
+	{
+		data->cmd_path[*cmd_iter] = "CMD";
 		return (1);
+	}
 	else
 	{
 		while (data->path[++i])
