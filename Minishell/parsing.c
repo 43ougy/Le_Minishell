@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/19 11:35:03 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/21 10:10:26 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_white_space(char c)
 	return (0);
 }
 
-int	get_nb_args(char *input, int *i)
+int	get_nb_args(char *input, int *i, t_prompt *data)
 {
 	int	ret;
 	int	j;
@@ -64,6 +64,7 @@ int	get_nb_args(char *input, int *i)
 	if (input[*i] == '|' && input[*i + 1] != '|')
 	{
 		(*i)++;
+		data->nb_pipe++;
 		while (is_white_space(input[*i]))
 			(*i)++;
 	}
@@ -298,7 +299,7 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 	{
 		tmp = iter;
 		j = -1;
-		nb_args = get_nb_args(input, &iter);
+		nb_args = get_nb_args(input, &iter, data);
 		if (nb_args == -1)
 		{
 			exit_pars(new_arg);
