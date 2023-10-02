@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/21 12:12:00 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/02 12:36:31 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,32 @@
 # include <sys/types.h>
 # include <dirent.h>
 
-typedef struct	t_shell
+typedef struct t_cmd
 {
-		char	*prompt;
-		char	**path;
-		char	**d_env;
-		char	***cmd;
-		char	**cmd_path;
-		char	***args;
-		int		fd[2];
-		int		check_exit;
-		int		nb_cmd;
-		int		nb_pipe;
-		pid_t	proc;
+	char	**cmd;
+	char	*path;
+	char	*infile;
+	char	*outfile;
+}	t_cmd;
+
+typedef struct t_shell
+{
+	char	*prompt;
+	char	**path;
+	char	**d_env;
+	char	***cmd;
+	char	**cmd_path;
+	t_cmd	*cmde;
+	int		nb_args;
+	int		nb_inar;
+	int		fd[2];
+	int		check_exit;
+	int		nb_cmd;
+	int		nb_pipe;
+	pid_t	proc;
 }	t_prompt;
 
-typedef struct	t_signal
+typedef struct t_signal
 {
 	const struct sigaction	ctrl_c;
 	const struct sigaction	ctrl_b;
@@ -62,5 +72,8 @@ void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
 char	***parsing(char *input, t_prompt *data);
+int		exec_pipe(t_prompt *data, int i, int p_fd);
+void	_pipe(t_prompt *data, int *p_fd);
+int		_execution(t_prompt *data);
 
 #endif

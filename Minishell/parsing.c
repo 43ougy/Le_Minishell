@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 09:59:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/21 10:10:26 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/29 16:30:33 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,41 @@ int	is_white_space(char c)
 	return (0);
 }
 
+int	_quotes_args(char *input, int **i, int ret)
+{
+	int	j;
+
+	j = **i;
+	(**i)++;
+	if (input[j] == 39)
+	{
+		while (input[**i] != 39 && input[**i])
+		{
+			if (input[**i] == '\\')
+				(**i)++;
+			(**i)++;
+		}
+	}
+	else if (input[j] == 34)
+	{
+		while (input[**i] != 34 && input[**i])
+		{
+			if (input[**i] == '\\' && input[**i + 1] == 34)
+				(**i)++;
+			(**i)++;
+		}
+	}
+	if (**i - j > 1 && (input[**i] == 34 || input[**i] == 39))
+		ret++;
+	else if (input[**i] != 34 && input[**i] != 39)
+	{
+		write(1, "quotes are open\n", 16);
+		return (-1);
+	}
+	(**i)++;
+	return (ret);
+}
+
 int	get_nb_args(char *input, int *i, t_prompt *data)
 {
 	int	ret;
@@ -27,36 +62,22 @@ int	get_nb_args(char *input, int *i, t_prompt *data)
 	ret = 0;
 	while (input[*i] && input[*i] != '|')
 	{
-		if (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])//39 = ' & 34 = "
+		if (!is_white_space(input[*i]) && input[*i] != 39
+			&& input[*i] != 34 && input[*i]) //39 = ' & 34 = "
 		{
 			ret++;
-			while (!is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i] && input[*i] != '|')
+			while (!is_white_space(input[*i]) && input[*i] != 39
+				&& input[*i] != 34 && input[*i] && input[*i] != '|')
 				(*i)++;
 		}
-		while (is_white_space(input[*i]) && input[*i] != 39 && input[*i] != 34 && input[*i])
+		while (is_white_space(input[*i]) && input[*i] != 39
+			&& input[*i] != 34 && input[*i])
 			(*i)++;
 		if (input[*i] == 39 || input[*i] == 34)
 		{
-			j = *i;
-			(*i)++;
-			if (input[j] == 39)
-			{
-				while (input[*i] != 39 && input[*i])
-					(*i)++;
-			}
-			else if (input[j] == 34)
-			{
-				while (input[*i] != 34 && input[*i])
-					(*i)++;
-			}
-			if (*i - j > 1 && (input[*i] == 34 || input[*i] == 39))
-				ret++;
-			else if (input[*i] != 34 && input[*i] != 39)
-			{
-				write(1, "quotes are open\n", 16);
+			ret = _quotes_args(input, &i, ret);
+			if (ret == -1)
 				return (-1);
-			}
-			(*i)++;
 		}
 	}
 	if (!input[*i])
@@ -65,23 +86,28 @@ int	get_nb_args(char *input, int *i, t_prompt *data)
 	{
 		(*i)++;
 		data->nb_pipe++;
-		while (is_white_space(input[*i]))
+		while (is_white_space(input[*i]) && input[*i])
 			(*i)++;
+		if (!input[*i])
+		{
+			write(1, "Error: pipe: no command after pipe\n", 36);
+			return (-1);
+		}
 	}
 	else
 	{
-		printf("Error: pipe\n");
+		write(1, "Error: pipe: no command between pipes\n", 39);
 		return (-1);
 	}
 	if (input[*i] == '|')
 	{
-		printf("Error: pipe\n");
+		write(1, "Error: pipe: no command between pipes\n", 39);
 		return (-1);
 	}
 	return (ret);
 }
 
-char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments dans un double tableau
+char	**get_args(char **ret, char *input, int nb_args)
 {
 	int		i;
 	int		j;
@@ -96,9 +122,11 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 		ar = 0;
 		while (is_white_space(input[ch]) && input[ch])
 			ch++;
-		if (!is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
+		if (!is_white_space(input[ch]) && input[ch] != 39
+			&& input[ch] != 34 && input[ch])
 		{
-			while (!is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
+			while (!is_white_space(input[ch]) && input[ch] != 39
+				&& input[ch] != 34 && input[ch] && input[ch] != '|')
 			{
 				ch++;
 				ar++;
@@ -138,7 +166,8 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 		}
 		if (!ret[i])
 			return (NULL);
-		while (is_white_space(input[ch]) && input[ch] != 39 && input[ch] != 34 && input[ch])
+		while (is_white_space(input[ch]) && input[ch] != 39
+			&& input[ch] != 34 && input[ch])
 			ch++;
 	}
 	ret[i] = NULL;
@@ -148,7 +177,7 @@ char	**get_args(char **ret, char *input, int nb_args)//attribution des arguments
 void	args_check(int *check, char **args, int *builtin)
 {
 	int	i;
-	
+
 	i = -1;
 	while (args[++i])
 	{
@@ -215,7 +244,8 @@ int	access_check(char *cmd, t_prompt *data, int *cmd_iter)
 			free(path_cmd);
 		}
 	}
-	if (ft_strcomp(cmd, "cd") || ft_strcomp(cmd, "export") || ft_strcomp(cmd, "unset"))
+	if (ft_strcomp(cmd, "cd") || ft_strcomp(cmd, "export")
+		|| ft_strcomp(cmd, "unset"))
 	{
 		if (ft_strcomp(cmd, "cd"))
 			data->cmd_path[*cmd_iter] = "CD_CMD";
@@ -268,7 +298,7 @@ void	exit_pars(char ***input)
 	free(input);
 }
 
-char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->prompt)
+char	***parsing(char *input, t_prompt *data)
 {
 	int			nb_args;
 	char		***new_arg;
@@ -339,7 +369,6 @@ char	***parsing(char *input, t_prompt *data)//check args from the stdin (data->p
 // possibilite d'export une string --> poulet=
 // si '=' seul, traite comme une commande
 // erreur pour ls si on retire PATH --> bash: ls: No such file or directory
-
 
 /*
 int	main(int ac, char **av, char **env)

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 08:49:06 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/18 09:35:55 by abougy           ###   ########.fr       */
+/*   Updated: 2023/09/22 12:13:01 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	ft_strcompn(char *s1, char *s2, int n)
 {
 	int	i;
 
-	while(s1[i] && s2[i] && i < n)
+	while (s1[i] && s2[i] && i < n)
 	{
 		if (s1[i] != s2[i])
 			return (0);
