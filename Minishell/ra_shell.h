@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/03 14:12:08 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/04 11:12:23 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,9 @@ char	***parsing(char *input, t_prompt *data);
 int		exec_pipe(t_prompt *data, int i, int p_fd);
 void	_pipe(t_prompt *data, int *p_fd);
 int		_execution(t_prompt *data);
+//===========Parser===========//
+int		_is_char(char c);
+int		_is_whitespace(char c);
+void	_free_args(t_prompt *data);
 
 #endif
