@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/02 12:36:31 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/03 14:12:08 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,15 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <dirent.h>
+# include <fcntl.h>
 
 typedef struct t_cmd
 {
 	char	**cmd;
 	char	*path;
-	char	*infile;
-	char	*outfile;
+	int		infile;
+	int		outfile;
+	int		n_inarg;
 }	t_cmd;
 
 typedef struct t_shell
