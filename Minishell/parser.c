@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/09 10:21:25 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/09 13:51:55 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,31 +45,28 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	int	i;
 	int	nb_args;
 	int	tmp;
+	int	check_char;
 
 	i = 0;
 	nb_args = 0;
+	check_char = 0;
 	if (method)
 	{
 		while (input[i])
 		{
-		/*	if (_is_char(input[i]) || input[i] == ' ')
-			{
-				while (input[i] && _is_char(input[i]) && input[i] != 34 && input[i] != 39)
-					i++;
-				while (input[i] && input[i] == ' ')
-					i++;
-			}*/
 			if (!_is_char(input[i]) && input[i] != ' ' && input[i] != 34 && input[i] != 39)
 			{
 				nb_args++;
 				while (!_is_char(input[i]) && input[i] && input[i] != 34 && input[i] != 39)
 					i++;
 			}
-			while (input[i] && input[i] == ' ' && !_is_char(input[i]) && input[i] != 34 && input[i] != 39)
+			while (input[i] && input[i] == ' ' && !_is_char(input[i])
+				&& input[i] != 34 && input[i] != 39)
 				i++;
 			while (_is_char(input[i]) && input[i] != 34
 				&& input[i] != 39 && input[i])
 			{
+				check_char++;
 				if (input[i] == '|' && input[i + 1] == '|')
 					return (1);
 				else if (input[i] == '|')
@@ -77,7 +74,8 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					tmp = i + 1;
 					while (input[tmp] != '|' && input[tmp])
 					{
-						if (!_is_char(input[tmp]) && input[tmp] != ' ' && input[tmp] != 34 && input[tmp] != 39)
+						if (!_is_char(input[tmp]) && input[tmp] != ' '
+							&& input[tmp] != 34 && input[tmp] != 39)
 						{
 							tmp = 0;
 							break ;
@@ -93,15 +91,12 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			{
 				if (_quotes(input, &i, &nb_args))
 					return (1);
+				if (!check_char)
+					nb_args -= 1;
 				while (input[i] && !_is_char(input[i]))
-				{
-					printf("char --> %c", input[i]);
-					printf("\n");
 					i++;
-				}
 				while (input[i] && (_is_char(input[i]) || input[i] == ' '))
 					i++;
-				printf("------------\n");
 			}
 		}
 		if (_is_char(input[i - 1]))
@@ -125,13 +120,11 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 		if (input[i] == 34 || input[i] == 39)
 		{
-			printf("test\n");
 			if (_quotes(input, &i, &nb_args))
 				return (1);
 		}
 		if (input[i] != 34 && input[i] != 39)
 		{
-			printf("test2\n");
 			while (input[i] && !_is_char(input[i]) && input[i] != 34 && input[i] != 39)
 			{
 				if (input[i] != ' ' && input[i] != 34 && input[i] != 39)
@@ -149,7 +142,6 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			}
 		}
 		data->nb_inar = nb_args;
-		printf("quotes -->%d\n", data->nb_inar);
 	}
 	return (0);
 }
@@ -168,7 +160,6 @@ int	_give_properties(t_prompt *data, char *input)
 		n = -1;
 		while (input[j] && !_is_char(input[j]) && input[j] != 34 && input[j] != 39)
 			j++;
-		printf("check ---> %c\n", input[j]);
 		if (input[j] == '<' && &data->cmde[i + 1])
 		{
 			n = data->cmde[i + 1].n_inarg;
@@ -183,7 +174,6 @@ int	_give_properties(t_prompt *data, char *input)
 		{
 			while (++n < data->cmde[i + 1].n_inarg)
 			{
-				printf("cmd ---> %s\n", data->cmde[i + 1].cmd[n]);
 				if (open(data->cmde[i + 1].cmd[0],
 						O_CREAT | O_RDWR | O_TRUNC, 0644) == -1)
 					return (1);
@@ -204,7 +194,7 @@ int	_give_properties(t_prompt *data, char *input)
 		if (!data->cmde[i].infile && !data->cmde[i].outfile)
 		{
 			n = -1;
-			if (data->cmde[i].cmd[0] && !access(data->cmde[i].cmd[0], F_OK | X_OK))
+			if (!access(data->cmde[i].cmd[0], F_OK | X_OK))
 				data->cmde[i].path = "CMD";
 			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
@@ -215,7 +205,7 @@ int	_give_properties(t_prompt *data, char *input)
 				while (data->path[++n])
 				{
 					path_cmd = ft_strjoin(data->path[n], data->cmde[i].cmd[0]);
-					if (data->cmde[i].cmd[0] && !access(path_cmd, F_OK | X_OK))
+					if (!access(path_cmd, F_OK | X_OK))
 					{
 						data->cmde[i].path = path_cmd;
 						break ;
@@ -286,7 +276,6 @@ int	_get_cmd(t_prompt *data, char *input)
 				data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
 						input + save + 1, n);
 				data->cmde[i].cmd[args][n] = '\0';
-				printf("quotes %d command %d = %s\n", i, args, data->cmde[i].cmd[args]);
 				j++;
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
@@ -296,7 +285,8 @@ int	_get_cmd(t_prompt *data, char *input)
 			{
 				while (input[j] && input[j] == ' ')
 					j++;
-				while (input[j] && !_is_char(input[j]) && input[j] != ' ' && input[j] != 34 && input[j] != 39)
+				while (input[j] && !_is_char(input[j]) && input[j] != ' '
+					&& input[j] != 34 && input[j] != 39)
 				{
 					j++;
 					n++;
@@ -307,7 +297,6 @@ int	_get_cmd(t_prompt *data, char *input)
 				data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
 						input + save, n);
 				data->cmde[i].cmd[args][n] = '\0';
-				printf("%d command %d = %s\n", i, args, data->cmde[i].cmd[args]);
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
@@ -326,7 +315,6 @@ int	_parser(t_prompt *data)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))
 		return (1);
-	printf("nb_args = %d\n", data->nb_args);
 	if (_get_cmd(data, data->prompt))
 		return (1);
 	return (0);
