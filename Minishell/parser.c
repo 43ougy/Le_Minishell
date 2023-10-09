@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/04 15:45:39 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/09 10:21:25 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			data->cmde[i].n_inarg = 0;
 			data->cmde[i].infile = 0;
 			data->cmde[i].outfile = 0;
+			data->cmde[i].file = 0;
 		}
 	}
 	else if (!method)
@@ -192,6 +193,14 @@ int	_give_properties(t_prompt *data, char *input)
 				data->cmde[i + 1].outfile = 1;
 			}
 		}
+		else
+		{
+			while (++n < data->cmde[i].n_inarg)
+			{
+				if (open(data->cmde[i].cmd[n], O_RDONLY) != -1)
+					data->cmde[i].file = 1;
+			}
+		}
 		if (!data->cmde[i].infile && !data->cmde[i].outfile)
 		{
 			n = -1;
@@ -244,7 +253,7 @@ int	_get_cmd(t_prompt *data, char *input)
 		if (_nb_args(data, input + save, 0))
 			return (1);
 		data->cmde[i].n_inarg = data->nb_inar;
-		data->cmde[i].cmd = malloc(sizeof(char *) * data->nb_inar);
+		data->cmde[i].cmd = malloc(sizeof(char *) * data->nb_inar + 1);
 		if (!data->cmde[i].cmd)
 			return (1);
 		args = -1;
@@ -317,6 +326,7 @@ int	_parser(t_prompt *data)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))
 		return (1);
+	printf("nb_args = %d\n", data->nb_args);
 	if (_get_cmd(data, data->prompt))
 		return (1);
 	return (0);
@@ -348,6 +358,11 @@ int	main(int ac, char **av, char **env)
 				printf("No\n");
 			printf("Outfile = ");
 			if (data.cmde[i].outfile)
+				printf("Yes\n");
+			else
+				printf("No\n");
+			printf("Isfile = ");
+			if (data.cmde[i].file)
 				printf("Yes\n");
 			else
 				printf("No\n");

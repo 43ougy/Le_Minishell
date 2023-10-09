@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/04 11:12:23 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/06 17:19:12 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct t_cmd
 	char	*path;
 	int		infile;
 	int		outfile;
+	int		file;
 	int		n_inarg;
 }	t_cmd;
 
