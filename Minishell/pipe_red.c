@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:07 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/04 15:46:08 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 13:44:30 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,15 @@ int	exec_pipe(t_prompt *data, int i, int p_fd)
 		close(0);
 		dup(p_fd);
 		close(p_fd);
-		if (!data->cmd[i++])
+		if (!data->cmde[i++].cmd)
 		{
 			close(1);
 			dup(fd[1]);
 			close(fd[1]);
 		}
 		execute(data, i);
-		exit_exec(data);
+		_free_args(data);
+		//exit_exec(data);
 	}
 	wait(&p_id);
 	close(fd[1]);
@@ -55,7 +56,7 @@ void	_pipe(t_prompt *data, int *p_fd)
 	int	i;
 
 	i = -1;
-	while (++i < data->nb_cmd - 1)
+	while (++i < data->nb_args)
 		*p_fd = exec_pipe(data, i, *p_fd);
 	close(*p_fd);
 }

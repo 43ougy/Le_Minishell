@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/06 17:19:12 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 13:51:25 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,14 @@ typedef struct t_shell
 	char	*prompt;
 	char	**path;
 	char	**d_env;
-	char	***cmd;
-	char	**cmd_path;
+//	char	***cmd;
+//	char	**cmd_path;
 	t_cmd	*cmde;
 	int		nb_args;
 	int		nb_inar;
 	int		fd[2];
 	int		check_exit;
-	int		nb_cmd;
+//	int		nb_cmd;
 	int		nb_pipe;
 	pid_t	proc;
 }	t_prompt;
@@ -70,7 +70,7 @@ char	**split_args(char *args);
 int		running(t_prompt *data);
 void	execute(t_prompt *data, int i);
 void	run_cd(t_prompt *data, char **cmd);
-void	exit_exec(t_prompt *data);
+//void	exit_exec(t_prompt *data);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
@@ -82,5 +82,6 @@ int		_execution(t_prompt *data);
 int		_is_char(char c);
 int		_is_whitespace(char c);
 void	_free_args(t_prompt *data);
+int		_parser(t_prompt *data);
 
 #endif

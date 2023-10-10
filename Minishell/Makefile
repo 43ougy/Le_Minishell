@@ -9,8 +9,10 @@ SRC = main.c			\
 		path_env.c		\
 		command.c		\
 		handle.c		\
-		parsing.c		\
-		pipe_red.c
+		parser.c		\
+		parser_utils.c	\
+		pipe_red.c		\
+		execution.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)

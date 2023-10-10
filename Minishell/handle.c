@@ -6,14 +6,14 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:40 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/22 12:18:41 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 13:41:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
 extern int	g_sig_check;
-
+/*
 void	exit_exec(t_prompt *data)
 {
 	int	i;
@@ -29,7 +29,7 @@ void	exit_exec(t_prompt *data)
 	}
 	free(data->cmd);
 	exit (0);
-}
+}*/
 
 void	handle_signal(int signo)
 {

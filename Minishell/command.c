@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/25 14:09:43 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 13:42:11 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,10 @@ int	running(t_prompt *data)
 	}
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 		exit(0);
-	data->cmd = parsing(data->prompt, data);
-	if (!data->cmd)
+//	data->cmd = parsing(data->prompt, data);
+	if (_parser(data))
+		return (1);
+	if (!data->cmde)
 		return (1);
 	add_history(data->prompt);
 	if (!_execution(data))

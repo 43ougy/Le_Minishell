@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/04 15:46:03 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 14:18:47 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,20 @@ void	execute(t_prompt *data, int i)
 {
 	int	check;
 
-	if (data->cmd_path[i])
+	if (data->cmde[i].path)
 	{
-		if (ft_strcomp(data->cmd_path[i], "CD_CMD"))
+		if (ft_strcomp(data->cmde[i].path, "cd"))
 		{
-			run_cd(data, data->cmd[i]);
+			run_cd(data, data->cmde[i].cmd);
 			return ;
 		}
 	}
 	check = 0;
-	if (ft_strcomp(data->cmd_path[i], "CMD"))
-		check = execve(data->cmd[i][0], data->cmd[i], data->d_env);
+//	printf("path-->%s, cmd-->%s | %s\n", data->cmde[i].path, data->cmde[i].cmd[0], data->cmde[i].cmd[1]);
+	if (ft_strcomp(data->cmde[i].path, "CMD"))
+		check = execve(data->cmde[i].cmd[0], data->cmde[i].cmd, data->d_env);
 	else
-		check = execve(ft_strjoin(data->cmd_path[i], data->cmd[i][0]), \
-			data->cmd[i], data->d_env);
+		check = execve(data->cmde[i].path, data->cmde[i].cmd, data->d_env);
 	if (check == -1)
 		perror("execve()");
 }
@@ -41,14 +41,14 @@ int	_execution(t_prompt *data)
 	int	p_fd;
 
 	p_fd = dup(0);
-	data->nb_pipe = 0;
 	if (pipe(data->fd))
 		return (0);
 	data->proc = fork();
 	if (data->proc == -1)
 	{
 		close(p_fd);
-		exit_exec(data);
+		_free_args(data);
+		//exit_exec(data);
 	}
 	if (!data->proc)
 	{
@@ -60,8 +60,13 @@ int	_execution(t_prompt *data)
 		else
 		{
 			execute(data, 0);
-			exit_exec(data);
+			_free_args(data);
+			//exit_exec(data);
 		}
+	}
+	else
+	{
+		
 	}
 	g_sig_check = 1;
 	wait(&data->proc);

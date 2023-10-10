@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/09 13:51:55 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/10 14:42:17 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,12 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 		while (input[i])
 		{
-			if (!_is_char(input[i]) && input[i] != ' ' && input[i] != 34 && input[i] != 39)
+			if (!_is_char(input[i]) && input[i] != ' '
+				&& input[i] != 34 && input[i] != 39)
 			{
 				nb_args++;
-				while (!_is_char(input[i]) && input[i] && input[i] != 34 && input[i] != 39)
+				while (!_is_char(input[i]) && input[i]
+					&& input[i] != 34 && input[i] != 39)
 					i++;
 			}
 			while (input[i] && input[i] == ' ' && !_is_char(input[i])
@@ -72,6 +74,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 				else if (input[i] == '|')
 				{
 					tmp = i + 1;
+					data->nb_pipe++;
 					while (input[tmp] != '|' && input[tmp])
 					{
 						if (!_is_char(input[tmp]) && input[tmp] != ' '
@@ -83,7 +86,10 @@ int	_nb_args(t_prompt *data, char *input, int method)
 						tmp++;
 					}
 					if (tmp)
+					{
+						printf("Error: no argument after pipe\n");
 						return (1);
+					}
 				}
 				i++;
 			}
@@ -125,12 +131,14 @@ int	_nb_args(t_prompt *data, char *input, int method)
 		}
 		if (input[i] != 34 && input[i] != 39)
 		{
-			while (input[i] && !_is_char(input[i]) && input[i] != 34 && input[i] != 39)
+			while (input[i] && !_is_char(input[i])
+				&& input[i] != 34 && input[i] != 39)
 			{
 				if (input[i] != ' ' && input[i] != 34 && input[i] != 39)
 				{
 					nb_args++;
-					while (!_is_char(input[i]) && input[i] != ' ' && input[i] && input[i] != 34 && input[i] != 39)
+					while (!_is_char(input[i]) && input[i] != ' '
+						&& input[i] && input[i] != 34 && input[i] != 39)
 						i++;
 				}
 				while (input[i] == ' ' && !_is_char(input[i])
@@ -158,7 +166,8 @@ int	_give_properties(t_prompt *data, char *input)
 	while (++i < data->nb_args)
 	{
 		n = -1;
-		while (input[j] && !_is_char(input[j]) && input[j] != 34 && input[j] != 39)
+		while (input[j] && !_is_char(input[j])
+			&& input[j] != 34 && input[j] != 39)
 			j++;
 		if (input[j] == '<' && &data->cmde[i + 1])
 		{
@@ -246,6 +255,7 @@ int	_get_cmd(t_prompt *data, char *input)
 		data->cmde[i].cmd = malloc(sizeof(char *) * data->nb_inar + 1);
 		if (!data->cmde[i].cmd)
 			return (1);
+		data->cmde[i].cmd[data->nb_inar] = NULL;
 		args = -1;
 		while (++args < data->nb_inar)
 		{
@@ -311,6 +321,7 @@ int	_get_cmd(t_prompt *data, char *input)
 
 int	_parser(t_prompt *data)
 {
+	data->nb_pipe = 0;
 	if (!data->prompt)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))
@@ -319,7 +330,7 @@ int	_parser(t_prompt *data)
 		return (1);
 	return (0);
 }
-
+/*
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
@@ -365,4 +376,4 @@ int	main(int ac, char **av, char **env)
 	free(data.path);
 	_free_args(&data);
 	return (0);
-}
+}*/
