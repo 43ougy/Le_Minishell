@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/10 13:51:25 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/11 10:14:58 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ typedef struct t_shell
 	t_cmd	*cmde;
 	int		nb_args;
 	int		nb_inar;
+	char	*infile;
+	char	*outfile;
 	int		fd[2];
 	int		check_exit;
 //	int		nb_cmd;

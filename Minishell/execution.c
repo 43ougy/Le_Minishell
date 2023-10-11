@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/10 14:18:47 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/11 10:21:14 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,69 @@ void	execute(t_prompt *data, int i)
 		perror("execve()");
 }
 
+int	_execution(t_prompt *data)
+{
+	int	tmpin;
+	int	tmpout;
+	int	fdin;
+	int	fdout;
+	int	i;
+
+	//printf("test\n");
+	tmpin = dup(0);
+	tmpout = dup(1);
+	i = -1;
+	if (data->infile)
+	{
+	//	printf("test fdin\n");
+		fdin = open(data->cmde[1].cmd[0], O_RDONLY);
+	}
+	else
+		fdin = dup(tmpin);
+//	printf("prewhile test\n");
+	while (++i < data->nb_args)
+	{
+//		printf("while test\n");
+		dup2(fdin, 0);
+		close(fdin);
+		if (i == data->nb_args - 1)
+		{
+			if (data->cmde[i].outfile)
+				fdout = open(data->cmde[i].cmd[0], O_RDONLY);
+			else
+				fdout = dup(tmpout);
+		}
+		else
+		{
+			pipe(data->fd);
+			fdout = data->fd[1];
+			fdin = data->fd[0];
+		}
+		dup2(fdout, 1);
+		close(fdout);
+		data->proc = fork();
+		if (!data->proc)
+		{
+			execute(data, i);
+			_free_args(data);
+		}
+	}
+	dup2(tmpin, 0);
+	dup2(tmpout, 1);
+	close(tmpin);
+	close(tmpout);
+	g_sig_check = 1;
+	wait(&data->proc);
+	g_sig_check = 0;
+	if (!data->prompt)
+	{
+		write(1, "\n", 1);
+		return (0);
+	}
+	return (1);
+}
+
+/*
 int	_execution(t_prompt *data)
 {
 	int	p_fd;
@@ -76,4 +139,4 @@ int	_execution(t_prompt *data)
 		write(1, "\n", 1);
 		return (0);
 	}
-}
+}*/
