@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 10:43:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 12:02:11 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	_execution(t_prompt *data)
 				fdout = open(data->outfile, O_RDWR);
 				if (fdout == -1)
 					fdout = open(data->outfile,
-						O_CREAT | O_RDWR | O_TRUNC, 0644);
+							O_CREAT | O_RDWR | O_TRUNC, 0644);
 			}
 			else
 				fdout = dup(tmpout);

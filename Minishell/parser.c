@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 10:38:30 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 14:34:07 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	_quotes(char *input, int *i, int *len)
 		(*len)++;
 	if (input[*i] != 34 && input[*i] != 39)
 	{
-		write(1, "quotes are open\n", 16);
+		write(2, "quotes are open\n", 16);
 		return (1);
 	}
 	(*i)++;
@@ -52,7 +52,9 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	check_char = 0;
 	if (method)
 	{
-		while (input[i])
+		if (_nb_args_method_one(data, input))
+			return (1);
+/*		while (input[i])
 		{
 			if (!_is_char(input[i]) && input[i] != ' '
 				&& input[i] != 34 && input[i] != 39)
@@ -87,7 +89,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					}
 					if (tmp)
 					{
-						printf("Error: no argument after pipe\n");
+						write(2, "Error: no argument after pipe\n", 30);
 						return (1);
 					}
 				}
@@ -120,7 +122,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			data->cmde[i].infile = 0;
 			data->cmde[i].outfile = 0;
 			data->cmde[i].file = 0;
-		}
+		}*/
 	}
 	else if (!method)
 	{
@@ -171,28 +173,11 @@ int	_give_properties(t_prompt *data, char *input)
 			j++;
 		if (input[j] == '<' && &data->cmde[i + 1])
 		{
-		/*	n = data->cmde[i + 1].n_inarg;
-			while (--n >= 0)
-			{
-				if (open(data->cmde[i + 1].cmd[n], O_RDONLY) == -1)
-					return (1);
-				data->cmde[i + 1].infile = 1;
-			}*/
 			data->cmde[i + 1].infile = 1;
 			data->infile = data->cmde[i + 1].cmd[0];
 		}
 		else if (input[j] == '>' && &data->cmde[i + 1])
 		{
-		/*	while (++n < data->cmde[i + 1].n_inarg)
-			{
-				if (open(data->cmde[i + 1].cmd[n],
-						O_CREAT | O_RDWR | O_TRUNC, 0644) == -1 && n == 0)
-					return (1);
-				else if (open(data->cmde[i + 1].cmd[n],
-						O_RDONLY) == -1 && n > 0)
-					return (1);
-				data->cmde[i + 1].outfile = 1;
-			}*/
 			data->cmde[i + 1].outfile = 1;
 			data->outfile = data->cmde[i + 1].cmd[0];
 		}
@@ -228,7 +213,8 @@ int	_give_properties(t_prompt *data, char *input)
 			}
 			if (!data->cmde[i].path)
 			{
-				printf("%s: command not found\n", data->cmde[i].cmd[0]);
+				write(2, data->cmde[i].cmd[0], ft_strlen(data->cmde[i].cmd[0]));
+				write(2, ": command not found\n", 20);
 				return (1);
 			}
 		}

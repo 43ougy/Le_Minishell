@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 10:07:20 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 10:45:15 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	run_cd(t_prompt *data, char **cmd)
 	{
 		if (i > 1)
 		{
-			write(1, "Cash'Hell: cd: too many arguments\n", 34);
+			write(2, "Cash'Hell: cd: too many arguments\n", 34);
 			return ;
 		}
 	}

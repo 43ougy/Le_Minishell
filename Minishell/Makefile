@@ -2,17 +2,18 @@ CC = @gcc
 RM = @rm -f
 FLAG = -Wall -Wextra -Werror
 NAME = minishell
-SRC = main.c			\
-		utils_1.c		\
-		utils_2.c		\
-		ft_split.c		\
-		path_env.c		\
-		command.c		\
-		handle.c		\
-		parser.c		\
-		parser_utils.c	\
-		pipe_red.c		\
-		execution.c
+SRC = main.c				\
+		utils_1.c			\
+		utils_2.c			\
+		ft_split.c			\
+		path_env.c			\
+		command.c			\
+		handle.c			\
+		parser.c			\
+		parser_utils.c		\
+		pipe_red.c			\
+		execution.c			\
+		parser_methods.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)

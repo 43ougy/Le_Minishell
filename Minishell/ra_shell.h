@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 10:32:20 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 14:01:53 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,18 @@
 # include <dirent.h>
 # include <fcntl.h>
 
+typedef struct t_signal
+{
+	const struct sigaction	ctrl_c;
+	const struct sigaction	ctrl_b;
+}	t_signal;
+
 typedef struct t_cmd
 {
 	char	**cmd;
 	char	*path;
+	char	*env_var;
+	char	**set_env;
 	int		infile;
 	int		outfile;
 	int		file;
@@ -51,12 +59,7 @@ typedef struct t_shell
 	pid_t	proc;
 }	t_prompt;
 
-typedef struct t_signal
-{
-	const struct sigaction	ctrl_c;
-	const struct sigaction	ctrl_b;
-}	t_signal;
-
+//============Utils===========//
 size_t	ft_strlen(const char *s);
 int		ft_strcomp(char *s1, char *s2);
 int		ft_strcompn(char *s1, char *s2, int n);
@@ -66,22 +69,25 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strdup(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_strncpy(char *dest, char *src, int n);
-char	**split_args(char *args);
+
+//===========Prompt===========//
 int		running(t_prompt *data);
 void	execute(t_prompt *data, int i);
 void	run_cd(t_prompt *data, char **cmd);
-//void	exit_exec(t_prompt *data);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
-char	***parsing(char *input, t_prompt *data);
 int		exec_pipe(t_prompt *data, int i, int p_fd);
 void	_pipe(t_prompt *data, int *p_fd);
 int		_execution(t_prompt *data);
+
 //===========Parser===========//
+int		_is_quotes(char c);
 int		_is_char(char c);
 int		_is_whitespace(char c);
 void	_free_args(t_prompt *data);
+int		_quotes(char *input, int *i, int *len);
+int		_nb_args_method_one(t_prompt *data, char *input);
 int		_parser(t_prompt *data);
 
 #endif
