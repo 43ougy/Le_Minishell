@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/10 13:42:11 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 10:07:20 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	run_cd(t_prompt *data, char **cmd)
 	}
 	else if (chdir(cmd[1]) != 0)
 		perror(cmd[1]);
-	execve("/usr/bin/ls", NULL, data->d_env);
 }
 
 int	running(t_prompt *data)
@@ -57,7 +56,6 @@ int	running(t_prompt *data)
 	}
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 		exit(0);
-//	data->cmd = parsing(data->prompt, data);
 	if (_parser(data))
 		return (1);
 	if (!data->cmde)

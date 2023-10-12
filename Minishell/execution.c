@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/11 10:21:14 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 10:43:18 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,12 @@ void	execute(t_prompt *data, int i)
 {
 	int	check;
 
-	if (data->cmde[i].path)
+	if (ft_strcomp(data->cmde[i].path, "cd"))
 	{
-		if (ft_strcomp(data->cmde[i].path, "cd"))
-		{
-			run_cd(data, data->cmde[i].cmd);
-			return ;
-		}
+		run_cd(data, data->cmde[i].cmd);
+		return ;
 	}
 	check = 0;
-//	printf("path-->%s, cmd-->%s | %s\n", data->cmde[i].path, data->cmde[i].cmd[0], data->cmde[i].cmd[1]);
 	if (ft_strcomp(data->cmde[i].path, "CMD"))
 		check = execve(data->cmde[i].cmd[0], data->cmde[i].cmd, data->d_env);
 	else
@@ -44,32 +40,33 @@ int	_execution(t_prompt *data)
 	int	fdout;
 	int	i;
 
-	//printf("test\n");
 	tmpin = dup(0);
 	tmpout = dup(1);
 	i = -1;
 	if (data->infile)
-	{
-	//	printf("test fdin\n");
 		fdin = open(data->cmde[1].cmd[0], O_RDONLY);
-	}
 	else
 		fdin = dup(tmpin);
-//	printf("prewhile test\n");
 	while (++i < data->nb_args)
 	{
-//		printf("while test\n");
 		dup2(fdin, 0);
 		close(fdin);
 		if (i == data->nb_args - 1)
 		{
-			if (data->cmde[i].outfile)
-				fdout = open(data->cmde[i].cmd[0], O_RDONLY);
+			data->background = 0;
+			if (data->outfile)
+			{
+				fdout = open(data->outfile, O_RDWR);
+				if (fdout == -1)
+					fdout = open(data->outfile,
+						O_CREAT | O_RDWR | O_TRUNC, 0644);
+			}
 			else
 				fdout = dup(tmpout);
 		}
 		else
 		{
+			data->background = 1;
 			pipe(data->fd);
 			fdout = data->fd[1];
 			fdin = data->fd[0];
@@ -79,6 +76,8 @@ int	_execution(t_prompt *data)
 		data->proc = fork();
 		if (!data->proc)
 		{
+			if (ft_strcomp(data->cmde[0].path, "cd") && !&data->cmde[1])
+				exit(0);
 			execute(data, i);
 			_free_args(data);
 		}
@@ -88,8 +87,11 @@ int	_execution(t_prompt *data)
 	close(tmpin);
 	close(tmpout);
 	g_sig_check = 1;
-	wait(&data->proc);
+	if (!data->background)
+		waitpid(data->proc, NULL, 0);
 	g_sig_check = 0;
+	if (ft_strcomp(data->cmde[0].path, "cd") && !&data->cmde[1])
+		run_cd(data, data->cmde[0].cmd);
 	if (!data->prompt)
 	{
 		write(1, "\n", 1);
@@ -97,46 +99,3 @@ int	_execution(t_prompt *data)
 	}
 	return (1);
 }
-
-/*
-int	_execution(t_prompt *data)
-{
-	int	p_fd;
-
-	p_fd = dup(0);
-	if (pipe(data->fd))
-		return (0);
-	data->proc = fork();
-	if (data->proc == -1)
-	{
-		close(p_fd);
-		_free_args(data);
-		//exit_exec(data);
-	}
-	if (!data->proc)
-	{
-		if (data->nb_pipe)
-		{
-			_pipe(data, &p_fd);
-			exit(0);
-		}
-		else
-		{
-			execute(data, 0);
-			_free_args(data);
-			//exit_exec(data);
-		}
-	}
-	else
-	{
-		
-	}
-	g_sig_check = 1;
-	wait(&data->proc);
-	g_sig_check = 0;
-	if (!data->prompt)
-	{
-		write(1, "\n", 1);
-		return (0);
-	}
-}*/

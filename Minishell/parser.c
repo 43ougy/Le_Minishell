@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/11 10:14:27 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 10:38:30 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,18 +171,19 @@ int	_give_properties(t_prompt *data, char *input)
 			j++;
 		if (input[j] == '<' && &data->cmde[i + 1])
 		{
-			n = data->cmde[i + 1].n_inarg;
+		/*	n = data->cmde[i + 1].n_inarg;
 			while (--n >= 0)
 			{
 				if (open(data->cmde[i + 1].cmd[n], O_RDONLY) == -1)
 					return (1);
 				data->cmde[i + 1].infile = 1;
-			}
+			}*/
+			data->cmde[i + 1].infile = 1;
 			data->infile = data->cmde[i + 1].cmd[0];
 		}
 		else if (input[j] == '>' && &data->cmde[i + 1])
 		{
-			while (++n < data->cmde[i + 1].n_inarg)
+		/*	while (++n < data->cmde[i + 1].n_inarg)
 			{
 				if (open(data->cmde[i + 1].cmd[n],
 						O_CREAT | O_RDWR | O_TRUNC, 0644) == -1 && n == 0)
@@ -191,7 +192,8 @@ int	_give_properties(t_prompt *data, char *input)
 						O_RDONLY) == -1 && n > 0)
 					return (1);
 				data->cmde[i + 1].outfile = 1;
-			}
+			}*/
+			data->cmde[i + 1].outfile = 1;
 			data->outfile = data->cmde[i + 1].cmd[0];
 		}
 		else
@@ -226,7 +228,7 @@ int	_give_properties(t_prompt *data, char *input)
 			}
 			if (!data->cmde[i].path)
 			{
-				printf("Command: %s not found\n", data->cmde[i].cmd[0]);
+				printf("%s: command not found\n", data->cmde[i].cmd[0]);
 				return (1);
 			}
 		}

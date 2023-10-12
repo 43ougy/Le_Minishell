@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:07 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/10 13:44:30 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/11 14:13:44 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ int	exec_pipe(t_prompt *data, int i, int p_fd)
 		}
 		execute(data, i);
 		_free_args(data);
-		//exit_exec(data);
 	}
 	wait(&p_id);
 	close(fd[1]);

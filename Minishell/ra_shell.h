@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/11 10:14:58 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/12 10:32:20 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,14 @@ typedef struct t_shell
 	char	*prompt;
 	char	**path;
 	char	**d_env;
-//	char	***cmd;
-//	char	**cmd_path;
 	t_cmd	*cmde;
 	int		nb_args;
 	int		nb_inar;
 	char	*infile;
 	char	*outfile;
+	int		background;
 	int		fd[2];
 	int		check_exit;
-//	int		nb_cmd;
 	int		nb_pipe;
 	pid_t	proc;
 }	t_prompt;
