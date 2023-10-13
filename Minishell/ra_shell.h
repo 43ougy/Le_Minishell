@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 14:01:53 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/13 16:40:30 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ typedef struct t_cmd
 {
 	char	**cmd;
 	char	*path;
-	char	*env_var;
-	char	**set_env;
 	int		infile;
 	int		outfile;
 	int		file;
@@ -52,6 +50,7 @@ typedef struct t_shell
 	int		nb_inar;
 	char	*infile;
 	char	*outfile;
+	char	**set_env;
 	int		background;
 	int		fd[2];
 	int		check_exit;
@@ -73,7 +72,9 @@ char	*ft_strncpy(char *dest, char *src, int n);
 //===========Prompt===========//
 int		running(t_prompt *data);
 void	execute(t_prompt *data, int i);
+void	run_env(t_prompt *data);
 void	run_cd(t_prompt *data, char **cmd);
+char	**run_export(t_prompt *data, char *name);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);

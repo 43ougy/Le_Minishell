@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/13 13:35:40 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/13 18:24:53 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	check_char = 0;
 	if (method)
 	{
-		if (_nb_args_method_one(data, input))
-			return (1);
-	/*	while (input[i])
+	//	if (_nb_args_method_one(data, input))
+	//		return (1);
+		while (input[i])
 		{
 			if (!_is_char(input[i]) && input[i] != ' '
 				&& input[i] != 34 && input[i] != 39)
@@ -107,7 +107,8 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					i++;
 			}
 		}
-		data->cmde = malloc(sizeof(t_cmd) * nb_args + 1);
+		printf("nb_args = %d\n", nb_args + 1);
+		data->cmde = malloc(sizeof(t_cmd) * nb_args);
 		if (!data->cmde)
 			return (1);
 		data->nb_args = nb_args;
@@ -120,7 +121,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			data->cmde[i].infile = 0;
 			data->cmde[i].outfile = 0;
 			data->cmde[i].file = 0;
-		}*/
+		}
 	}
 	else if (!method)
 	{
@@ -199,8 +200,12 @@ int	_give_properties(t_prompt *data, char *input)
 				data->cmde[i].path = "CMD";
 			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
-				|| ft_strcomp(data->cmde[i].cmd[0], "unset"))
+				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
+				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
+			{
+				printf("CMD = [%s]\n", data->cmde[i].cmd[0]);
 				data->cmde[i].path = data->cmde[i].cmd[0];
+			}
 			else
 			{
 				while (data->path[++n])
@@ -272,7 +277,7 @@ int	_get_cmd(t_prompt *data, char *input)
 		if (_nb_args(data, input + save, 0))
 			return (1);
 		data->cmde[i].n_inarg = data->nb_inar;
-		data->cmde[i].cmd = malloc(sizeof(char *) * data->nb_inar + 1);
+		data->cmde[i].cmd = malloc(sizeof(char *) * (data->nb_inar + 1));
 		if (!data->cmde[i].cmd)
 			return (1);
 		data->cmde[i].cmd[data->nb_inar] = NULL;
@@ -308,7 +313,7 @@ int	_get_cmd(t_prompt *data, char *input)
 				data->cmde[i].cmd[args][n] = '\0';
 				j++;
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
-					&& input[j] != 34 && input[j] != 39)
+					&& input[j] != 34 && input[j] != 39 && input[j])
 					j++;
 			}
 			else
@@ -340,7 +345,7 @@ int	_get_cmd(t_prompt *data, char *input)
 							input + save, n);
 					data->cmde[i].cmd[args][n] = '\0';
 				}
-				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
+				while (input[j] && (!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
 			}

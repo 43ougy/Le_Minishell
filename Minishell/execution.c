@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 12:02:11 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/13 18:22:01 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,16 @@ void	execute(t_prompt *data, int i)
 {
 	int	check;
 
-	if (ft_strcomp(data->cmde[i].path, "cd"))
+	if (ft_strcomp(data->cmde[i].path, "cd")
+		|| ft_strcomp(data->cmde[i].path, "export")
+		|| ft_strcomp(data->cmde[i].path, "env"))
 	{
-		run_cd(data, data->cmde[i].cmd);
+		if (ft_strcomp(data->cmde[i].path, "cd"))
+			run_cd(data, data->cmde[i].cmd);
+		else if (ft_strcomp(data->cmde[i].path, "export"))
+			data->d_env = run_export(data, data->cmde[i].cmd[1]);
+		else if (ft_strcomp(data->cmde[i].path, "env"))
+			run_env(data);
 		return ;
 	}
 	check = 0;
@@ -76,8 +83,13 @@ int	_execution(t_prompt *data)
 		data->proc = fork();
 		if (!data->proc)
 		{
+			if (&data->cmde[1])
+				printf("PROC | args1 exist\n");
 			if (ft_strcomp(data->cmde[0].path, "cd") && !&data->cmde[1])
+			{
+				printf("C'est CD ?\n");
 				exit(0);
+			}
 			execute(data, i);
 			_free_args(data);
 		}
@@ -91,7 +103,10 @@ int	_execution(t_prompt *data)
 		waitpid(data->proc, NULL, 0);
 	g_sig_check = 0;
 	if (ft_strcomp(data->cmde[0].path, "cd") && !&data->cmde[1])
+	{
+		printf("JE VAIS DANS CD\n");
 		run_cd(data, data->cmde[0].cmd);
+	}
 	if (!data->prompt)
 	{
 		write(1, "\n", 1);

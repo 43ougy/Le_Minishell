@@ -1,6 +1,6 @@
 CC = @gcc
 RM = @rm -f
-FLAG = -Wall -Wextra -Werror
+FLAG = -Wall -Wextra -Werror -g
 NAME = minishell
 SRC = main.c				\
 		utils_1.c			\
@@ -13,7 +13,7 @@ SRC = main.c				\
 		parser_utils.c		\
 		pipe_red.c			\
 		execution.c			\
-		parser_methods.c
+		#parser_methods.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)
