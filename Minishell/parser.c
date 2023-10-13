@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/12 14:34:07 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/13 13:35:40 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 		if (_nb_args_method_one(data, input))
 			return (1);
-/*		while (input[i])
+	/*	while (input[i])
 		{
 			if (!_is_char(input[i]) && input[i] != ' '
 				&& input[i] != 34 && input[i] != 39)
@@ -107,8 +107,6 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					i++;
 			}
 		}
-		if (_is_char(input[i - 1]))
-			return (1);
 		data->cmde = malloc(sizeof(t_cmd) * nb_args + 1);
 		if (!data->cmde)
 			return (1);
@@ -165,6 +163,11 @@ int	_give_properties(t_prompt *data, char *input)
 
 	j = 0;
 	i = -1;
+	if (ft_strcomp(data->cmde[0].cmd[0], " ") && !&data->cmde[1])
+	{
+		write(1, "\n", 1);
+		return (0);
+	}
 	while (++i < data->nb_args)
 	{
 		n = -1;
@@ -223,6 +226,33 @@ int	_give_properties(t_prompt *data, char *input)
 			j++;
 	}
 	return (0);
+}
+
+char	*_env_variable(t_prompt *data, char *input)
+{
+	int		len;
+	char	*env_var;
+	char	*ret;
+	int		i;
+
+	len = 0;
+	i = 0;
+	while (input[i] && input[i] != ' ' && !_is_char(input[i])
+		&& !_is_quotes(input[i]))
+	{
+		len++;
+		i++;
+	}
+	env_var = malloc(sizeof(char) * len + 1);
+	env_var[len] = '\0';
+	i = -1;
+	while (++i < len)
+		env_var[i] = input[i];
+	ret = ft_getenv(data->d_env, env_var);
+	free(env_var);
+	if (!ret)
+		return (NULL);
+	return (ret);
 }
 
 int	_get_cmd(t_prompt *data, char *input)
@@ -285,18 +315,31 @@ int	_get_cmd(t_prompt *data, char *input)
 			{
 				while (input[j] && input[j] == ' ')
 					j++;
+				if (input[j - 1] == ' ' && input[j])
+					save = j;
 				while (input[j] && !_is_char(input[j]) && input[j] != ' '
-					&& input[j] != 34 && input[j] != 39)
+					&& input[j] != 34 && input[j] != 39 && input[j] != '$')
 				{
 					j++;
 					n++;
 				}
-				data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
-				if (!data->cmde[i].cmd[args])
-					return (1);
-				data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
-						input + save, n);
-				data->cmde[i].cmd[args][n] = '\0';
+				if (input[j] == '$')
+				{
+					data->cmde[i].cmd[args] = _env_variable(data, input + j + 1);
+					if (!data->cmde[i].cmd[args])
+						return (1);
+					while (input[j] && input[j] != ' ')
+						j++;
+				}
+				else
+				{
+					data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
+					if (!data->cmde[i].cmd[args])
+						return (1);
+					data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
+							input + save, n);
+					data->cmde[i].cmd[args][n] = '\0';
+				}
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;

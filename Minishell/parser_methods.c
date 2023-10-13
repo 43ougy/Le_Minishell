@@ -8,7 +8,9 @@ void	_one_method_one_split(char *input, int *i, int *nb_args)
 		(*nb_args)++;
 		while (!_is_char(input[*i]) && input[*i]
 			&& !_is_quotes(input[*i]))
+		{
 			(*i)++;
+		}
 	}
 	while (input[*i] && input[*i] == ' ' && !_is_char(input[*i])
 		&& !_is_quotes(input[*i]))
