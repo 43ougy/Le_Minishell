@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 11:37:10 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/14 14:32:30 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ char	**run_export(t_prompt *data, char *name)
 	while (data->d_env[++i])
 		free(data->d_env[i]);
 	free(data->d_env);
+	data->d_env = NULL;
 	return (new_env);
 }
 /*
@@ -103,8 +104,11 @@ int	running(t_prompt *data)
 	}
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 		exit(0);
-	if (data->cmde)
+//	printf("TEST|||||||||||||||||||\n");
+	if (data->check_exit > 0 && data->cmde)
 		_free_args_nexit(data);
+	data->check_exit = 1;
+//	printf("TEST|||||||||||||||||||\n");
 	if (_parser(data))
 		return (1);
 	if (!data->cmde)
