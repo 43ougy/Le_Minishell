@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/13 17:09:22 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/14 11:29:53 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,36 @@ void	_free_args(t_prompt *data)
 					free(data->cmde[i].cmd[j]);
 				free(data->cmde[i].cmd);
 			}
+			if (data->cmde[i].path)
+				data->cmde[i].path = NULL;
 		}
 		free(data->cmde);
 	}
+	data->cmde = NULL;
 	exit(0);
+}
+
+void	_free_args_nexit(t_prompt *data)
+{
+	int	i;
+	int	j;
+
+	if (data->cmde)
+	{
+		i = -1;
+		while (++i < data->nb_args)
+		{
+			j = -1;
+			if (data->cmde[i].cmd)
+			{
+				while (++j < data->cmde[i].n_inarg)
+					free(data->cmde[i].cmd[j]);
+				free(data->cmde[i].cmd);
+			}
+			if (data->cmde[i].path)
+				data->cmde[i].path = NULL;
+		}
+		free(data->cmde);
+	}
+	data->cmde = NULL;
 }

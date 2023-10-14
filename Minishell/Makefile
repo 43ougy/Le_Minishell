@@ -1,6 +1,6 @@
 CC = @gcc
 RM = @rm -f
-FLAG = -Wall -Wextra -Werror -g
+FLAG = -Wall -Wextra -Werror -g3
 NAME = minishell
 SRC = main.c				\
 		utils_1.c			\

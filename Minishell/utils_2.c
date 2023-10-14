@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 08:25:14 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/13 17:27:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/14 11:47:45 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,20 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 
 char	*ft_strdup(const char *s)
 {
-	size_t			i;
-	char			*dest;
+	size_t	i;
+	char	*dest;
+	int		len;
 
 	i = -1;
-	dest = malloc(sizeof(char) * ft_strlen(s) + 1);
+	len = 0;
+	while (s[len])
+		len++;
+	dest = malloc(sizeof(char) * len + 1);
 	if (!dest)
 		return (NULL);
-	while (++i < ft_strlen(s))
+	while (++i < len && s[i])
 		dest[i] = s[i];
-	dest[i] = '\0';
+	dest[len] = '\0';
 	return (dest);
 }
 
@@ -62,10 +66,6 @@ char	*ft_strncpy(char *dest, char *src, int n)
 	i = -1;
 	while (++i < n && src[i])
 		dest[i] = src[i];
-	while (i < n)
-	{
-		dest[i] = '\0';
-		i++;
-	}
+	dest[n] = '\0';
 	return (dest);
 }

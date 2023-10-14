@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/13 16:40:30 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/14 11:30:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int		_is_quotes(char c);
 int		_is_char(char c);
 int		_is_whitespace(char c);
 void	_free_args(t_prompt *data);
+void	_free_args_nexit(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
 int		_nb_args_method_one(t_prompt *data, char *input);
 int		_parser(t_prompt *data);

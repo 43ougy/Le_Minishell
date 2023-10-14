@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/13 18:24:53 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/14 11:21:39 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					i++;
 			}
 		}
-		printf("nb_args = %d\n", nb_args + 1);
-		data->cmde = malloc(sizeof(t_cmd) * nb_args);
+		data->cmde = malloc(sizeof(t_cmd) * nb_args + 1);
 		if (!data->cmde)
 			return (1);
 		data->nb_args = nb_args;
@@ -202,10 +201,7 @@ int	_give_properties(t_prompt *data, char *input)
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
 				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
 				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
-			{
-				printf("CMD = [%s]\n", data->cmde[i].cmd[0]);
 				data->cmde[i].path = data->cmde[i].cmd[0];
-			}
 			else
 			{
 				while (data->path[++n])
@@ -249,6 +245,8 @@ char	*_env_variable(t_prompt *data, char *input)
 		i++;
 	}
 	env_var = malloc(sizeof(char) * len + 1);
+	if (!env_var)
+		return (NULL);
 	env_var[len] = '\0';
 	i = -1;
 	while (++i < len)
@@ -310,7 +308,6 @@ int	_get_cmd(t_prompt *data, char *input)
 					return (1);
 				data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
 						input + save + 1, n);
-				data->cmde[i].cmd[args][n] = '\0';
 				j++;
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39 && input[j])
@@ -320,7 +317,7 @@ int	_get_cmd(t_prompt *data, char *input)
 			{
 				while (input[j] && input[j] == ' ')
 					j++;
-				if (input[j - 1] == ' ' && input[j])
+				if (j > 0 && input[j - 1] == ' ' && input[j])
 					save = j;
 				while (input[j] && !_is_char(input[j]) && input[j] != ' '
 					&& input[j] != 34 && input[j] != 39 && input[j] != '$')
@@ -343,7 +340,6 @@ int	_get_cmd(t_prompt *data, char *input)
 						return (1);
 					data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
 							input + save, n);
-					data->cmde[i].cmd[args][n] = '\0';
 				}
 				while (input[j] && (!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
