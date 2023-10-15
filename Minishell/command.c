@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 14:32:30 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/15 15:34:34 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	run_env(t_prompt *data)
 	int	i;
 
 	i = -1;
+	write(1, "MY ENV\n", 7);
 	while (data->d_env[++i])
 	{
 		write(1, data->d_env[i], ft_strlen(data->d_env[i]));
@@ -104,11 +105,9 @@ int	running(t_prompt *data)
 	}
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 		exit(0);
-//	printf("TEST|||||||||||||||||||\n");
 	if (data->check_exit > 0 && data->cmde)
 		_free_args_nexit(data);
 	data->check_exit = 1;
-//	printf("TEST|||||||||||||||||||\n");
 	if (_parser(data))
 		return (1);
 	if (!data->cmde)
