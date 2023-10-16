@@ -5,6 +5,7 @@ NAME = minishell
 SRC = main.c				\
 		utils_1.c			\
 		utils_2.c			\
+		utils_3.c			\
 		ft_split.c			\
 		path_env.c			\
 		command.c			\

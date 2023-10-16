@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/15 15:30:53 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 11:46:20 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ int	_execution(t_prompt *data)
 		if (!data->proc)
 		{
 			if (ft_strcomp(data->cmde[0].path, "cd")
-				|| ft_strcomp(data->cmde[0].path, "export"))
+				|| ft_strcomp(data->cmde[0].path, "export")
+				|| ft_strcomp(data->cmde[0].path, "env"))
 				exit(0);
 			execute(data, i);
 			_free_args(data);
@@ -101,10 +102,9 @@ int	_execution(t_prompt *data)
 	if (ft_strcomp(data->cmde[0].path, "cd"))
 		run_cd(data, data->cmde[0].cmd);
 	if (ft_strcomp(data->cmde[0].path, "export"))
-	{
-		printf("Run export\n");
 		data->d_env = run_export(data, data->cmde[0].cmd[1]);
-	}
+	if (ft_strcomp(data->cmde[0].path, "env"))
+		run_env(data);
 	if (!data->prompt)
 	{
 		write(1, "\n", 1);

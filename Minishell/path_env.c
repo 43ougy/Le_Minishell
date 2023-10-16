@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:47 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/11 09:18:44 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 15:18:42 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ char	*ft_getenv(char **env, char *path_name)
 		if (ft_strcomp(path_name, path))
 		{
 			free(path);
+			path = NULL;
 			path = ft_strdup(env[li] + ch + 1);
 			break ;
 		}
 		free(path);
+		path = NULL;
 		li++;
 	}
 	return (path);

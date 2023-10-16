@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 14:32:01 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 11:54:08 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,7 @@ int	main(int ac, char **av, char **env)
 		if (!running(&data))
 			break ;
 	}
-	while (data.path[++i])
-		free(data.path[i]);
-	free(data.path);
-	i = -1;
-	while (data.d_env[++i])
-		free(data.d_env[i]);
-	free(data.d_env);
+	_free_struct(&data);
 	_free_args_nexit(&data);
 	return (0);
 }

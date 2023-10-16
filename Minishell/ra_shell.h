@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 11:30:13 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 13:42:35 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct t_shell
 	char	*infile;
 	char	*outfile;
 	char	**set_env;
+	int		exec_check;
 	int		background;
 	int		fd[2];
 	int		check_exit;
@@ -85,9 +86,11 @@ int		_execution(t_prompt *data);
 //===========Parser===========//
 int		_is_quotes(char c);
 int		_is_char(char c);
+int		_is_alpha(char c);
 int		_is_whitespace(char c);
 void	_free_args(t_prompt *data);
 void	_free_args_nexit(t_prompt *data);
+void	_free_struct(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
 int		_nb_args_method_one(t_prompt *data, char *input);
 int		_parser(t_prompt *data);

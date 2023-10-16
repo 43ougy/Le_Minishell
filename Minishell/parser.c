@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 11:21:39 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 16:00:02 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,8 @@ int	_give_properties(t_prompt *data, char *input)
 					path_cmd = ft_strjoin(data->path[n], data->cmde[i].cmd[0]);
 					if (!access(path_cmd, F_OK | X_OK))
 					{
-						data->cmde[i].path = path_cmd;
+						data->cmde[i].path = ft_strdup(path_cmd);
+						free(path_cmd);
 						break ;
 					}
 					free(path_cmd);
@@ -238,8 +239,8 @@ char	*_env_variable(t_prompt *data, char *input)
 
 	len = 0;
 	i = 0;
-	while (input[i] && input[i] != ' ' && !_is_char(input[i])
-		&& !_is_quotes(input[i]))
+	while (input[i] && ((input[i] >= 'a' && input[i] <= 'z')
+		|| (input[i] >= 'A' && input[i] <= 'Z')))
 	{
 		len++;
 		i++;
@@ -256,6 +257,68 @@ char	*_env_variable(t_prompt *data, char *input)
 	if (!ret)
 		return (NULL);
 	return (ret);
+}
+
+char	*_check_value(t_prompt *data, char *input)
+{
+	int		i;
+	int		j;
+	int		len;
+	char	*d_var;
+	char	*cmd;
+
+	i = 0;
+	len = 0;
+	j = -1;
+	while (input[i] && input[i] != ' ')
+	{
+		while (input[i] && _is_alpha(input[i]))
+		{
+			i++;
+			len++;
+		}
+		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]))
+		{
+			d_var = _env_variable(data, input + i + 1);
+			if (d_var)
+				len += ft_strlen(d_var);
+			i++;
+			while (input[i] && _is_alpha(input[i]))
+				i++;
+		}
+		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1]) || !input[i + 1]))
+		{
+			len ++;
+			i++;
+		}
+	}
+	cmd = malloc(sizeof(char) * len + 1);
+	if (!cmd)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		while (i < len && input[i] != '$')
+		{
+			cmd[i] = input[i];
+			i++;
+		}
+		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]) && d_var)
+		{
+			while (d_var[++j] && i < len)
+			{
+				cmd[i] = d_var[j];
+				i++;
+			}
+		}
+		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1]) || !input[i + 1]))
+		{
+			cmd[i] = '$';
+			i++;
+		}
+	}
+	cmd[len] = '\0';
+	return (cmd);
 }
 
 int	_get_cmd(t_prompt *data, char *input)
@@ -319,15 +382,17 @@ int	_get_cmd(t_prompt *data, char *input)
 					j++;
 				if (j > 0 && input[j - 1] == ' ' && input[j])
 					save = j;
-				while (input[j] && !_is_char(input[j]) && input[j] != ' '
+			/*	while (input[j] && !_is_char(input[j]) && input[j] != ' '
 					&& input[j] != 34 && input[j] != 39 && input[j] != '$')
 				{
 					j++;
 					n++;
-				}
-				if (input[j] == '$')
+				}*/
+				if (input[j] == '$' || ((input[j] >= 'a' && input[j] <= 'z')
+					|| (input[j] <= 'A' && input[j] >= 'Z')))
 				{
-					data->cmde[i].cmd[args] = _env_variable(data, input + j + 1);
+					//data->cmde[i].cmd[args] = _env_variable(data, input + j + 1);
+					data->cmde[i].cmd[args] = _check_value(data, input + j);
 					if (!data->cmde[i].cmd[args])
 						return (1);
 					while (input[j] && input[j] != ' ')

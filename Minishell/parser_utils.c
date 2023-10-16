@@ -6,31 +6,26 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 11:29:53 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/16 11:56:56 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
-int	_is_char(char c)
+void	_free_struct(t_prompt *data)
 {
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
-}
+	int	i;
 
-int	_is_quotes(char c)
-{
-	if (c == 34 || c == 39)
-		return (1);
-	return (0);
-}
-
-int	_is_whitespace(char c)
-{
-	if ((c >= 9 && c <= 13) || c == ' ')
-		return (0);
-	return (1);
+	i = -1;
+	while (data->d_env[++i])
+		free(data->d_env[i]);
+	free(data->d_env);
+	data->d_env = NULL;
+	i = -1;
+	while (data->path[++i])
+		free(data->path[i]);
+	free(data->path);
+	data->path = NULL;
 }
 
 void	_free_args(t_prompt *data)
@@ -51,11 +46,12 @@ void	_free_args(t_prompt *data)
 				free(data->cmde[i].cmd);
 			}
 			if (data->cmde[i].path)
-				data->cmde[i].path = NULL;
+				free(data->cmde[i].path);
 		}
 		free(data->cmde);
 	}
 	data->cmde = NULL;
+	_free_struct(data);
 	exit(0);
 }
 
