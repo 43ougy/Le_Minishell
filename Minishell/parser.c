@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/16 16:00:02 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 10:16:12 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,13 +263,24 @@ char	*_check_value(t_prompt *data, char *input)
 {
 	int		i;
 	int		j;
+	int		ch;
+	int		in;
 	int		len;
-	char	*d_var;
+	char	**d_var;
 	char	*cmd;
 
-	i = 0;
+	i = -1;
 	len = 0;
-	j = -1;
+	j = -0;
+	/*data->dollar = 0;
+	while (input[++i] && input[i] != ' ')
+		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]))
+			data->dollar++;*/
+	d_var = malloc(sizeof(char *) * (data->dollar + 1));
+	if (!d_var)
+		return (NULL);
+	d_var[data->dollar] = NULL;
+	i = 0;
 	while (input[i] && input[i] != ' ')
 	{
 		while (input[i] && _is_alpha(input[i]))
@@ -279,12 +290,13 @@ char	*_check_value(t_prompt *data, char *input)
 		}
 		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]))
 		{
-			d_var = _env_variable(data, input + i + 1);
-			if (d_var)
-				len += ft_strlen(d_var);
+			d_var[j] = _env_variable(data, input + i + 1);
+			if (d_var[j])
+				len += ft_strlen(d_var[j]);
 			i++;
 			while (input[i] && _is_alpha(input[i]))
 				i++;
+			j++;
 		}
 		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1]) || !input[i + 1]))
 		{
@@ -295,26 +307,35 @@ char	*_check_value(t_prompt *data, char *input)
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
+	j = 0;
 	i = 0;
+	in = 0;
 	while (i < len)
 	{
-		while (i < len && input[i] != '$')
+		while (i < len && input[in] != '$')
 		{
-			cmd[i] = input[i];
+			cmd[i] = input[in];
 			i++;
+			in++;
 		}
-		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]) && d_var)
+		if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]) && d_var[j])
 		{
-			while (d_var[++j] && i < len)
+			ch = -1;
+			while (d_var[j][++ch] && i < len)
 			{
-				cmd[i] = d_var[j];
+				cmd[i] = d_var[j][ch];
 				i++;
 			}
+			in++;
+			while (input[in] && _is_alpha(input[in]))
+				in++;
+			j++;
 		}
-		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1]) || !input[i + 1]))
+		if (input[in] == '$' && ((!_is_alpha(input[in + 1]) && input[in + 1]) || !input[in + 1]))
 		{
 			cmd[i] = '$';
 			i++;
+			in++;
 		}
 	}
 	cmd[len] = '\0';
@@ -328,6 +349,7 @@ int	_get_cmd(t_prompt *data, char *input)
 	int	n;
 	int	j;
 	int	args;
+	int	in;
 
 	i = -1;
 	save = 0;
@@ -382,16 +404,13 @@ int	_get_cmd(t_prompt *data, char *input)
 					j++;
 				if (j > 0 && input[j - 1] == ' ' && input[j])
 					save = j;
-			/*	while (input[j] && !_is_char(input[j]) && input[j] != ' '
-					&& input[j] != 34 && input[j] != 39 && input[j] != '$')
+				data->dollar = 0;
+				in = save - 1;
+				while (input[++in] && input[in] != ' ')
+					if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
+						data->dollar++;
+				if (data->dollar > 0)
 				{
-					j++;
-					n++;
-				}*/
-				if (input[j] == '$' || ((input[j] >= 'a' && input[j] <= 'z')
-					|| (input[j] <= 'A' && input[j] >= 'Z')))
-				{
-					//data->cmde[i].cmd[args] = _env_variable(data, input + j + 1);
 					data->cmde[i].cmd[args] = _check_value(data, input + j);
 					if (!data->cmde[i].cmd[args])
 						return (1);
@@ -400,6 +419,12 @@ int	_get_cmd(t_prompt *data, char *input)
 				}
 				else
 				{
+					while (input[j] && !_is_char(input[j]) && input[j] != ' '
+						&& input[j] != 34 && input[j] != 39 && input[j] != '$')
+					{
+						j++;
+						n++;
+					}
 					data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
 					if (!data->cmde[i].cmd[args])
 						return (1);
