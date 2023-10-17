@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 09:39:58 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 13:44:50 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct t_shell
 	int		fd[2];
 	int		check_exit;
 	int		dollar;
+	int		equal;
 	int		nb_pipe;
 	pid_t	proc;
 }	t_prompt;
@@ -87,7 +88,9 @@ int		_execution(t_prompt *data);
 //===========Parser===========//
 int		_is_quotes(char c);
 int		_is_char(char c);
+int		_is_num(char c);
 int		_is_alpha(char c);
+int		_is_limiter(char c);
 int		_is_whitespace(char c);
 void	_free_args(t_prompt *data);
 void	_free_args_nexit(t_prompt *data);

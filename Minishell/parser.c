@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 10:16:12 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 16:30:41 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,14 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 	//	if (_nb_args_method_one(data, input))
 	//		return (1);
+		while (input[i] && input[i] == ' ')
+			i++;
+		if (input[i] == '|')
+		{
+			write(2, "Cash'Hell: syntax error near unexpected token `|'\n", 50);
+			return (1);
+		}
+		i = 0;
 		while (input[i])
 		{
 			if (!_is_char(input[i]) && input[i] != ' '
@@ -200,7 +208,8 @@ int	_give_properties(t_prompt *data, char *input)
 			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
 				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
-				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
+				|| ft_strcomp(data->cmde[i].cmd[0], "env")
+				|| ft_strcomp(data->cmde[i].cmd[0], "SET_ENV"))
 				data->cmde[i].path = data->cmde[i].cmd[0];
 			else
 			{
@@ -239,8 +248,7 @@ char	*_env_variable(t_prompt *data, char *input)
 
 	len = 0;
 	i = 0;
-	while (input[i] && ((input[i] >= 'a' && input[i] <= 'z')
-		|| (input[i] >= 'A' && input[i] <= 'Z')))
+	while (input[i] && (_is_alpha(input[i]) || input[i] == '_'))
 	{
 		len++;
 		i++;
@@ -272,10 +280,6 @@ char	*_check_value(t_prompt *data, char *input)
 	i = -1;
 	len = 0;
 	j = -0;
-	/*data->dollar = 0;
-	while (input[++i] && input[i] != ' ')
-		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]))
-			data->dollar++;*/
 	d_var = malloc(sizeof(char *) * (data->dollar + 1));
 	if (!d_var)
 		return (NULL);
@@ -283,12 +287,12 @@ char	*_check_value(t_prompt *data, char *input)
 	i = 0;
 	while (input[i] && input[i] != ' ')
 	{
-		while (input[i] && _is_alpha(input[i]))
+		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
 		{
 			i++;
 			len++;
 		}
-		if (input[i] == '$' && input[i + 1] && _is_alpha(input[i + 1]))
+		if (input[i] == '$' && input[i + 1] && (_is_alpha(input[i + 1]) || input[i + 1] == '_'))
 		{
 			d_var[j] = _env_variable(data, input + i + 1);
 			if (d_var[j])
@@ -318,10 +322,10 @@ char	*_check_value(t_prompt *data, char *input)
 			i++;
 			in++;
 		}
-		if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]) && d_var[j])
+		if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
 		{
 			ch = -1;
-			while (d_var[j][++ch] && i < len)
+			while (d_var[j] && d_var[j][++ch] && i < len)
 			{
 				cmd[i] = d_var[j][ch];
 				i++;
@@ -342,6 +346,48 @@ char	*_check_value(t_prompt *data, char *input)
 	return (cmd);
 }
 
+char	**_set_equals(t_prompt *data, char *input)
+{
+	char	**ret;
+	char	*equal_var;
+	int		i;
+	int		j;
+	int		len;
+
+	len = 0;
+	j = -1;
+	ret = NULL;
+	while (input[len] && input[len] != ' ')
+		len++;
+	equal_var = malloc(sizeof(char) * len + 1);
+	i = -1;
+	while (input[++i] && input[i] != ' ')
+		equal_var[i] = input[i];
+	equal_var[i] = '\0';
+	len = 0;
+	/*if (data->set_env)
+		while (data->set_env[len])
+			len++;*/
+	ret = malloc(sizeof(char *) * (len + 2));
+	if (!ret)
+		return (NULL);
+	ret[len + 1] = NULL;
+	/*if (data->set_env)
+	{
+		while (++j < len + 1 && data->set_env[j])
+		{
+			ret[j] = ft_strdup(data->set_env[j]);
+			free(data->set_env[j]);
+		}
+		free(data->set_env);
+	}*/
+	ret[len] = ft_strdup(equal_var);
+	if (!ret)
+		return (NULL);
+	free(equal_var);
+	return (ret);
+}
+
 int	_get_cmd(t_prompt *data, char *input)
 {
 	int	i;
@@ -354,6 +400,10 @@ int	_get_cmd(t_prompt *data, char *input)
 	i = -1;
 	save = 0;
 	j = 0;
+	while (input[j] && input[j] == ' ')
+		j++;
+	if (!input[j] || input[j] == ' ')
+		return (1);
 	while (++i < data->nb_args)
 	{
 		data->nb_inar = 0;
@@ -400,15 +450,19 @@ int	_get_cmd(t_prompt *data, char *input)
 			}
 			else
 			{
-				while (input[j] && input[j] == ' ')
-					j++;
-				if (j > 0 && input[j - 1] == ' ' && input[j])
-					save = j;
+				save = j;
 				data->dollar = 0;
+				data->equal = 0;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
 						data->dollar++;
+				in = save - 1;
+				while (input[++in] && input[in] != ' ')
+					if (input[in] == '=' && !data->dollar && _is_alpha(input[in - 1])
+						&& input[in + 1] && (_is_alpha(input[in + 1])
+						|| _is_num(input[in + 1])))
+						data->equal++;
 				if (data->dollar > 0)
 				{
 					data->cmde[i].cmd[args] = _check_value(data, input + j);
@@ -417,6 +471,17 @@ int	_get_cmd(t_prompt *data, char *input)
 					while (input[j] && input[j] != ' ')
 						j++;
 				}
+				/*else if (data->equal == 1)
+				{
+					data->set_env = _set_equals(data, input);
+					if (!data->set_env)
+						return (1);
+					//for (int i = 0; data->set_env[i]; i++)
+					//	printf("SET_ENV = %s\n", data->set_env[i]);
+					while (input[j] && input[j] != ' ')
+						j++;
+					data->cmde[i].cmd[args] = "SET_ENV";
+				}*/
 				else
 				{
 					while (input[j] && !_is_char(input[j]) && input[j] != ' '
@@ -448,6 +513,7 @@ int	_parser(t_prompt *data)
 	data->nb_pipe = 0;
 	data->infile = NULL;
 	data->outfile = NULL;
+	data->set_env = NULL;
 	if (!data->prompt)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))

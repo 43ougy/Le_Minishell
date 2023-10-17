@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 08:25:14 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/14 11:47:45 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 13:43:43 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,4 +68,11 @@ char	*ft_strncpy(char *dest, char *src, int n)
 		dest[i] = src[i];
 	dest[n] = '\0';
 	return (dest);
+}
+
+int	_is_num(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
 }
