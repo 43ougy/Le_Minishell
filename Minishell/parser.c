@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 16:30:41 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/18 10:12:59 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	check_char = 0;
 	if (method)
 	{
-	//	if (_nb_args_method_one(data, input))
-	//		return (1);
 		while (input[i] && input[i] == ' ')
 			i++;
 		if (input[i] == '|')
@@ -208,9 +206,17 @@ int	_give_properties(t_prompt *data, char *input)
 			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
 				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
-				|| ft_strcomp(data->cmde[i].cmd[0], "env")
-				|| ft_strcomp(data->cmde[i].cmd[0], "SET_ENV"))
+				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
 				data->cmde[i].path = data->cmde[i].cmd[0];
+			else if (data->equals > 0)
+			{
+				if (data->equals == 1 && !data->cmde[i].cmd[1])
+					data->cmde[i].path = data->cmde[i].cmd[0];
+				else if (data->equals == 1 && data->cmde[i].cmd[1])
+					data->cmde[i].path = "bad_set_env";
+				else if (data->equals > 1)
+					data->cmde[i].path = "bad_set_env";
+			}
 			else
 			{
 				while (data->path[++n])
@@ -400,6 +406,7 @@ int	_get_cmd(t_prompt *data, char *input)
 	i = -1;
 	save = 0;
 	j = 0;
+	data->equal = 0;
 	while (input[j] && input[j] == ' ')
 		j++;
 	if (!input[j] || input[j] == ' ')
@@ -452,7 +459,6 @@ int	_get_cmd(t_prompt *data, char *input)
 			{
 				save = j;
 				data->dollar = 0;
-				data->equal = 0;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
@@ -485,7 +491,7 @@ int	_get_cmd(t_prompt *data, char *input)
 				else
 				{
 					while (input[j] && !_is_char(input[j]) && input[j] != ' '
-						&& input[j] != 34 && input[j] != 39 && input[j] != '$')
+						&& input[j] != 34 && input[j] != 39)
 					{
 						j++;
 						n++;

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 13:44:50 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 16:57:02 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,10 @@ void	execute(t_prompt *data, int i);
 void	run_env(t_prompt *data);
 void	run_cd(t_prompt *data, char **cmd);
 char	**run_export(t_prompt *data, char *name);
+char	**run_unset(t_prompt *data, char *name);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
-int		exec_pipe(t_prompt *data, int i, int p_fd);
-void	_pipe(t_prompt *data, int *p_fd);
 int		_execution(t_prompt *data);
 
 //===========Parser===========//
@@ -96,7 +95,6 @@ void	_free_args(t_prompt *data);
 void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
-int		_nb_args_method_one(t_prompt *data, char *input);
 int		_parser(t_prompt *data);
 
 #endif

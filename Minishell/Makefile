@@ -12,9 +12,8 @@ SRC = main.c				\
 		handle.c			\
 		parser.c			\
 		parser_utils.c		\
-		pipe_red.c			\
 		execution.c			\
-		#parser_methods.c
+		
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)

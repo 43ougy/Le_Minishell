@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 14:30:55 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/18 09:47:45 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ char	**run_export(t_prompt *data, char *name)
 	int		len;
 	char	**new_env;
 
-	i = -1;
-	len = 1;
+	len = 0;
 	new_env = NULL;
-	while (data->d_env[++i])
+	while (data->d_env[len])
 		len++;
+	len++;
 	new_env = malloc(sizeof(char *) * (len + 1));
 	if (!new_env)
 		return (NULL);
@@ -80,10 +80,36 @@ char	**run_export(t_prompt *data, char *name)
 	data->d_env = NULL;
 	return (new_env);
 }
-/*
-void	run_unset(t_prompt *data, char *name)
+
+char	**run_unset(t_prompt *data, char *name)
 {
-}*/
+	int		i;
+	int		j;
+	int		len;
+	char	**new_env;
+
+	i = -1;
+	len = 0;
+	j = 0;
+	while (data->d_env[len])
+		len++;
+	new_env = malloc(sizeof(char *) * len);
+	if (!new_env)
+		return (NULL);
+	while (data->d_env[++i])
+	{
+		if (data->d_env[i] && !ft_strcomp(data->d_env[i], name))
+			new_env[j] = ft_strdup(data->d_env[i]);
+		j++;
+	}
+	new_env[len] = NULL;
+	i = -1;
+	while (data->d_env[++i])
+		free(data->d_env[i]);
+	free(data->d_env);
+	data->d_env = NULL;
+	return (new_env);
+}
 
 int	running(t_prompt *data)
 {

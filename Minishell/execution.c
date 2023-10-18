@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 14:23:21 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/17 16:58:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ int	_execution(t_prompt *data)
 		{
 			if (ft_strcomp(data->cmde[0].path, "cd")
 				|| ft_strcomp(data->cmde[0].path, "export")
+				|| ft_strcomp(data->cmde[0].path, "unset")
 				|| ft_strcomp(data->cmde[0].path, "env")
 				|| ft_strcomp(data->cmde[0].path, "SET_ENV"))
 				exit(0);
@@ -104,6 +105,8 @@ int	_execution(t_prompt *data)
 		run_cd(data, data->cmde[0].cmd);
 	if (ft_strcomp(data->cmde[0].path, "export"))
 		data->d_env = run_export(data, data->cmde[0].cmd[1]);
+	if (ft_strcomp(data->cmde[0].path, "unset"))
+		data->d_env = run_unset(data, data->cmde[0].cmd[1]);
 	if (ft_strcomp(data->cmde[0].path, "env"))
 		run_env(data);
 	if (!data->prompt)
