@@ -21,9 +21,11 @@ void	handle_signal(int signo)
 	if (signo == SIGINT)
 	{
 		rl_replace_line("", 0);
-		write(1, "\n", 1);
+		//if (g_sig_check == 2)
+		//	write(1, "\n", 1);
 		if (!g_sig_check)
 		{
+			write(1, "\n", 1);
 			rl_on_new_line();
 			rl_redisplay();
 		}

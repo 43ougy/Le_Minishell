@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/18 10:12:59 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/20 15:35:23 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,7 @@ int	_give_properties(t_prompt *data, char *input)
 			else if (data->equals > 0)
 			{
 				if (data->equals == 1 && !data->cmde[i].cmd[1])
-					data->cmde[i].path = data->cmde[i].cmd[0];
+					data->cmde[i].path = "set_env";//data->cmde[i].cmd[0];
 				else if (data->equals == 1 && data->cmde[i].cmd[1])
 					data->cmde[i].path = "bad_set_env";
 				else if (data->equals > 1)
@@ -352,48 +352,6 @@ char	*_check_value(t_prompt *data, char *input)
 	return (cmd);
 }
 
-char	**_set_equals(t_prompt *data, char *input)
-{
-	char	**ret;
-	char	*equal_var;
-	int		i;
-	int		j;
-	int		len;
-
-	len = 0;
-	j = -1;
-	ret = NULL;
-	while (input[len] && input[len] != ' ')
-		len++;
-	equal_var = malloc(sizeof(char) * len + 1);
-	i = -1;
-	while (input[++i] && input[i] != ' ')
-		equal_var[i] = input[i];
-	equal_var[i] = '\0';
-	len = 0;
-	/*if (data->set_env)
-		while (data->set_env[len])
-			len++;*/
-	ret = malloc(sizeof(char *) * (len + 2));
-	if (!ret)
-		return (NULL);
-	ret[len + 1] = NULL;
-	/*if (data->set_env)
-	{
-		while (++j < len + 1 && data->set_env[j])
-		{
-			ret[j] = ft_strdup(data->set_env[j]);
-			free(data->set_env[j]);
-		}
-		free(data->set_env);
-	}*/
-	ret[len] = ft_strdup(equal_var);
-	if (!ret)
-		return (NULL);
-	free(equal_var);
-	return (ret);
-}
-
 int	_get_cmd(t_prompt *data, char *input)
 {
 	int	i;
@@ -406,7 +364,7 @@ int	_get_cmd(t_prompt *data, char *input)
 	i = -1;
 	save = 0;
 	j = 0;
-	data->equal = 0;
+	data->equals = 0;
 	while (input[j] && input[j] == ' ')
 		j++;
 	if (!input[j] || input[j] == ' ')
@@ -468,7 +426,7 @@ int	_get_cmd(t_prompt *data, char *input)
 					if (input[in] == '=' && !data->dollar && _is_alpha(input[in - 1])
 						&& input[in + 1] && (_is_alpha(input[in + 1])
 						|| _is_num(input[in + 1])))
-						data->equal++;
+						data->equals++;
 				if (data->dollar > 0)
 				{
 					data->cmde[i].cmd[args] = _check_value(data, input + j);
@@ -477,17 +435,6 @@ int	_get_cmd(t_prompt *data, char *input)
 					while (input[j] && input[j] != ' ')
 						j++;
 				}
-				/*else if (data->equal == 1)
-				{
-					data->set_env = _set_equals(data, input);
-					if (!data->set_env)
-						return (1);
-					//for (int i = 0; data->set_env[i]; i++)
-					//	printf("SET_ENV = %s\n", data->set_env[i]);
-					while (input[j] && input[j] != ' ')
-						j++;
-					data->cmde[i].cmd[args] = "SET_ENV";
-				}*/
 				else
 				{
 					while (input[j] && !_is_char(input[j]) && input[j] != ' '
@@ -519,7 +466,6 @@ int	_parser(t_prompt *data)
 	data->nb_pipe = 0;
 	data->infile = NULL;
 	data->outfile = NULL;
-	data->set_env = NULL;
 	if (!data->prompt)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))

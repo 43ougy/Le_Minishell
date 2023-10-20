@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 16:58:13 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/20 16:57:17 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	_execution(t_prompt *data)
 	int	fdin;
 	int	fdout;
 	int	i;
+	int	status;
 
 	tmpin = dup(0);
 	tmpout = dup(1);
@@ -87,7 +88,8 @@ int	_execution(t_prompt *data)
 				|| ft_strcomp(data->cmde[0].path, "export")
 				|| ft_strcomp(data->cmde[0].path, "unset")
 				|| ft_strcomp(data->cmde[0].path, "env")
-				|| ft_strcomp(data->cmde[0].path, "SET_ENV"))
+				|| ft_strcomp(data->cmde[0].path, "bad_set_env")
+				|| ft_strcomp(data->cmde[0].path, "set_env"))
 				exit(0);
 			execute(data, i);
 			_free_args(data);
@@ -97,9 +99,11 @@ int	_execution(t_prompt *data)
 	dup2(tmpout, 1);
 	close(tmpin);
 	close(tmpout);
-	g_sig_check = 1;
+	g_sig_check = 2;
 	if (!data->background)
-		waitpid(data->proc, NULL, 0);
+		waitpid(data->proc, &status, 0);
+	data->status = status;
+	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;
 	if (ft_strcomp(data->cmde[0].path, "cd"))
 		run_cd(data, data->cmde[0].cmd);
@@ -109,6 +113,12 @@ int	_execution(t_prompt *data)
 		data->d_env = run_unset(data, data->cmde[0].cmd[1]);
 	if (ft_strcomp(data->cmde[0].path, "env"))
 		run_env(data);
+	if (ft_strcomp(data->cmde[0].path, "set_env"))
+	{
+		data->set_env = run_set_equals(data, data->cmde[0].cmd[0]);
+		for (int i = 0; data->set_env[i]; i++)
+			printf("set_env after = [%s]\n", data->set_env[i]);
+	}
 	if (!data->prompt)
 	{
 		write(1, "\n", 1);

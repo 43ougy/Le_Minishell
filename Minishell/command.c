@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/18 09:47:45 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/20 15:52:01 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,36 @@ char	**run_export(t_prompt *data, char *name)
 	int		i;
 	int		len;
 	char	**new_env;
+	char	*comp;
+	char	*equal;
 
 	len = 0;
 	new_env = NULL;
+	i = -1;
+	printf("Export test\n");
+	if (data->set_env)
+	{
+		while (data->set_env[++i])
+		{
+			printf("SET_ENV in export = %s\n", data->set_env[i]);
+			while (data->set_env[i][len] && data->set_env[i][len] != '=')
+				len++;
+			comp = ft_substr(data->set_env[i], 0, len);
+			if (ft_strcomp(name, comp))
+			{
+				free(comp);
+				comp = ft_strdup(data->set_env[i]);
+				i = -1;
+				break ;
+			}
+			free(comp);
+		}
+		if (i != -1)
+			return (data->d_env);
+	}
+	else
+		return (data->d_env);
+	len = 0;
 	while (data->d_env[len])
 		len++;
 	len++;
@@ -71,13 +98,14 @@ char	**run_export(t_prompt *data, char *name)
 	i = -1;
 	while (data->d_env[++i])
 		new_env[i] = ft_strdup(data->d_env[i]);
-	new_env[i] = ft_strdup(name);
+	new_env[i] = ft_strdup(comp);
 	new_env[len] = NULL;
 	i = -1;
 	while (data->d_env[++i])
 		free(data->d_env[i]);
 	free(data->d_env);
 	data->d_env = NULL;
+	free(comp);
 	return (new_env);
 }
 
@@ -87,18 +115,35 @@ char	**run_unset(t_prompt *data, char *name)
 	int		j;
 	int		len;
 	char	**new_env;
+	char	*comp;
 
 	i = -1;
 	len = 0;
 	j = 0;
 	while (data->d_env[len])
+	{
+		while (data->d_env[len][j] && data->d_env[len][j] != '=')
+			j++;
+		comp = ft_substr(data->d_env[len], 0, j);
+		if (ft_strcomp(name, comp))
+		{
+			free(comp);
+			comp = ft_strdup(data->d_env[len]);
+			break ;
+		}
+		free(comp);
 		len++;
+	}
+	len = 0;
+	while (data->d_env[len])
+		len++;
+	j = 0;
 	new_env = malloc(sizeof(char *) * len);
 	if (!new_env)
 		return (NULL);
 	while (data->d_env[++i])
 	{
-		if (data->d_env[i] && !ft_strcomp(data->d_env[i], name))
+		if (data->d_env[i] && !ft_strcomp(data->d_env[i], comp))
 			new_env[j] = ft_strdup(data->d_env[i]);
 		j++;
 	}
@@ -107,8 +152,48 @@ char	**run_unset(t_prompt *data, char *name)
 	while (data->d_env[++i])
 		free(data->d_env[i]);
 	free(data->d_env);
+	free(comp);
 	data->d_env = NULL;
 	return (new_env);
+}
+
+char	**run_set_equals(t_prompt *data, char *input)
+{
+	char	**ret;
+	int		i;
+	int		j;
+	int		len;
+
+	len = 0;
+	j = -1;
+	ret = NULL;
+	len = 0;
+	if (data->set_env)
+	{
+		while (data->set_env[len])
+		{
+			if (ft_strcomp(data->set_env[len], input))
+				return (data->set_env);
+			len++;
+		}
+	}
+	ret = malloc(sizeof(char *) * (len + 2));
+	if (!ret)
+		return (NULL);
+	if (data->set_env)
+	{
+		while (++j < len + 2 && data->set_env[j])
+		{
+			ret[j] = ft_strdup(data->set_env[j]);
+			free(data->set_env[j]);
+		}
+		free(data->set_env);
+	}
+	ret[len] = ft_strdup(input);
+	ret[len + 1] = NULL;
+	if (!ret)
+		return (NULL);
+	return (ret);
 }
 
 int	running(t_prompt *data)
