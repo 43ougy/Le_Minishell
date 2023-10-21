@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/20 14:43:27 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 09:40:38 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ int	main(int ac, char **av, char **env)
 	t_prompt	data;
 	t_signal	sig_act;
 	int			i;
-	char		*env_path;
+//	char		*env_path;
 
 	i = -1;
 	data.check_exit = 0;
 	data.set_env = NULL;
 	if (_make_env(&data, env))
 		return (1);
-	env_path = ft_getenv(data.d_env, "PATH");
+/*	env_path = ft_getenv(data.d_env, "PATH");
 	data.path = give_path(env_path);
-	free(env_path);
+	free(env_path);*/
 	write(1, "launching...\n", 13);
 	while (1)
 	{

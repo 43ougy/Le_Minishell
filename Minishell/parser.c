@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/20 15:35:23 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 09:55:10 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ int	_give_properties(t_prompt *data, char *input)
 				else if (data->equals > 1)
 					data->cmde[i].path = "bad_set_env";
 			}
-			else
+			else if (data->path)
 			{
 				while (data->path[++n])
 				{
@@ -423,8 +423,9 @@ int	_get_cmd(t_prompt *data, char *input)
 						data->dollar++;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
-					if (input[in] == '=' && !data->dollar && _is_alpha(input[in - 1])
-						&& input[in + 1] && (_is_alpha(input[in + 1])
+					if (input[in] == '=' && !data->dollar && input[in - 1]
+						&& _is_alpha(input[in - 1]) && input[in + 1]
+						&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
 						|| _is_num(input[in + 1])))
 						data->equals++;
 				if (data->dollar > 0)

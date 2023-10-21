@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/20 15:52:01 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 09:43:21 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ char	**run_export(t_prompt *data, char *name)
 	char	*comp;
 	char	*equal;
 
-	len = 0;
 	new_env = NULL;
 	i = -1;
 	printf("Export test\n");
@@ -70,6 +69,7 @@ char	**run_export(t_prompt *data, char *name)
 	{
 		while (data->set_env[++i])
 		{
+			len = 0;
 			printf("SET_ENV in export = %s\n", data->set_env[i]);
 			while (data->set_env[i][len] && data->set_env[i][len] != '=')
 				len++;
@@ -118,10 +118,10 @@ char	**run_unset(t_prompt *data, char *name)
 	char	*comp;
 
 	i = -1;
-	len = 0;
-	j = 0;
-	while (data->d_env[len])
+	len = -1;
+	while (data->d_env[++len])
 	{
+		j = 0;
 		while (data->d_env[len][j] && data->d_env[len][j] != '=')
 			j++;
 		comp = ft_substr(data->d_env[len], 0, j);
@@ -132,22 +132,23 @@ char	**run_unset(t_prompt *data, char *name)
 			break ;
 		}
 		free(comp);
-		len++;
 	}
 	len = 0;
 	while (data->d_env[len])
 		len++;
 	j = 0;
-	new_env = malloc(sizeof(char *) * len);
+	new_env = malloc(sizeof(char *) * len + 1);
 	if (!new_env)
 		return (NULL);
 	while (data->d_env[++i])
 	{
 		if (data->d_env[i] && !ft_strcomp(data->d_env[i], comp))
+		{
 			new_env[j] = ft_strdup(data->d_env[i]);
-		j++;
+			j++;
+		}
 	}
-	new_env[len] = NULL;
+	new_env[j] = NULL;
 	i = -1;
 	while (data->d_env[++i])
 		free(data->d_env[i]);
@@ -198,6 +199,8 @@ char	**run_set_equals(t_prompt *data, char *input)
 
 int	running(t_prompt *data)
 {
+	char *env_path;
+
 	if (isatty(0) && isatty(2))
 	{
 		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
@@ -218,6 +221,16 @@ int	running(t_prompt *data)
 		exit(0);
 	if (data->check_exit > 0 && data->cmde)
 		_free_args_nexit(data);
+	free(data->path);
+	data->path = NULL;
+	env_path = ft_getenv(data->d_env, "PATH");
+	if (!env_path)
+		free(env_path);
+	else
+	{
+		data->path = give_path(env_path);
+		free(env_path);
+	}
 	data->check_exit = 1;
 	if (_parser(data))
 		return (1);
