@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 09:40:38 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 11:13:18 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	main(int ac, char **av, char **env)
 	i = -1;
 	data.check_exit = 0;
 	data.set_env = NULL;
+	data.path = NULL;
 	if (_make_env(&data, env))
 		return (1);
 /*	env_path = ft_getenv(data.d_env, "PATH");

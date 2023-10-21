@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/17 14:38:28 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 11:26:26 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	_free_args_nexit(t_prompt *data)
 				free(data->cmde[i].cmd);
 			}
 			if (data->cmde[i].path)
-				data->cmde[i].path = NULL;
+				free(data->cmde[i].path);
 		}
 		free(data->cmde);
 	}

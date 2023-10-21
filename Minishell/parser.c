@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 09:55:10 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 12:17:41 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,6 +348,10 @@ char	*_check_value(t_prompt *data, char *input)
 			in++;
 		}
 	}
+	i = -1;
+	while (d_var[++i])
+		free(d_var[i]);
+	free(d_var);
 	cmd[len] = '\0';
 	return (cmd);
 }

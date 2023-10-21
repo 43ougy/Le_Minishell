@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 09:43:21 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 11:24:46 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,8 +199,10 @@ char	**run_set_equals(t_prompt *data, char *input)
 
 int	running(t_prompt *data)
 {
-	char *env_path;
+	char	*env_path;
+	int		i;
 
+	i = -1;
 	if (isatty(0) && isatty(2))
 	{
 		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
@@ -221,7 +223,12 @@ int	running(t_prompt *data)
 		exit(0);
 	if (data->check_exit > 0 && data->cmde)
 		_free_args_nexit(data);
-	free(data->path);
+	if (data->path)
+	{
+		while (data->path[++i])
+			free(data->path[i]);
+		free(data->path);
+	}
 	data->path = NULL;
 	env_path = ft_getenv(data->d_env, "PATH");
 	if (!env_path)

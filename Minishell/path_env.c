@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:47 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/16 15:18:42 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/21 11:18:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ char	**give_path(char *path)
 	{
 		path_slash = ft_strjoin(split_path[i], "/");
 		free(split_path[i]);
-		split_path[i] = path_slash;
+		split_path[i] = ft_strdup(path_slash);
+		free(path_slash);
 	}
 	return (split_path);
 }
