@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 12:17:41 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/23 11:24:01 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,15 +207,15 @@ int	_give_properties(t_prompt *data, char *input)
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
 				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
 				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
-				data->cmde[i].path = data->cmde[i].cmd[0];
+				data->cmde[i].path = ft_strdup(data->cmde[i].cmd[0]);
 			else if (data->equals > 0)
 			{
 				if (data->equals == 1 && !data->cmde[i].cmd[1])
-					data->cmde[i].path = "set_env";//data->cmde[i].cmd[0];
+					data->cmde[i].path = ft_strdup("set_env");//data->cmde[i].cmd[0];
 				else if (data->equals == 1 && data->cmde[i].cmd[1])
-					data->cmde[i].path = "bad_set_env";
+					data->cmde[i].path = ft_strdup("bad_set_env");
 				else if (data->equals > 1)
-					data->cmde[i].path = "bad_set_env";
+					data->cmde[i].path = ft_strdup("bad_set_env");
 			}
 			else if (data->path)
 			{

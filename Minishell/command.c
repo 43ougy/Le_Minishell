@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 11:24:46 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/23 11:20:50 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char	**run_export(t_prompt *data, char *name)
 	printf("Export test\n");
 	if (data->set_env)
 	{
+		i = -1;
 		while (data->set_env[++i])
 		{
 			len = 0;
@@ -88,6 +89,27 @@ char	**run_export(t_prompt *data, char *name)
 	}
 	else
 		return (data->d_env);
+	i = -1;
+	if (data->d_env)
+	{
+		while (data->d_env[++i])
+		{
+			len = 0;
+			printf("D_ENV in export = %s\n", data->d_env[i]);
+			while (data->d_env[i][len] && data->d_env[i][len] != '=')
+				len++;
+			equal = ft_substr(data->d_env[i], 0, len);
+			if (ft_strcomp(name, equal))
+			{
+				free(equal);
+				free(data->d_env[i]);
+				data->d_env[i] = ft_strdup(comp);
+				free(comp);
+				return (data->d_env);
+			}
+			free(equal);
+		}
+	}
 	len = 0;
 	while (data->d_env[len])
 		len++;
@@ -161,12 +183,11 @@ char	**run_unset(t_prompt *data, char *name)
 char	**run_set_equals(t_prompt *data, char *input)
 {
 	char	**ret;
-	int		i;
 	int		j;
 	int		len;
+	char	*comp;
+	char	*name;
 
-	len = 0;
-	j = -1;
 	ret = NULL;
 	len = 0;
 	if (data->set_env)
@@ -177,13 +198,36 @@ char	**run_set_equals(t_prompt *data, char *input)
 				return (data->set_env);
 			len++;
 		}
+		len = -1;
+		j = 0;
+		while (input[j] && input[j] != '=')
+			j++;
+		name = ft_substr(input, 0, j);
+		while (data->set_env[++len])
+		{
+			j = 0;
+			while (data->set_env[len][j] && data->set_env[len][j] != '=')
+				j++;
+			comp = ft_substr(data->set_env[len], 0, j);
+			if (ft_strcomp(name, comp))
+			{
+				free(comp);
+				free(name);
+				free(data->set_env[len]);
+				data->set_env[len] = ft_strdup(input);
+				return (data->set_env);
+			}
+			free(comp);
+		}
+		free(name);
 	}
+	j = -1;
 	ret = malloc(sizeof(char *) * (len + 2));
 	if (!ret)
 		return (NULL);
 	if (data->set_env)
 	{
-		while (++j < len + 2 && data->set_env[j])
+		while (++j < len && data->set_env[j])
 		{
 			ret[j] = ft_strdup(data->set_env[j]);
 			free(data->set_env[j]);
