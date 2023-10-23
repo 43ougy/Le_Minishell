@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/23 11:24:01 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/23 15:44:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	_quotes(char *input, int *i, int *len)
 	if (input[j] == 34)
 	{
 		(*i)++;
+		printf("[%c]\n", input[*i]);
 		while (input[*i] != 34 && input[*i])
 			(*i)++;
 	}
@@ -103,9 +104,10 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			}
 			if (input[i] == 34 || input[i] == 39)
 			{
+				printf("%d | %c | %s\n", i, input[i], input);
 				if (_quotes(input, &i, &nb_args))
 					return (1);
-				if (!check_char)
+				if (!check_char && nb_args > 1)
 					nb_args -= 1;
 				while (input[i] && !_is_char(input[i]))
 					i++;
@@ -211,7 +213,7 @@ int	_give_properties(t_prompt *data, char *input)
 			else if (data->equals > 0)
 			{
 				if (data->equals == 1 && !data->cmde[i].cmd[1])
-					data->cmde[i].path = ft_strdup("set_env");//data->cmde[i].cmd[0];
+					data->cmde[i].path = ft_strdup("set_env");
 				else if (data->equals == 1 && data->cmde[i].cmd[1])
 					data->cmde[i].path = ft_strdup("bad_set_env");
 				else if (data->equals > 1)
@@ -291,14 +293,15 @@ char	*_check_value(t_prompt *data, char *input)
 		return (NULL);
 	d_var[data->dollar] = NULL;
 	i = 0;
-	while (input[i] && input[i] != ' ')
+	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
 	{
 		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
 		{
 			i++;
 			len++;
 		}
-		if (input[i] == '$' && input[i + 1] && (_is_alpha(input[i + 1]) || input[i + 1] == '_'))
+		if (input[i] == '$' && input[i + 1] && (_is_alpha(input[i + 1])
+				|| input[i + 1] == '_'))
 		{
 			d_var[j] = _env_variable(data, input + i + 1);
 			if (d_var[j])
@@ -308,7 +311,8 @@ char	*_check_value(t_prompt *data, char *input)
 				i++;
 			j++;
 		}
-		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1]) || !input[i + 1]))
+		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1])
+				|| !input[i + 1]))
 		{
 			len ++;
 			i++;
@@ -341,7 +345,8 @@ char	*_check_value(t_prompt *data, char *input)
 				in++;
 			j++;
 		}
-		if (input[in] == '$' && ((!_is_alpha(input[in + 1]) && input[in + 1]) || !input[in + 1]))
+		if (input[in] == '$' && ((!_is_alpha(input[in + 1]) && input[in + 1])
+				|| !input[in + 1]))
 		{
 			cmd[i] = '$';
 			i++;
@@ -389,29 +394,83 @@ int	_get_cmd(t_prompt *data, char *input)
 			n = 0;
 			if (input[j] == 34 || input[j] == 39)
 			{
+				printf("CMD_TEST\n");
 				if (input[j] == 34)
 				{
+					save = j;
 					j++;
-					while (input[j] != 34 && input[j])
+					data->dollar = 0;
+					in = j - 1;
+					while (input[++in] && input[in] != 34)
+						if (input[in] == '$' && input[in + 1]
+							&& _is_alpha(input[in + 1]))
+							data->dollar++;
+					/*in = j - 1;
+					while (input[++in] && input[in] != 34)
+						if (input[in] == '=' && !data->dollar && input[in - 1]
+							&& _is_alpha(input[in - 1]) && input[in + 1]
+							&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
+							|| _is_num(input[in + 1])))
+								data->equals++;*/
+					if (data->dollar > 0)
 					{
-						j++;
-						n++;
+						data->cmde[i].cmd[args] = _check_value(data, input + j);
+						if (!data->cmde[i].cmd[args])
+							return (1);
+						while (input[j] && input[j] != 34)
+							j++;
+					}
+					else
+					{
+						while (input[j] != 34 && input[j])
+						{
+							j++;
+							n++;
+						}
 					}
 				}
-				if (input[j] == 39)
+				else if (input[j] == 39)
 				{
+					save = j;
 					j++;
-					while (input[j] != 39 && input[j])
+					data->dollar = 0;
+					in = j - 1;
+					while (input[++in] && input[in] != 39)
+						if (input[in] == '$' && input[in + 1]
+							&& _is_alpha(input[in + 1]))
+							data->dollar++;
+					/*in = j - 1;
+					while (input[++in] && input[in] != 39)
+						if (input[in] == '=' && !data->dollar && input[in - 1]
+							&& _is_alpha(input[in - 1]) && input[in + 1]
+							&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
+							|| _is_num(input[in + 1])))
+								data->equals++;*/
+					if (data->dollar > 0)
 					{
-						j++;
-						n++;
+						data->cmde[i].cmd[args] = _check_value(data, input + j);
+						if (!data->cmde[i].cmd[args])
+							return (1);
+						while (input[j] && input[j] != 39)
+							j++;
+					}
+					else
+					{
+						while (input[j] != 39 && input[j])
+						{
+							j++;
+							n++;
+						}
 					}
 				}
-				data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
-				if (!data->cmde[i].cmd[args])
-					return (1);
-				data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
-						input + save + 1, n);
+				if (n)
+				{
+					data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
+					if (!data->cmde[i].cmd[args])
+						return (1);
+					data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
+							input + save + 1, n);
+				}
 				j++;
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39 && input[j])
@@ -423,14 +482,15 @@ int	_get_cmd(t_prompt *data, char *input)
 				data->dollar = 0;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
-					if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
+					if (input[in] == '$' && input[in + 1]
+						&& _is_alpha(input[in + 1]))
 						data->dollar++;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '=' && !data->dollar && input[in - 1]
 						&& _is_alpha(input[in - 1]) && input[in + 1]
 						&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
-						|| _is_num(input[in + 1])))
+							|| _is_num(input[in + 1])))
 						data->equals++;
 				if (data->dollar > 0)
 				{
@@ -451,10 +511,11 @@ int	_get_cmd(t_prompt *data, char *input)
 					data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
 					if (!data->cmde[i].cmd[args])
 						return (1);
-					data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
-							input + save, n);
+					data->cmde[i].cmd[args] = \
+					ft_strncpy(data->cmde[i].cmd[args], input + save, n);
 				}
-				while (input[j] && (!_is_whitespace(input[j]) || _is_char(input[j]))
+				while (input[j] && (!_is_whitespace(input[j])
+						|| _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
 			}

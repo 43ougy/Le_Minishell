@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 11:13:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/23 14:47:44 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,7 @@ int	_make_env(t_prompt *data, char **env)
 		return (1);
 	i = -1;
 	while (env[++i])
-	{
 		data->d_env[i] = ft_strdup(env[i]);
-	//	write(1, data->d_env[i], ft_strlen(data->d_env[i]));
-	//	write(1, "\n", 1);
-	}
 	data->d_env[len] = NULL;
 	return (0);
 }
@@ -43,7 +39,6 @@ int	main(int ac, char **av, char **env)
 	t_prompt	data;
 	t_signal	sig_act;
 	int			i;
-//	char		*env_path;
 
 	i = -1;
 	data.check_exit = 0;
@@ -51,9 +46,6 @@ int	main(int ac, char **av, char **env)
 	data.path = NULL;
 	if (_make_env(&data, env))
 		return (1);
-/*	env_path = ft_getenv(data.d_env, "PATH");
-	data.path = give_path(env_path);
-	free(env_path);*/
 	write(1, "launching...\n", 13);
 	while (1)
 	{
