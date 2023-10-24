@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/23 10:40:52 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 15:26:38 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	_execution(t_prompt *data)
 				|| ft_strcomp(data->cmde[0].path, "unset")
 				|| ft_strcomp(data->cmde[0].path, "env")
 				|| ft_strcomp(data->cmde[0].path, "bad_set_env")
+				|| ft_strcomp(data->cmde[0].path, "exit")
 				|| ft_strcomp(data->cmde[0].path, "set_env"))
 				exit(0);
 			execute(data, i);
@@ -102,8 +103,8 @@ int	_execution(t_prompt *data)
 	g_sig_check = 2;
 	if (!data->background)
 		waitpid(data->proc, &status, 0);
-	data->status = status;
-	printf("STATUS = [%d]\n", status);
+	data->exit_status = ft_itoa(status);
+//	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;
 	if (ft_strcomp(data->cmde[0].path, "cd"))
 		run_cd(data, data->cmde[0].cmd);
@@ -114,10 +115,22 @@ int	_execution(t_prompt *data)
 	if (ft_strcomp(data->cmde[0].path, "env"))
 		run_env(data);
 	if (ft_strcomp(data->cmde[0].path, "set_env"))
-	{
 		data->set_env = run_set_equals(data, data->cmde[0].cmd[0]);
-		for (int i = 0; data->set_env[i]; i++)
-			printf("set_env after = [%s]\n", data->set_env[i]);
+	if (ft_strcomp(data->cmde[0].path, "exit"))
+	{
+		i = -1;
+		write(1, "exit\n", 5);
+		while (data->cmde[0].cmd[1][++i])
+		{
+			if (_is_alpha(data->cmde[0].cmd[1][i]))
+			{
+				write(1, "bash: exit: ", 12);
+				write(1, data->cmde[0].cmd[1], ft_strlen(data->cmde[0].cmd[1]));
+				write(1, ": numeric argument required\n", 28);
+				break ;
+			}
+		}
+		_free_args(data);
 	}
 	if (!data->prompt)
 	{

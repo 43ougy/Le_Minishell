@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/23 15:44:19 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 15:46:23 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ int	_give_properties(t_prompt *data, char *input)
 			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
 				|| ft_strcomp(data->cmde[i].cmd[0], "export")
 				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
+				|| ft_strcomp(data->cmde[i].cmd[0], "exit")
 				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
 				data->cmde[i].path = ft_strdup(data->cmde[i].cmd[0]);
 			else if (data->equals > 0)
@@ -237,6 +238,7 @@ int	_give_properties(t_prompt *data, char *input)
 			{
 				write(2, data->cmde[i].cmd[0], ft_strlen(data->cmde[i].cmd[0]));
 				write(2, ": command not found\n", 20);
+				data->exit_status = ft_itoa(127);
 				return (1);
 			}
 		}
@@ -287,12 +289,13 @@ char	*_check_value(t_prompt *data, char *input)
 
 	i = -1;
 	len = 0;
-	j = -0;
+	j = 0;
 	d_var = malloc(sizeof(char *) * (data->dollar + 1));
 	if (!d_var)
 		return (NULL);
 	d_var[data->dollar] = NULL;
 	i = 0;
+	printf("T||||||||||||\n");
 	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
 	{
 		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
@@ -312,10 +315,18 @@ char	*_check_value(t_prompt *data, char *input)
 			j++;
 		}
 		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1])
-				|| !input[i + 1]))
+				|| !input[i + 1]) && input[in + 1] != '?')
 		{
-			len ++;
+			len++;
 			i++;
+		}
+		if (input[i] == '$' && (input[i + 1] && input[i + 1] == '?'))
+		{
+			ch = -1;
+			printf("TEST2||||||||||||\n");
+			while (data->exit_status[++ch])
+				len++;
+			i += 2;
 		}
 	}
 	cmd = malloc(sizeof(char) * len + 1);
@@ -346,10 +357,22 @@ char	*_check_value(t_prompt *data, char *input)
 			j++;
 		}
 		if (input[in] == '$' && ((!_is_alpha(input[in + 1]) && input[in + 1])
-				|| !input[in + 1]))
+				|| !input[in + 1]) && input[in + 1] != '?')
 		{
 			cmd[i] = '$';
 			i++;
+			in++;
+		}
+		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
+		{
+			ch = -1;
+			printf("TEST|||||||||||\n");
+			while (data->exit_status[++ch])
+			{
+				cmd[i] = data->exit_status[ch];
+				write(1, &cmd[i], 1);
+				i++;
+			}
 			in++;
 		}
 	}
@@ -483,7 +506,8 @@ int	_get_cmd(t_prompt *data, char *input)
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '$' && input[in + 1]
-						&& _is_alpha(input[in + 1]))
+						&& (_is_alpha(input[in + 1])
+						|| input[in + 1] == '?'))
 						data->dollar++;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')

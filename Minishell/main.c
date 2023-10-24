@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/23 14:47:44 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 15:20:59 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int	main(int ac, char **av, char **env)
 
 	i = -1;
 	data.check_exit = 0;
+	data.exit_status = NULL;
 	data.set_env = NULL;
 	data.path = NULL;
 	if (_make_env(&data, env))
@@ -60,5 +61,7 @@ int	main(int ac, char **av, char **env)
 	}
 	_free_struct(&data);
 	_free_args_nexit(&data);
+	if (data.prompt)
+		free(data.prompt);
 	return (0);
 }

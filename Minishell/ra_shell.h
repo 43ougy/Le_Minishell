@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/20 16:55:21 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 15:28:48 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ typedef struct t_shell
 	int		dollar;
 	int		equals;
 	int		nb_pipe;
-	int		status;
+	char	*exit_status;
 	pid_t	proc;
 }	t_prompt;
 
@@ -68,6 +68,7 @@ int		ft_strcomp(char *s1, char *s2);
 int		ft_strcompn(char *s1, char *s2, int n);
 char	*ft_strjoin(char *s1, char *s2);
 char	**ft_split(char const *s, char c);
+char	*ft_itoa(int n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strdup(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/21 11:26:26 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 12:20:08 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,21 @@ void	_free_struct(t_prompt *data)
 	int	i;
 
 	i = -1;
-	while (data->d_env[++i])
-		free(data->d_env[i]);
-	free(data->d_env);
-	data->d_env = NULL;
+	if (data->d_env)
+	{
+		while (data->d_env[++i])
+			free(data->d_env[i]);
+		free(data->d_env);
+		data->d_env = NULL;
+	}
 	i = -1;
-	while (data->path[++i])
-		free(data->path[i]);
-	free(data->path);
-	data->path = NULL;
+	if (data->path)
+	{
+		while (data->path[++i])
+			free(data->path[i]);
+		free(data->path);
+		data->path = NULL;
+	}
 }
 
 void	_free_args(t_prompt *data)

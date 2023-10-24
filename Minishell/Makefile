@@ -13,11 +13,12 @@ SRC = main.c				\
 		parser.c			\
 		parser_utils.c		\
 		execution.c			\
-		
+		ft_itoa.c
+
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)
-
+	
 $(NAME) : $(OBJ)
 	@printf "\e[33mCompile...\n\e[0m"
 	$(CC) $(FLAG) -o $(NAME) $(OBJ) -lreadline
