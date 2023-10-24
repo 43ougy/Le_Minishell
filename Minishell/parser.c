@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/24 15:46:23 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/24 17:49:44 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,12 +315,12 @@ char	*_check_value(t_prompt *data, char *input)
 			j++;
 		}
 		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1])
-				|| !input[i + 1]) && input[in + 1] != '?')
+				|| !input[i + 1]) && input[i + 1] != '?')
 		{
 			len++;
 			i++;
 		}
-		if (input[i] == '$' && (input[i + 1] && input[i + 1] == '?'))
+		if (input[i] == '$' && input[i + 1] && input[i + 1] == '?')
 		{
 			ch = -1;
 			printf("TEST2||||||||||||\n");
@@ -370,10 +370,10 @@ char	*_check_value(t_prompt *data, char *input)
 			while (data->exit_status[++ch])
 			{
 				cmd[i] = data->exit_status[ch];
-				write(1, &cmd[i], 1);
 				i++;
 			}
-			in++;
+			cmd[i] = '\0';
+			in += 2;
 		}
 	}
 	i = -1;
