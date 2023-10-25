@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/24 15:26:38 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/25 09:59:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ int	_execution(t_prompt *data)
 	g_sig_check = 2;
 	if (!data->background)
 		waitpid(data->proc, &status, 0);
+	if (data->exit_status)
+		free(data->exit_status);
 	data->exit_status = ft_itoa(status);
 //	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;

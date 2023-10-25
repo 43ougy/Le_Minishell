@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/24 17:49:44 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/25 12:03:53 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,8 @@ int	_give_properties(t_prompt *data, char *input)
 			{
 				write(2, data->cmde[i].cmd[0], ft_strlen(data->cmde[i].cmd[0]));
 				write(2, ": command not found\n", 20);
+				if (data->exit_status)
+					free(data->exit_status);
 				data->exit_status = ft_itoa(127);
 				return (1);
 			}
@@ -245,6 +247,7 @@ int	_give_properties(t_prompt *data, char *input)
 		while (input[j] && _is_char(input[j])
 			&& input[j] != 34 && input[j] != 39)
 			j++;
+		printf("CMD(properties) = [%s]\n", data->cmde[i].cmd[1]);
 	}
 	return (0);
 }
@@ -287,7 +290,6 @@ char	*_check_value(t_prompt *data, char *input)
 	char	**d_var;
 	char	*cmd;
 
-	i = -1;
 	len = 0;
 	j = 0;
 	d_var = malloc(sizeof(char *) * (data->dollar + 1));
@@ -295,7 +297,6 @@ char	*_check_value(t_prompt *data, char *input)
 		return (NULL);
 	d_var[data->dollar] = NULL;
 	i = 0;
-	printf("T||||||||||||\n");
 	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
 	{
 		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
@@ -322,13 +323,16 @@ char	*_check_value(t_prompt *data, char *input)
 		}
 		if (input[i] == '$' && input[i + 1] && input[i + 1] == '?')
 		{
-			ch = -1;
-			printf("TEST2||||||||||||\n");
-			while (data->exit_status[++ch])
+			ch = 0;
+			if (data->exit_status[ch] == '0')
 				len++;
+			else
+				while (data->exit_status[ch++])
+					len++;
 			i += 2;
 		}
 	}
+	printf("len = %d\n", len);
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
@@ -366,9 +370,10 @@ char	*_check_value(t_prompt *data, char *input)
 		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
 		{
 			ch = -1;
-			printf("TEST|||||||||||\n");
-			while (data->exit_status[++ch])
+			printf("TEST||||||||||||||\n");
+			while (++ch < len)
 			{
+				printf("exit_status = [%s]\n", data->exit_status);
 				cmd[i] = data->exit_status[ch];
 				i++;
 			}
@@ -381,6 +386,7 @@ char	*_check_value(t_prompt *data, char *input)
 		free(d_var[i]);
 	free(d_var);
 	cmd[len] = '\0';
+	printf("CMD = %s\n", cmd);
 	return (cmd);
 }
 
@@ -428,13 +434,6 @@ int	_get_cmd(t_prompt *data, char *input)
 						if (input[in] == '$' && input[in + 1]
 							&& _is_alpha(input[in + 1]))
 							data->dollar++;
-					/*in = j - 1;
-					while (input[++in] && input[in] != 34)
-						if (input[in] == '=' && !data->dollar && input[in - 1]
-							&& _is_alpha(input[in - 1]) && input[in + 1]
-							&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
-							|| _is_num(input[in + 1])))
-								data->equals++;*/
 					if (data->dollar > 0)
 					{
 						data->cmde[i].cmd[args] = _check_value(data, input + j);
@@ -462,13 +461,6 @@ int	_get_cmd(t_prompt *data, char *input)
 						if (input[in] == '$' && input[in + 1]
 							&& _is_alpha(input[in + 1]))
 							data->dollar++;
-					/*in = j - 1;
-					while (input[++in] && input[in] != 39)
-						if (input[in] == '=' && !data->dollar && input[in - 1]
-							&& _is_alpha(input[in - 1]) && input[in + 1]
-							&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
-							|| _is_num(input[in + 1])))
-								data->equals++;*/
 					if (data->dollar > 0)
 					{
 						data->cmde[i].cmd[args] = _check_value(data, input + j);
@@ -542,10 +534,12 @@ int	_get_cmd(t_prompt *data, char *input)
 						|| _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
+				printf("CMD = [%s] | i = %d | args = %d\n", data->cmde[i].cmd[args], i, args);
 			}
 			save = j;
 		}
 	}
+	printf("CMD(getcmd) = [%s]\n", data->cmde[0].cmd[1]);
 	if (_give_properties(data, input))
 		return (1);
 	return (0);
