@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/25 09:59:13 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/26 12:22:55 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,26 @@ int	_execution(t_prompt *data)
 		if (i == data->nb_args - 1)
 		{
 			data->background = 0;
-			if (data->outfile)
+			/*if (data->outfile)
 			{
 				fdout = open(data->outfile, O_RDWR);
 				if (fdout == -1)
 					fdout = open(data->outfile,
 							O_CREAT | O_RDWR | O_TRUNC, 0644);
+				char	foo[4096];
+				int		nbytes = read(fdin, foo, sizeof(foo));
 			}
-			else
+			else*/
 				fdout = dup(tmpout);
+		}
+		else if (i == data->nb_args - 2 && data->outfile)
+		{
+			fdout = open(data->outfile, O_RDWR);
+			if (fdout == -1)
+				fdout = open(data->outfile,
+						O_CREAT | O_RDWR | O_TRUNC, 0644);
+			char	foo[4096];
+			int		nbytes = read(fdin, foo, sizeof(foo));
 		}
 		else
 		{
@@ -106,7 +117,7 @@ int	_execution(t_prompt *data)
 	if (data->exit_status)
 		free(data->exit_status);
 	data->exit_status = ft_itoa(status);
-//	printf("STATUS = [%d]\n", status);
+	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;
 	if (ft_strcomp(data->cmde[0].path, "cd"))
 		run_cd(data, data->cmde[0].cmd);

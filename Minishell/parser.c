@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/25 12:03:53 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/26 12:05:37 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ int	_give_properties(t_prompt *data, char *input)
 		while (input[j] && _is_char(input[j])
 			&& input[j] != 34 && input[j] != 39)
 			j++;
-		printf("CMD(properties) = [%s]\n", data->cmde[i].cmd[1]);
+	//	printf("CMD(properties) = [%s]\n", data->cmde[i].cmd[1]);
 	}
 	return (0);
 }
@@ -332,7 +332,7 @@ char	*_check_value(t_prompt *data, char *input)
 			i += 2;
 		}
 	}
-	printf("len = %d\n", len);
+//	printf("len = %d\n", len);
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
@@ -370,10 +370,11 @@ char	*_check_value(t_prompt *data, char *input)
 		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
 		{
 			ch = -1;
-			printf("TEST||||||||||||||\n");
+		//	printf("TEST||||||||||||||\n");
 			while (++ch < len)
 			{
-				printf("exit_status = [%s]\n", data->exit_status);
+		//		printf("exit_status = [%s]\n", data->exit_status);
+		//		printf("i = %d | exit_status(char) = [%c]\n", i, data->exit_status[ch]);
 				cmd[i] = data->exit_status[ch];
 				i++;
 			}
@@ -386,7 +387,7 @@ char	*_check_value(t_prompt *data, char *input)
 		free(d_var[i]);
 	free(d_var);
 	cmd[len] = '\0';
-	printf("CMD = %s\n", cmd);
+//	printf("CMD = %s\n", cmd);
 	return (cmd);
 }
 
@@ -423,7 +424,7 @@ int	_get_cmd(t_prompt *data, char *input)
 			n = 0;
 			if (input[j] == 34 || input[j] == 39)
 			{
-				printf("CMD_TEST\n");
+			//	printf("CMD_TEST\n");
 				if (input[j] == 34)
 				{
 					save = j;
@@ -534,12 +535,12 @@ int	_get_cmd(t_prompt *data, char *input)
 						|| _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
-				printf("CMD = [%s] | i = %d | args = %d\n", data->cmde[i].cmd[args], i, args);
+		//		printf("CMD = [%s] | i = %d | args = %d\n", data->cmde[i].cmd[args], i, args);
 			}
 			save = j;
 		}
 	}
-	printf("CMD(getcmd) = [%s]\n", data->cmde[0].cmd[1]);
+//	printf("CMD(getcmd) = [%s]\n", data->cmde[0].cmd[1]);
 	if (_give_properties(data, input))
 		return (1);
 	return (0);
