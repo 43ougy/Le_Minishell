@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/26 12:22:55 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/31 09:54:35 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,12 @@ void	execute(t_prompt *data, int i)
 
 	if (ft_strcomp(data->cmde[i].path, "cd")
 		|| ft_strcomp(data->cmde[i].path, "export")
+		|| ft_strcomp(data->cmde[i].path, "unset")
+		|| ft_strcomp(data->cmde[i].path, "bad_set_env")
+		|| ft_strcomp(data->cmde[i].path, "set_env")
+		|| ft_strcomp(data->cmde[i].path, "exit")
 		|| ft_strcomp(data->cmde[i].path, "env"))
-	{
-		if (ft_strcomp(data->cmde[i].path, "cd"))
-			run_cd(data, data->cmde[i].cmd);
-		else if (ft_strcomp(data->cmde[i].path, "export"))
-			data->d_env = run_export(data, data->cmde[i].cmd[1]);
-		else if (ft_strcomp(data->cmde[i].path, "env"))
-			run_env(data);
 		return ;
-	}
 	check = 0;
 	if (ft_strcomp(data->cmde[i].path, "CMD"))
 		check = execve(data->cmde[i].cmd[0], data->cmde[i].cmd, data->d_env);
@@ -52,7 +48,16 @@ int	_execution(t_prompt *data)
 	tmpout = dup(1);
 	i = -1;
 	if (data->infile)
-		fdin = open(data->cmde[1].cmd[0], O_RDONLY);
+	{
+		printf("FILE = [%s]\n", data->infile);
+		fdin = open(data->infile, O_RDONLY);
+		if (fdin == -1)
+		{
+			write(1, "bash: ", 6);
+			write(1, data->infile, ft_strlen(data->infile));
+			write(1, ": No such file or directory\n", 28);
+		}
+	}
 	else
 		fdin = dup(tmpin);
 	while (++i < data->nb_args)
@@ -61,28 +66,22 @@ int	_execution(t_prompt *data)
 		close(fdin);
 		if (i == data->nb_args - 1)
 		{
+			//printf("TEST|||||||\n");
 			data->background = 0;
-			/*if (data->outfile)
-			{
-				fdout = open(data->outfile, O_RDWR);
-				if (fdout == -1)
-					fdout = open(data->outfile,
-							O_CREAT | O_RDWR | O_TRUNC, 0644);
-				char	foo[4096];
-				int		nbytes = read(fdin, foo, sizeof(foo));
-			}
-			else*/
-				fdout = dup(tmpout);
+			fdout = dup(tmpout);
 		}
 		else if (i == data->nb_args - 2 && data->outfile)
 		{
-			fdout = open(data->outfile, O_RDWR);
+			if (!data->append)
+				fdout = open(data->outfile, O_RDWR | O_TRUNC);
+			else
+				fdout = open(data->outfile, O_RDWR | O_APPEND);
 			if (fdout == -1)
 				fdout = open(data->outfile,
 						O_CREAT | O_RDWR | O_TRUNC, 0644);
-			char	foo[4096];
-			int		nbytes = read(fdin, foo, sizeof(foo));
 		}
+		else if (i == data->nb_args - 2 && data->infile)
+			fdout = dup(tmpout);
 		else
 		{
 			data->background = 1;
@@ -95,14 +94,18 @@ int	_execution(t_prompt *data)
 		data->proc = fork();
 		if (!data->proc)
 		{
-			if (ft_strcomp(data->cmde[0].path, "cd")
-				|| ft_strcomp(data->cmde[0].path, "export")
-				|| ft_strcomp(data->cmde[0].path, "unset")
-				|| ft_strcomp(data->cmde[0].path, "env")
-				|| ft_strcomp(data->cmde[0].path, "bad_set_env")
-				|| ft_strcomp(data->cmde[0].path, "exit")
-				|| ft_strcomp(data->cmde[0].path, "set_env"))
+			if (!data->nb_pipe
+					&& (ft_strcomp(data->cmde[0].path, "cd")
+					|| ft_strcomp(data->cmde[0].path, "export")
+					|| ft_strcomp(data->cmde[0].path, "unset")
+					|| ft_strcomp(data->cmde[0].path, "env")
+					|| ft_strcomp(data->cmde[0].path, "bad_set_env")
+					|| ft_strcomp(data->cmde[0].path, "exit")
+					|| ft_strcomp(data->cmde[0].path, "set_env")))
+			{
+				printf("test\n");
 				exit(0);
+			}
 			execute(data, i);
 			_free_args(data);
 		}
@@ -119,31 +122,35 @@ int	_execution(t_prompt *data)
 	data->exit_status = ft_itoa(status);
 	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;
-	if (ft_strcomp(data->cmde[0].path, "cd"))
-		run_cd(data, data->cmde[0].cmd);
-	if (ft_strcomp(data->cmde[0].path, "export"))
-		data->d_env = run_export(data, data->cmde[0].cmd[1]);
-	if (ft_strcomp(data->cmde[0].path, "unset"))
-		data->d_env = run_unset(data, data->cmde[0].cmd[1]);
-	if (ft_strcomp(data->cmde[0].path, "env"))
-		run_env(data);
-	if (ft_strcomp(data->cmde[0].path, "set_env"))
-		data->set_env = run_set_equals(data, data->cmde[0].cmd[0]);
-	if (ft_strcomp(data->cmde[0].path, "exit"))
+	if (!data->nb_pipe)
 	{
-		i = -1;
-		write(1, "exit\n", 5);
-		while (data->cmde[0].cmd[1][++i])
+		if (ft_strcomp(data->cmde[0].path, "cd"))
+			run_cd(data, data->cmde[0].cmd);
+		if (ft_strcomp(data->cmde[0].path, "export"))
+			data->d_env = run_export(data, data->cmde[0].cmd[1]);
+		if (ft_strcomp(data->cmde[0].path, "unset"))
+			data->d_env = run_unset(data, data->cmde[0].cmd[1]);
+		if (ft_strcomp(data->cmde[0].path, "env"))
+			run_env(data);
+		if (ft_strcomp(data->cmde[0].path, "set_env"))
+			data->set_env = run_set_equals(data, data->cmde[0].cmd[0]);
+		if (ft_strcomp(data->cmde[0].path, "exit"))
 		{
-			if (_is_alpha(data->cmde[0].cmd[1][i]))
+			i = -1;
+			write(1, "exit\n", 5);
+			while (data->cmde[0].cmd[1][++i])
 			{
-				write(1, "bash: exit: ", 12);
-				write(1, data->cmde[0].cmd[1], ft_strlen(data->cmde[0].cmd[1]));
-				write(1, ": numeric argument required\n", 28);
-				break ;
+				if (_is_alpha(data->cmde[0].cmd[1][i]))
+				{
+					write(1, "bash: exit: ", 12);
+					write(1, data->cmde[0].cmd[1],
+						ft_strlen(data->cmde[0].cmd[1]));
+					write(1, ": numeric argument required\n", 28);
+					break ;
+				}
 			}
+			_free_args(data);
 		}
-		_free_args(data);
 	}
 	if (!data->prompt)
 	{

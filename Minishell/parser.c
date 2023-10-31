@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/26 12:05:37 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/31 09:59:07 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int	_quotes(char *input, int *i, int *len)
 	if (input[j] == 34)
 	{
 		(*i)++;
-		printf("[%c]\n", input[*i]);
 		while (input[*i] != 34 && input[*i])
 			(*i)++;
 	}
@@ -57,7 +56,8 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			i++;
 		if (input[i] == '|')
 		{
-			write(2, "Cash'Hell: syntax error near unexpected token `|'\n", 50);
+			write(2, \
+				"Cash'Hell: syntax error near unexpected token `|'\n", 50);
 			return (1);
 		}
 		i = 0;
@@ -104,7 +104,6 @@ int	_nb_args(t_prompt *data, char *input, int method)
 			}
 			if (input[i] == 34 || input[i] == 39)
 			{
-				printf("%d | %c | %s\n", i, input[i], input);
 				if (_quotes(input, &i, &nb_args))
 					return (1);
 				if (!check_char && nb_args > 1)
@@ -171,6 +170,8 @@ int	_give_properties(t_prompt *data, char *input)
 
 	j = 0;
 	i = -1;
+	data->append = 0;
+	data->heredoc = 0;
 	if (ft_strcomp(data->cmde[0].cmd[0], " ") && !&data->cmde[1])
 	{
 		write(1, "\n", 1);
@@ -182,14 +183,26 @@ int	_give_properties(t_prompt *data, char *input)
 		while (input[j] && !_is_char(input[j])
 			&& input[j] != 34 && input[j] != 39)
 			j++;
-		if (input[j] == '<' && &data->cmde[i + 1])
+		if (input[j] == '<' && input[j + 1] != '<' && &data->cmde[i + 1])
 		{
 			data->cmde[i + 1].infile = 1;
 			data->infile = data->cmde[i + 1].cmd[0];
 		}
-		else if (input[j] == '>' && &data->cmde[i + 1])
+		else if (input[j] == '<' && input[j + 1] == '<' && &data->cmde[i + 1])
+		{
+			data->cmde[i + 1].infile = 1;
+			data->heredoc = 1;
+			data->infile = data->cmde[i + 1].cmd[0];
+		}
+		else if (input[j] == '>' && input[j + 1] != '>' && &data->cmde[i + 1])
 		{
 			data->cmde[i + 1].outfile = 1;
+			data->outfile = data->cmde[i + 1].cmd[0];
+		}
+		else if (input[j] == '>' && input[j + 1] == '>' && &data->cmde[i + 1])
+		{
+			data->cmde[i + 1].outfile = 1;
+			data->append = 1;
 			data->outfile = data->cmde[i + 1].cmd[0];
 		}
 		else
@@ -247,7 +260,6 @@ int	_give_properties(t_prompt *data, char *input)
 		while (input[j] && _is_char(input[j])
 			&& input[j] != 34 && input[j] != 39)
 			j++;
-	//	printf("CMD(properties) = [%s]\n", data->cmde[i].cmd[1]);
 	}
 	return (0);
 }
@@ -332,7 +344,6 @@ char	*_check_value(t_prompt *data, char *input)
 			i += 2;
 		}
 	}
-//	printf("len = %d\n", len);
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
@@ -370,11 +381,8 @@ char	*_check_value(t_prompt *data, char *input)
 		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
 		{
 			ch = -1;
-		//	printf("TEST||||||||||||||\n");
 			while (++ch < len)
 			{
-		//		printf("exit_status = [%s]\n", data->exit_status);
-		//		printf("i = %d | exit_status(char) = [%c]\n", i, data->exit_status[ch]);
 				cmd[i] = data->exit_status[ch];
 				i++;
 			}
@@ -387,7 +395,6 @@ char	*_check_value(t_prompt *data, char *input)
 		free(d_var[i]);
 	free(d_var);
 	cmd[len] = '\0';
-//	printf("CMD = %s\n", cmd);
 	return (cmd);
 }
 
@@ -424,7 +431,6 @@ int	_get_cmd(t_prompt *data, char *input)
 			n = 0;
 			if (input[j] == 34 || input[j] == 39)
 			{
-			//	printf("CMD_TEST\n");
 				if (input[j] == 34)
 				{
 					save = j;
@@ -484,8 +490,8 @@ int	_get_cmd(t_prompt *data, char *input)
 					data->cmde[i].cmd[args] = malloc(sizeof(char) * n + 1);
 					if (!data->cmde[i].cmd[args])
 						return (1);
-					data->cmde[i].cmd[args] = ft_strncpy(data->cmde[i].cmd[args],
-							input + save + 1, n);
+					data->cmde[i].cmd[args] = \
+						ft_strncpy(data->cmde[i].cmd[args], input + save + 1, n);
 				}
 				j++;
 				while ((!_is_whitespace(input[j]) || _is_char(input[j]))
@@ -499,8 +505,8 @@ int	_get_cmd(t_prompt *data, char *input)
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '$' && input[in + 1]
-						&& (_is_alpha(input[in + 1])
-						|| input[in + 1] == '?'))
+							&& (_is_alpha(input[in + 1])
+							|| input[in + 1] == '?'))
 						data->dollar++;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
@@ -535,12 +541,10 @@ int	_get_cmd(t_prompt *data, char *input)
 						|| _is_char(input[j]))
 					&& input[j] != 34 && input[j] != 39)
 					j++;
-		//		printf("CMD = [%s] | i = %d | args = %d\n", data->cmde[i].cmd[args], i, args);
 			}
 			save = j;
 		}
 	}
-//	printf("CMD(getcmd) = [%s]\n", data->cmde[0].cmd[1]);
 	if (_give_properties(data, input))
 		return (1);
 	return (0);

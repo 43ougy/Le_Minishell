@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/24 12:25:04 by abougy           ###   ########.fr       */
+/*   Updated: 2023/10/30 16:54:10 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	run_env(t_prompt *data)
 	int	i;
 
 	i = -1;
-	write(1, "MY ENV\n", 7);
 	while (data->d_env[++i])
 	{
 		write(1, data->d_env[i], ft_strlen(data->d_env[i]));
@@ -64,14 +63,12 @@ char	**run_export(t_prompt *data, char *name)
 
 	new_env = NULL;
 	i = -1;
-	printf("Export test\n");
 	if (data->set_env)
 	{
 		i = -1;
 		while (data->set_env[++i])
 		{
 			len = 0;
-			printf("SET_ENV in export = %s\n", data->set_env[i]);
 			while (data->set_env[i][len] && data->set_env[i][len] != '=')
 				len++;
 			comp = ft_substr(data->set_env[i], 0, len);
@@ -95,7 +92,6 @@ char	**run_export(t_prompt *data, char *name)
 		while (data->d_env[++i])
 		{
 			len = 0;
-			printf("D_ENV in export = %s\n", data->d_env[i]);
 			while (data->d_env[i][len] && data->d_env[i][len] != '=')
 				len++;
 			equal = ft_substr(data->d_env[i], 0, len);
@@ -275,6 +271,7 @@ int	running(t_prompt *data)
 			free(data->prompt);
 		exit(0);
 	}
+	add_history(data->prompt);
 	if (data->check_exit > 0 && data->cmde)
 		_free_args_nexit(data);
 	if (data->path)
@@ -297,7 +294,6 @@ int	running(t_prompt *data)
 		return (1);
 	if (!data->cmde)
 		return (1);
-	add_history(data->prompt);
 	if (!_execution(data))
 		return (0);
 	if (data->prompt)
