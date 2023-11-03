@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/03 10:29:33 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 11:34:31 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int	_execution(t_prompt *data)
 					|| ft_strcomp(data->cmde[0].path, "set_env")))
 				exit(0);
 			execute(data, i);
-			_free_args(data);
+			_free_args(data, 0);
 		}
 	}
 	dup2(tmpin, 0);
@@ -167,10 +167,13 @@ int	_execution(t_prompt *data)
 					write(1, data->cmde[0].cmd[1],
 						ft_strlen(data->cmde[0].cmd[1]));
 					write(1, ": numeric argument required\n", 28);
+					status = 2;
 					break ;
 				}
 			}
-			_free_args(data);
+			if (_is_num(data->cmde[0].cmd[1][0]))
+				status = ft_atoi(data->cmde[0].cmd[1]);
+			_free_args(data, status);
 		}
 	}
 	if (!data->prompt)

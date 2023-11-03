@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/24 12:20:08 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 11:29:54 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	_free_struct(t_prompt *data)
 	}
 }
 
-void	_free_args(t_prompt *data)
+void	_free_args(t_prompt *data, int status)
 {
 	int	i;
 	int	j;
@@ -58,7 +58,7 @@ void	_free_args(t_prompt *data)
 	}
 	data->cmde = NULL;
 	_free_struct(data);
-	exit(0);
+	exit(status);
 }
 
 void	_free_args_nexit(t_prompt *data)

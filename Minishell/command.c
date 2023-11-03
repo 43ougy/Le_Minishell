@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/30 16:54:10 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 11:18:57 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ char	**run_export(t_prompt *data, char *name)
 			comp = ft_substr(data->set_env[i], 0, len);
 			if (ft_strcomp(name, comp))
 			{
+				free(data->prompt);
 				free(comp);
 				comp = ft_strdup(data->set_env[i]);
 				i = -1;
@@ -251,8 +252,6 @@ int	running(t_prompt *data)
 			printf("exit\n");
 			_free_struct(data);
 			_free_args_nexit(data);
-			if (data->prompt)
-				free(data->prompt);
 			exit(0);
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 08:49:06 by abougy            #+#    #+#             */
-/*   Updated: 2023/09/22 12:13:01 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 11:29:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,26 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (NULL);
 	ft_strlcpy(s2, s + start, len + 1);
 	return (s2);
+}
+
+int	ft_atoi(char *str)
+{
+	long	nb;
+	int		sig;
+
+	nb = 0;
+	sig = 1;
+	if (*str == '-')
+		sig = -1;
+	if (*str == '-' || *str == '+')
+		str++;
+	while (*str)
+	{
+		if (!_is_num(*str))
+			return (-1);
+		nb = nb * 10 + (*str++ - '0');
+	}
+	if (nb * sig <= 0 || nb * sig > 2147483647)
+		return (-1);
+	return (nb);
 }

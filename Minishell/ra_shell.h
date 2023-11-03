@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/03 09:55:34 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 11:28:54 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strdup(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_strncpy(char *dest, char *src, int n);
+int		ft_atoi(char *str);
 
 //===========Prompt===========//
 int		running(t_prompt *data);
@@ -96,7 +97,7 @@ int		_is_num(char c);
 int		_is_alpha(char c);
 int		_is_limiter(char c);
 int		_is_whitespace(char c);
-void	_free_args(t_prompt *data);
+void	_free_args(t_prompt *data, int status);
 void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
