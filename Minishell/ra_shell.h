@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/31 09:59:29 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 09:55:34 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,5 +101,13 @@ void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
 int		_parser(t_prompt *data);
+
+//==========Get_Line==========//
+void	ft_bzero(void *s, size_t n);
+void	*ft_calloc(size_t count, size_t size);
+char	*ft_free(char *buffer, char *buf);
+char	*cat_line(char *line);
+char	*read_stdin(int fd, char *line);
+char	*get_line(int fd);
 
 #endif

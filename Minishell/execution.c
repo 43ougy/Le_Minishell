@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/31 09:54:35 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/03 10:29:33 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@ void	execute(t_prompt *data, int i)
 		|| ft_strcomp(data->cmde[i].path, "exit")
 		|| ft_strcomp(data->cmde[i].path, "env"))
 		return ;
+	if (ft_strcomp(data->cmde[i].cmd[0], "clear"))
+	{
+		write(1, "\033c", 3);
+		return ;
+	}
 	check = 0;
 	if (ft_strcomp(data->cmde[i].path, "CMD"))
 		check = execve(data->cmde[i].cmd[0], data->cmde[i].cmd, data->d_env);
@@ -47,7 +52,7 @@ int	_execution(t_prompt *data)
 	tmpin = dup(0);
 	tmpout = dup(1);
 	i = -1;
-	if (data->infile)
+	if (data->infile && !data->heredoc)
 	{
 		printf("FILE = [%s]\n", data->infile);
 		fdin = open(data->infile, O_RDONLY);
@@ -91,6 +96,25 @@ int	_execution(t_prompt *data)
 		}
 		dup2(fdout, 1);
 		close(fdout);
+		if (data->heredoc)
+		{
+			char	*ret;
+
+			close(fdin);
+			while (1)
+			{
+				write(1, "> ", 2);
+				ret = get_line(0);
+				if (ft_strcompn(ret, data->cmde[1].cmd[0], ft_strlen(ret)))
+				{
+					write(1, "test\n", 5);
+					free(ret);
+					break ;
+				}
+				write(fdin, ret, ft_strlen(ret)); 
+			}
+			data->heredoc = 0;
+		}
 		data->proc = fork();
 		if (!data->proc)
 		{
@@ -102,10 +126,7 @@ int	_execution(t_prompt *data)
 					|| ft_strcomp(data->cmde[0].path, "bad_set_env")
 					|| ft_strcomp(data->cmde[0].path, "exit")
 					|| ft_strcomp(data->cmde[0].path, "set_env")))
-			{
-				printf("test\n");
 				exit(0);
-			}
 			execute(data, i);
 			_free_args(data);
 		}
