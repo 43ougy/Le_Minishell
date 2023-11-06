@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/03 11:34:31 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/06 12:34:14 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	_execution(t_prompt *data)
 		{
 			char	*ret;
 
-			close(fdin);
+			//close(fdin);
 			while (1)
 			{
 				write(1, "> ", 2);
@@ -111,7 +111,7 @@ int	_execution(t_prompt *data)
 					free(ret);
 					break ;
 				}
-				write(fdin, ret, ft_strlen(ret)); 
+				//write(fdin, ret, ft_strlen(ret)); 
 			}
 			data->heredoc = 0;
 		}

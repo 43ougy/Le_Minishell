@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/06 11:13:25 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/06 15:03:04 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,6 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					i++;
 			}
 		}
-		printf("NB_ARGS = %d\n", nb_args);
 		data->cmde = malloc(sizeof(t_cmd) * nb_args + 1);
 		if (!data->cmde)
 			return (1);
@@ -281,7 +280,6 @@ int	_give_properties(t_prompt *data, char *input)
 					if (!access(path_cmd, F_OK | X_OK))
 					{
 						data->cmde[i].path = ft_strdup(path_cmd);
-						printf("CMD[%d] = [%s], PATH = [%s]\n", i, data->cmde[i].cmd[0], path_cmd);
 						free(path_cmd);
 						break ;
 					}
@@ -377,14 +375,12 @@ char	*_check_value(t_prompt *data, char *input)
 		if (input[i] == '$' && input[i + 1] && input[i + 1] == '?')
 		{
 			ch = 0;
-			if (data->exit_status[ch] == '0')
+			while (data->exit_status[ch++])
 				len++;
-			else
-				while (data->exit_status[ch++])
-					len++;
 			i += 2;
 		}
 	}
+	printf("%d\n", len);
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
@@ -422,7 +418,7 @@ char	*_check_value(t_prompt *data, char *input)
 		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
 		{
 			ch = -1;
-			while (++ch < len)
+			while (data->exit_status[++ch])
 			{
 				cmd[i] = data->exit_status[ch];
 				i++;
