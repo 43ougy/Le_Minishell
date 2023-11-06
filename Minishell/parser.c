@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/31 09:59:07 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/06 11:13:25 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,14 @@ int	_quotes(char *input, int *i, int *len)
 
 int	_nb_args(t_prompt *data, char *input, int method)
 {
-	int	i;
-	int	nb_args;
-	int	tmp;
-	int	check_char;
+	int		i;
+	int		nb_args;
+	int		tmp;
+	int		check_char;
+	char	*new_input;
+	char	*ls_pipe;
+	int		n = -1;
+	int		j = -1;
 
 	i = 0;
 	nb_args = 0;
@@ -96,11 +100,46 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					}
 					if (tmp)
 					{
-						write(2, "Error: no argument after pipe\n", 30);
-						return (1);
+						while (tmp)
+						{
+							write(1, "> ", 2);
+							new_input = get_line(0);
+							if (!new_input)
+							{
+								_free_struct(data);
+								write(1, "Cash'Hell syntax error: unexpected end of file\n", 47);
+								write(1, "exit\n", 5);
+								exit(2);
+							}
+							if (!ft_strcomp(new_input, "\n"))
+							{
+								ls_pipe = malloc(sizeof(char) * (ft_strlen(new_input) + ft_strlen(input)));
+								while (input[++n] && input[n])
+									ls_pipe[n] = input[n];
+								while (new_input[++j] && new_input[j])
+								{
+									ls_pipe[n] = new_input[j];
+									n++;
+								}
+								ls_pipe[n - 1] = '\0';
+								free(data->prompt);
+								data->prompt = ft_strdup(ls_pipe);
+								input = NULL;
+								input = ft_strdup(ls_pipe);
+								free(ls_pipe);
+								free(new_input);
+								tmp = 0;
+							}
+						}
 					}
 				}
 				i++;
+				if (input[i] == '|')
+				{
+					write(2, \
+						"Cash'Hell: syntax error near unexpected token `|'\n", 50);
+					return (1);
+				}
 			}
 			if (input[i] == 34 || input[i] == 39)
 			{
@@ -114,6 +153,7 @@ int	_nb_args(t_prompt *data, char *input, int method)
 					i++;
 			}
 		}
+		printf("NB_ARGS = %d\n", nb_args);
 		data->cmde = malloc(sizeof(t_cmd) * nb_args + 1);
 		if (!data->cmde)
 			return (1);
@@ -241,6 +281,7 @@ int	_give_properties(t_prompt *data, char *input)
 					if (!access(path_cmd, F_OK | X_OK))
 					{
 						data->cmde[i].path = ft_strdup(path_cmd);
+						printf("CMD[%d] = [%s], PATH = [%s]\n", i, data->cmde[i].cmd[0], path_cmd);
 						free(path_cmd);
 						break ;
 					}
