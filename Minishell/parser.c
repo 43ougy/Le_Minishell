@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/07 11:32:29 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/07 16:32:07 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,7 +380,6 @@ char	*_check_value(t_prompt *data, char *input)
 			i += 2;
 		}
 	}
-	printf("%d\n", len);
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
@@ -423,7 +422,6 @@ char	*_check_value(t_prompt *data, char *input)
 				cmd[i] = data->exit_status[ch];
 				i++;
 			}
-			cmd[i] = '\0';
 			in += 2;
 		}
 	}

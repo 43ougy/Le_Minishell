@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/07 14:17:35 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/07 16:34:10 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,15 +101,11 @@ int	_execution(t_prompt *data)
 			char	*ret;
 			char	*line;
 
-			//close(fdin);
 			ret = NULL;
 			while (1)
 			{
 				write(1, "> ", 2);
 				line = get_line(0);
-				//condition if ret = data->cmde[1].cmd[0]
-				//si condition rempli, ecrire dans le terminal
-				//sinon ajouter le ret du get_line() dans une variable avec un strjoin
 				if (!line)
 				{
 					write(1, "bash: warning: here-document delimited", 38);
@@ -174,7 +170,6 @@ int	_execution(t_prompt *data)
 	if (data->exit_status)
 		free(data->exit_status);
 	data->exit_status = ft_itoa(status);
-	printf("STATUS = [%d]\n", status);
 	g_sig_check = 0;
 	if (!data->nb_pipe)
 	{
