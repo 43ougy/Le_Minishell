@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/06 12:34:14 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/07 14:17:35 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	_execution(t_prompt *data)
 			write(1, "bash: ", 6);
 			write(1, data->infile, ft_strlen(data->infile));
 			write(1, ": No such file or directory\n", 28);
+			return (1);
 		}
 	}
 	else
@@ -71,7 +72,6 @@ int	_execution(t_prompt *data)
 		close(fdin);
 		if (i == data->nb_args - 1)
 		{
-			//printf("TEST|||||||\n");
 			data->background = 0;
 			fdout = dup(tmpout);
 		}
@@ -99,19 +99,52 @@ int	_execution(t_prompt *data)
 		if (data->heredoc)
 		{
 			char	*ret;
+			char	*line;
 
 			//close(fdin);
+			ret = NULL;
 			while (1)
 			{
 				write(1, "> ", 2);
-				ret = get_line(0);
-				if (ft_strcompn(ret, data->cmde[1].cmd[0], ft_strlen(ret)))
+				line = get_line(0);
+				//condition if ret = data->cmde[1].cmd[0]
+				//si condition rempli, ecrire dans le terminal
+				//sinon ajouter le ret du get_line() dans une variable avec un strjoin
+				if (!line)
 				{
-					write(1, "test\n", 5);
+					write(1, "bash: warning: here-document delimited", 38);
+					write(1, " by end-of-file (wanted `", 25);
+					write(1, \
+						data->cmde[1].cmd[0], ft_strlen(data->cmde[1].cmd[0]));
+					write(1, "')\n", 3);
+					if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
+					{
+						write(1, ret, ft_strlen(ret));
+						data->exit_status = "0";
+						return (1);
+					}
+					return (1);
+				}
+				if (ft_strcompn(line, data->cmde[1].cmd[0], ft_strlen(line)))
+				{
+					if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
+					{
+						write(1, ret, ft_strlen(ret));
+						data->exit_status = "0";
+						return (1);
+					}
+					else if (ft_strcomp(data->cmde[0].cmd[0], "echo"))
+					{
+						write(1, "\n", 1);
+						data->exit_status = "0";
+						return (1);
+					}
+					free(line);
 					free(ret);
 					break ;
 				}
-				//write(fdin, ret, ft_strlen(ret)); 
+				ret = ft_strjoin(ret, line);
+				free(line);
 			}
 			data->heredoc = 0;
 		}

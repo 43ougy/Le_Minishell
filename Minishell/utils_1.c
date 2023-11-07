@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 08:49:06 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/03 11:29:19 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/07 11:57:04 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,13 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	i = -1;
 	j = -1;
+	if (!s1)
+	{
+		s1 = malloc(1);
+		if (!s1)
+			return (NULL);
+		s1[0] = '\0';
+	}
 	len = ft_strlen(s1) + ft_strlen(s2);
 	ret = malloc(sizeof(char) * len + 1);
 	while (s1[++i] && s1[i])
