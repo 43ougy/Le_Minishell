@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/07 16:34:10 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/09 10:32:38 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int	_execution(t_prompt *data)
 					if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
 					{
 						write(1, ret, ft_strlen(ret));
-						data->exit_status = "0";
+						data->exit_status = ft_strdup("0");
 						return (1);
 					}
 					return (1);
@@ -126,13 +126,13 @@ int	_execution(t_prompt *data)
 					if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
 					{
 						write(1, ret, ft_strlen(ret));
-						data->exit_status = "0";
+						data->exit_status = ft_strdup("0");
 						return (1);
 					}
 					else if (ft_strcomp(data->cmde[0].cmd[0], "echo"))
 					{
 						write(1, "\n", 1);
-						data->exit_status = "0";
+						data->exit_status = ft_strdup("0");
 						return (1);
 					}
 					free(line);
@@ -167,10 +167,6 @@ int	_execution(t_prompt *data)
 	g_sig_check = 2;
 	if (!data->background)
 		waitpid(data->proc, &status, 0);
-	if (data->exit_status)
-		free(data->exit_status);
-	data->exit_status = ft_itoa(status);
-	g_sig_check = 0;
 	if (!data->nb_pipe)
 	{
 		if (ft_strcomp(data->cmde[0].path, "cd"))
@@ -201,9 +197,16 @@ int	_execution(t_prompt *data)
 			}
 			if (_is_num(data->cmde[0].cmd[1][0]))
 				status = ft_atoi(data->cmde[0].cmd[1]);
+			if (data->exit_status)
+				free(data->exit_status);
+			data->exit_status = ft_itoa(status);
 			_free_args(data, status);
 		}
 	}
+	if (data->exit_status)
+		free(data->exit_status);
+	data->exit_status = ft_itoa(status);
+	g_sig_check = 0;
 	if (!data->prompt)
 	{
 		write(1, "\n", 1);

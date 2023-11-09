@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/07 16:32:07 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/09 15:05:52 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,17 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 		while (input[i] && input[i] == ' ')
 			i++;
-		if (input[i] == '|')
+		if (_is_char(input[i]))
 		{
-			write(2, \
-				"Cash'Hell: syntax error near unexpected token `|'\n", 50);
+			if (input[i] == '|')
+				write(2, \
+					"Cash'Hell: syntax error near unexpected token `|'\n", 50);
+			else
+				write(2, \
+					"Cash'Hell: syntax error near unexpected token `newline'\n", 56);
+			if (data->exit_status)
+				free(data->exit_status);
+			data->exit_status = ft_strdup("2");
 			return (1);
 		}
 		i = 0;
@@ -84,6 +91,54 @@ int	_nb_args(t_prompt *data, char *input, int method)
 				check_char++;
 				if (input[i] == '|' && input[i + 1] == '|')
 					return (1);
+				else if (input[i] == '>')
+				{
+					if (input[i] == '>' && input[i + 2] == '>')
+					{
+						write(2, \
+							"Cash'Hell: syntax error near unexpected token `>'\n", 50);
+						return (1);
+					}
+					else
+					{
+						tmp = i;
+						while (input[i] == '>')
+							i++;
+						while (input[i] == ' ')
+							i++;
+						if (!input[i])
+						{
+							write(2, \
+								"Cash'Hell: syntax error near unexpected token `newline'\n", 56);
+							return (1);
+						}
+					}
+					i = tmp;
+				}
+				else if (input[i] == '<')
+				{
+					if (input[i] == '<' && input[i + 2] == '<')
+					{
+						write(2, \
+							"Cash'Hell: syntax error near unexpected token `<'\n", 50);
+						return (1);
+					}
+					else
+					{
+						tmp = i;
+						while (input[i] == '<')
+							i++;
+						while (input[i] == ' ')
+							i++;
+						if (!input[i])
+						{
+							write(2, \
+								"Cash'Hell: syntax error near unexpected token `newline'\n", 56);
+							return (1);
+						}
+					}
+					i = tmp;
+				}
 				else if (input[i] == '|')
 				{
 					tmp = i + 1;
@@ -107,8 +162,8 @@ int	_nb_args(t_prompt *data, char *input, int method)
 							if (!new_input)
 							{
 								_free_struct(data);
-								write(1, "Cash'Hell syntax error: unexpected end of file\n", 47);
-								write(1, "exit\n", 5);
+								write(2, "Cash'Hell syntax error: unexpected end of file\n", 47);
+								write(2, "exit\n", 5);
 								exit(2);
 							}
 							if (!ft_strcomp(new_input, "\n"))
@@ -292,7 +347,7 @@ int	_give_properties(t_prompt *data, char *input)
 				write(2, ": command not found\n", 20);
 				if (data->exit_status)
 					free(data->exit_status);
-				data->exit_status = ft_itoa(127);
+				data->exit_status = ft_strdup("127");
 				return (1);
 			}
 		}
@@ -343,10 +398,13 @@ char	*_check_value(t_prompt *data, char *input)
 
 	len = 0;
 	j = 0;
-	d_var = malloc(sizeof(char *) * (data->dollar + 1));
-	if (!d_var)
-		return (NULL);
-	d_var[data->dollar] = NULL;
+	if (data->dollar != -1)
+	{
+		d_var = malloc(sizeof(char *) * (data->dollar + 1));
+		if (!d_var)
+			return (NULL);
+		d_var[data->dollar] = NULL;
+	}
 	i = 0;
 	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
 	{
@@ -372,10 +430,10 @@ char	*_check_value(t_prompt *data, char *input)
 			len++;
 			i++;
 		}
-		if (input[i] == '$' && input[i + 1] && input[i + 1] == '?')
+		if (input[i] == '$' && (input[i + 1] && input[i + 1] == '?'))
 		{
-			ch = 0;
-			while (data->exit_status[ch++])
+			ch = -1;
+			while (data->exit_status[++ch])
 				len++;
 			i += 2;
 		}
@@ -383,12 +441,13 @@ char	*_check_value(t_prompt *data, char *input)
 	cmd = malloc(sizeof(char) * len + 1);
 	if (!cmd)
 		return (NULL);
+	cmd[len] = '\0';
 	j = 0;
 	i = 0;
 	in = 0;
 	while (i < len)
 	{
-		while (i < len && input[in] != '$')
+		while (i < len && input[in] != '$' && input[in])
 		{
 			cmd[i] = input[in];
 			i++;
@@ -414,10 +473,10 @@ char	*_check_value(t_prompt *data, char *input)
 			i++;
 			in++;
 		}
-		if (input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
+		if (input[in] && input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
 		{
 			ch = -1;
-			while (data->exit_status[++ch])
+			while (data->exit_status[++ch] && i < len)
 			{
 				cmd[i] = data->exit_status[ch];
 				i++;
@@ -426,10 +485,12 @@ char	*_check_value(t_prompt *data, char *input)
 		}
 	}
 	i = -1;
-	while (d_var[++i])
-		free(d_var[i]);
-	free(d_var);
-	cmd[len] = '\0';
+	if (data->dollar != -1)
+	{
+		while (d_var[++i])
+			free(d_var[i]);
+		free(d_var);
+	}
 	return (cmd);
 }
 
@@ -539,10 +600,14 @@ int	_get_cmd(t_prompt *data, char *input)
 				data->dollar = 0;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
+				{
 					if (input[in] == '$' && input[in + 1]
-							&& (_is_alpha(input[in + 1])
-							|| input[in + 1] == '?'))
+							&& _is_alpha(input[in + 1]))
 						data->dollar++;
+					else if (input[in] == '$' && input[in + 1]
+							&& input[in + 1] == '?')
+						data->dollar = -1;
+				}
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 					if (input[in] == '=' && !data->dollar && input[in - 1]
@@ -550,7 +615,7 @@ int	_get_cmd(t_prompt *data, char *input)
 						&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
 							|| _is_num(input[in + 1])))
 						data->equals++;
-				if (data->dollar > 0)
+				if (data->dollar > 0 || data->dollar == -1)
 				{
 					data->cmde[i].cmd[args] = _check_value(data, input + j);
 					if (!data->cmde[i].cmd[args])

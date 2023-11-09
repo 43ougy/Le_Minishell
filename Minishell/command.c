@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 10:00:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/03 11:18:57 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/09 11:05:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,6 +252,8 @@ int	running(t_prompt *data)
 			printf("exit\n");
 			_free_struct(data);
 			_free_args_nexit(data);
+			if (data->exit_status)
+				free(data->exit_status);
 			exit(0);
 		}
 	}
@@ -268,6 +270,8 @@ int	running(t_prompt *data)
 		_free_args_nexit(data);
 		if (data->prompt)
 			free(data->prompt);
+		if (data->exit_status)
+			free(data->exit_status);
 		exit(0);
 	}
 	add_history(data->prompt);

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/10/25 10:52:33 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/08 10:16:22 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	main(int ac, char **av, char **env)
 
 	i = -1;
 	data.check_exit = 0;
-	data.exit_status = ft_itoa(0);
+	data.exit_status = ft_strdup("0");
 	data.set_env = NULL;
 	data.path = NULL;
 	if (_make_env(&data, env))
