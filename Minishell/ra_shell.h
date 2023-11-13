@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/10 15:04:25 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/13 20:38:58 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ int		_is_alpha(char c);
 int		_is_limiter(char c);
 int		_is_whitespace(char c);
 int		_nb_args(t_prompt *data, char *input, int method);
+int		_give_properties(t_prompt *data, char *input);
 void	_free_args(t_prompt *data, int status);
 void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/10 15:03:09 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/13 20:33:43 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ int	_quotes(char *input, int *i, int *len)
 	return (0);
 }
 
-int	_give_properties(t_prompt *data, char *input)
+/*int	_give_properties(t_prompt *data, char *input)
 {
 	int		i;
 	int		j;
 	int		n;
 	char	*path_cmd;
 
-	/*j = 0;
+	j = 0;
 	i = -1;
 	data->append = 0;
 	data->heredoc = 0;
@@ -55,10 +55,10 @@ int	_give_properties(t_prompt *data, char *input)
 	{
 		write(1, "\n", 1);
 		return (0);
-	}*/
+	}
 	while (++i < data->nb_args)
 	{
-		/*n = -1;
+		n = -1;
 		while (input[j] && !_is_char(input[j])
 			&& input[j] != 34 && input[j] != 39)
 			j++;
@@ -91,7 +91,7 @@ int	_give_properties(t_prompt *data, char *input)
 				if (open(data->cmde[i].cmd[n], O_RDONLY) != -1)
 					data->cmde[i].file = 1;
 			}
-		}*/
+		}
 		if (!data->cmde[i].infile && !data->cmde[i].outfile)
 		{
 			n = -1;
@@ -141,7 +141,7 @@ int	_give_properties(t_prompt *data, char *input)
 			j++;
 	}
 	return (0);
-}
+}*/
 
 char	*_env_variable(t_prompt *data, char *input)
 {
