@@ -14,7 +14,8 @@ SRC = main.c				\
 		parser_utils.c		\
 		execution.c			\
 		ft_itoa.c			\
-		heredoc.c
+		heredoc.c			\
+		nb_args_split.c
 
 OBJ = $(SRC:.c=.o)
 

@@ -1,4 +1,5 @@
 *.o
 *.swp
+*.txt
 a.out
 minishell
