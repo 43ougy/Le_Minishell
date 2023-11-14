@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/13 20:33:43 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/14 15:39:22 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,109 +40,6 @@ int	_quotes(char *input, int *i, int *len)
 	return (0);
 }
 
-/*int	_give_properties(t_prompt *data, char *input)
-{
-	int		i;
-	int		j;
-	int		n;
-	char	*path_cmd;
-
-	j = 0;
-	i = -1;
-	data->append = 0;
-	data->heredoc = 0;
-	if (ft_strcomp(data->cmde[0].cmd[0], " ") && !&data->cmde[1])
-	{
-		write(1, "\n", 1);
-		return (0);
-	}
-	while (++i < data->nb_args)
-	{
-		n = -1;
-		while (input[j] && !_is_char(input[j])
-			&& input[j] != 34 && input[j] != 39)
-			j++;
-		if (input[j] == '<' && input[j + 1] != '<' && &data->cmde[i + 1])
-		{
-			data->cmde[i + 1].infile = 1;
-			data->infile = data->cmde[i + 1].cmd[0];
-		}
-		else if (input[j] == '<' && input[j + 1] == '<' && &data->cmde[i + 1])
-		{
-			data->cmde[i + 1].infile = 1;
-			data->heredoc = 1;
-			data->infile = data->cmde[i + 1].cmd[0];
-		}
-		else if (input[j] == '>' && input[j + 1] != '>' && &data->cmde[i + 1])
-		{
-			data->cmde[i + 1].outfile = 1;
-			data->outfile = data->cmde[i + 1].cmd[0];
-		}
-		else if (input[j] == '>' && input[j + 1] == '>' && &data->cmde[i + 1])
-		{
-			data->cmde[i + 1].outfile = 1;
-			data->append = 1;
-			data->outfile = data->cmde[i + 1].cmd[0];
-		}
-		else
-		{
-			while (++n < data->cmde[i].n_inarg)
-			{
-				if (open(data->cmde[i].cmd[n], O_RDONLY) != -1)
-					data->cmde[i].file = 1;
-			}
-		}
-		if (!data->cmde[i].infile && !data->cmde[i].outfile)
-		{
-			n = -1;
-			if (!access(data->cmde[i].cmd[0], F_OK | X_OK))
-				data->cmde[i].path = "CMD";
-			else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
-				|| ft_strcomp(data->cmde[i].cmd[0], "export")
-				|| ft_strcomp(data->cmde[i].cmd[0], "unset")
-				|| ft_strcomp(data->cmde[i].cmd[0], "exit")
-				|| ft_strcomp(data->cmde[i].cmd[0], "env"))
-				data->cmde[i].path = ft_strdup(data->cmde[i].cmd[0]);
-			else if (data->equals > 0)
-			{
-				if (data->equals == 1 && !data->cmde[i].cmd[1])
-					data->cmde[i].path = ft_strdup("set_env");
-				else if (data->equals == 1 && data->cmde[i].cmd[1])
-					data->cmde[i].path = ft_strdup("bad_set_env");
-				else if (data->equals > 1)
-					data->cmde[i].path = ft_strdup("bad_set_env");
-			}
-			else if (data->path)
-			{
-				while (data->path[++n])
-				{
-					path_cmd = ft_strjoin(data->path[n], data->cmde[i].cmd[0]);
-					if (!access(path_cmd, F_OK | X_OK))
-					{
-						data->cmde[i].path = ft_strdup(path_cmd);
-						free(path_cmd);
-						break ;
-					}
-					free(path_cmd);
-				}
-			}
-			if (!data->cmde[i].path)
-			{
-				write(2, data->cmde[i].cmd[0], ft_strlen(data->cmde[i].cmd[0]));
-				write(2, ": command not found\n", 20);
-				if (data->exit_status)
-					free(data->exit_status);
-				data->exit_status = ft_strdup("127");
-				return (1);
-			}
-		}
-		while (input[j] && _is_char(input[j])
-			&& input[j] != 34 && input[j] != 39)
-			j++;
-	}
-	return (0);
-}*/
-
 char	*_env_variable(t_prompt *data, char *input)
 {
 	int		len;
@@ -171,7 +68,7 @@ char	*_env_variable(t_prompt *data, char *input)
 	return (ret);
 }
 
-char	*_check_value(t_prompt *data, char *input)
+/*char	*_check_value(t_prompt *data, char *input)
 {
 	int		i;
 	int		j;
@@ -277,7 +174,7 @@ char	*_check_value(t_prompt *data, char *input)
 		free(d_var);
 	}
 	return (cmd);
-}
+}*/
 
 int	_get_cmd(t_prompt *data, char *input)
 {

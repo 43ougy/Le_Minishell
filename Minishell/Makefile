@@ -17,6 +17,7 @@ SRC = main.c					\
 		heredoc.c				\
 		nb_args_split.c			\
 		give_properties_split.c	\
+		check_value_split.c
 
 OBJ = $(SRC:.c=.o)
 

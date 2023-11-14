@@ -25,10 +25,10 @@ void	_chevron_file(t_prompt *data, int i, int j, char *input)
 		data->heredoc = 1;
 	}
 	else if (input[j] == '>' && input[j + 1] != '>')
-		_infile_chevron(data, i);
+		_outfile_chevron(data, i);
 	else if (input[j] == '>' && input[j + 1] == '>')
 	{
-		_infile_chevron(data, i);
+		_outfile_chevron(data, i);
 		data->append = 1;
 	}
 	else
