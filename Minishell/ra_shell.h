@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/14 15:46:32 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/16 15:14:42 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct t_shell
 	int		background;
 	int		fd[2];
 	int		check_exit;
+	int		question_mark;
 	int		dollar;
 	int		equals;
 	int		nb_pipe;

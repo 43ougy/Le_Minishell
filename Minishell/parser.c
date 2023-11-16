@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/14 15:39:22 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/16 18:17:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,114 +68,6 @@ char	*_env_variable(t_prompt *data, char *input)
 	return (ret);
 }
 
-/*char	*_check_value(t_prompt *data, char *input)
-{
-	int		i;
-	int		j;
-	int		ch;
-	int		in;
-	int		len;
-	char	**d_var;
-	char	*cmd;
-
-	len = 0;
-	j = 0;
-	if (data->dollar != -1)
-	{
-		d_var = malloc(sizeof(char *) * (data->dollar + 1));
-		if (!d_var)
-			return (NULL);
-		d_var[data->dollar] = NULL;
-	}
-	i = 0;
-	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
-	{
-		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
-		{
-			i++;
-			len++;
-		}
-		if (input[i] == '$' && input[i + 1] && (_is_alpha(input[i + 1])
-				|| input[i + 1] == '_'))
-		{
-			d_var[j] = _env_variable(data, input + i + 1);
-			if (d_var[j])
-				len += ft_strlen(d_var[j]);
-			i++;
-			while (input[i] && _is_alpha(input[i]))
-				i++;
-			j++;
-		}
-		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1])
-				|| !input[i + 1]) && input[i + 1] != '?')
-		{
-			len++;
-			i++;
-		}
-		if (input[i] == '$' && (input[i + 1] && input[i + 1] == '?'))
-		{
-			ch = -1;
-			while (data->exit_status[++ch])
-				len++;
-			i += 2;
-		}
-	}
-	cmd = malloc(sizeof(char) * len + 1);
-	if (!cmd)
-		return (NULL);
-	cmd[len] = '\0';
-	j = 0;
-	i = 0;
-	in = 0;
-	while (i < len)
-	{
-		while (i < len && input[in] != '$' && input[in])
-		{
-			cmd[i] = input[in];
-			i++;
-			in++;
-		}
-		if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
-		{
-			ch = -1;
-			while (d_var[j] && d_var[j][++ch] && i < len)
-			{
-				cmd[i] = d_var[j][ch];
-				i++;
-			}
-			in++;
-			while (input[in] && _is_alpha(input[in]))
-				in++;
-			j++;
-		}
-		if (input[in] == '$' && ((!_is_alpha(input[in + 1]) && input[in + 1])
-				|| !input[in + 1]) && input[in + 1] != '?')
-		{
-			cmd[i] = '$';
-			i++;
-			in++;
-		}
-		if (input[in] && input[in] == '$' && (input[in + 1] && input[in + 1] == '?'))
-		{
-			ch = -1;
-			while (data->exit_status[++ch] && i < len)
-			{
-				cmd[i] = data->exit_status[ch];
-				i++;
-			}
-			in += 2;
-		}
-	}
-	i = -1;
-	if (data->dollar != -1)
-	{
-		while (d_var[++i])
-			free(d_var[i]);
-		free(d_var);
-	}
-	return (cmd);
-}*/
-
 int	_get_cmd(t_prompt *data, char *input)
 {
 	int	i;
@@ -189,7 +81,7 @@ int	_get_cmd(t_prompt *data, char *input)
 	save = 0;
 	j = 0;
 	data->equals = 0;
-	while (input[j] && input[j] == ' ')
+	/*while (input[j] && input[j] == ' ')
 		j++;
 	if (!input[j] || input[j] == ' ')
 		return (1);
@@ -202,7 +94,7 @@ int	_get_cmd(t_prompt *data, char *input)
 		data->cmde[i].cmd = malloc(sizeof(char *) * (data->nb_inar + 1));
 		if (!data->cmde[i].cmd)
 			return (1);
-		data->cmde[i].cmd[data->nb_inar] = NULL;
+		data->cmde[i].cmd[data->nb_inar] = NULL;*/
 		args = -1;
 		while (++args < data->nb_inar)
 		{
@@ -280,6 +172,7 @@ int	_get_cmd(t_prompt *data, char *input)
 			{
 				save = j;
 				data->dollar = 0;
+				data->question_mark = 0;
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
 				{
@@ -288,7 +181,7 @@ int	_get_cmd(t_prompt *data, char *input)
 						data->dollar++;
 					else if (input[in] == '$' && input[in + 1]
 							&& input[in + 1] == '?')
-						data->dollar = -1;
+						data->question_mark++;
 				}
 				in = save - 1;
 				while (input[++in] && input[in] != ' ')
@@ -297,7 +190,7 @@ int	_get_cmd(t_prompt *data, char *input)
 						&& (_is_alpha(input[in + 1]) || input[in + 1] == '/'
 							|| _is_num(input[in + 1])))
 						data->equals++;
-				if (data->dollar > 0 || data->dollar == -1)
+				if (data->dollar > 0)
 				{
 					data->cmde[i].cmd[args] = _check_value(data, input + j);
 					if (!data->cmde[i].cmd[args])
@@ -346,50 +239,3 @@ int	_parser(t_prompt *data)
 		return (1);
 	return (0);
 }
-/*
-int	main(int ac, char **av, char **env)
-{
-	t_prompt	data;
-	char		*path = ft_getenv(env, "PATH");
-
-	(void)ac;
-	data.path = give_path(path);
-	free(path);
-	data.nb_args = 0;
-	data.nb_inar = 0;
-	data.cmde = NULL;
-	data.prompt = av[1];
-	//data.prompt = "cat < infile | wc -l | cat -e | husdfhi > outfile";
-	_parser(&data);
-	for (int i = 0; i < data.nb_args; i++)
-	{
-		printf("args %d :\n", i);
-		for (int j = 0; j < data.cmde[i].n_inarg; j++)
-		{
-			printf("Infile = ");
-			if (data.cmde[i].infile)
-				printf("Yes\n");
-			else
-				printf("No\n");
-			printf("Outfile = ");
-			if (data.cmde[i].outfile)
-				printf("Yes\n");
-			else
-				printf("No\n");
-			printf("Isfile = ");
-			if (data.cmde[i].file)
-				printf("Yes\n");
-			else
-				printf("No\n");
-			printf("	%s\n", data.cmde[i].cmd[j]);
-			if (data.cmde[i].path != NULL)
-				printf("Path to [%s] is [%s]\n", data.cmde[i].cmd[0], data.cmde[i].path);
-			printf("\n");
-		}
-	}
-	for (int i = 0; data.path[i]; i++)
-		free(data.path[i]);
-	free(data.path);
-	_free_args(&data);
-	return (0);
-}*/
