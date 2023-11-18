@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/16 15:14:42 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/17 16:08:10 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,15 @@ typedef struct t_cmd
 	int		n_inarg;
 }	t_cmd;
 
+typedef struct t_run
+{
+	int		len;
+	int		i;
+	int		j;
+	char	*comp;
+	char	*equal;
+}	t_run;
+
 typedef struct t_shell
 {
 	char	*prompt;
@@ -56,6 +65,13 @@ typedef struct t_shell
 	int		fd[2];
 	int		check_exit;
 	int		question_mark;
+	int		args_count;
+	int		cmd_count;
+	int		index;
+	int		i_check;
+	int		save_index;
+	int		cmd_len;
+	int		val_len;
 	int		dollar;
 	int		equals;
 	int		nb_pipe;
@@ -104,6 +120,7 @@ char	*_env_variable(t_prompt *data, char *input);
 int		_nb_args(t_prompt *data, char *input, int method);
 int		_give_properties(t_prompt *data, char *input);
 char	*_check_value(t_prompt *data, char *input);
+int		_get_cmd(t_prompt *data, char *input);
 void	_free_args(t_prompt *data, int status);
 void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);
@@ -117,5 +134,9 @@ char	*ft_free(char *buffer, char *buf);
 char	*cat_line(char *line);
 char	*read_stdin(int fd, char *line);
 char	*get_line(int fd);
+
+//=============Run============//
+char	**run_export(t_prompt *data, char *name);
+char	**run_unset(t_prompt *data, char *name);
 
 #endif

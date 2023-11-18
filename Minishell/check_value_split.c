@@ -1,60 +1,58 @@
 #include "ra_shell.h"
 
-void	_environement_data(t_prompt *data, int *i, char *input, int *len, int *j)
-{	
+void	_environement_data(t_prompt *data, int *i, char *input, int *j)
+{
 	data->d_var[*j] = _env_variable(data, input + *i + 1);
 	if (data->d_var[*j])
-		(*len) += ft_strlen(data->d_var[*j]);
+		data->val_len += ft_strlen(data->d_var[*j]);
 	(*i)++;
 	while (input[*i] && _is_alpha(input[*i]))
 		(*i)++;
 	(*j)++;
 }
 
-void	_exit_status(t_prompt *data, int *len, int *i)
+void	_exit_status(t_prompt *data, int *i)
 {
 	int	ch;
 
 	ch = -1;
 	while (data->exit_status[++ch])
-		(*len)++;
+		data->val_len++;
 	(*i) += 2;
 }
 
-int	_dollar_attribute(char *input, t_prompt *data)
+void	_dollar_attribute(char *input, t_prompt *data)
 {
 	int	i;
-	int	len;
 	int	j;
 
 	i = 0;
-	len = 0;
 	j = 0;
+	data->val_len = 0;
 	while (input[i] && input[i] != ' ' && !_is_quotes(input[i]))
 	{
 		while (input[i] && (_is_alpha(input[i]) || _is_limiter(input[i])))
 		{
 			i++;
-			len++;
+			data->val_len++;
 		}
 		if (input[i] == '$' && input[i + 1] && (_is_alpha(input[i + 1])
 				|| input[i + 1] == '_'))
-			_environement_data(data, &i, input, &len, &j);
+			_environement_data(data, &i, input, &j);
 		if (input[i] == '$' && ((!_is_alpha(input[i + 1]) && input[i + 1])
 				|| !input[i + 1]) && input[i + 1] != '?')
 		{
 			i++;
-			len++;
+			data->val_len++;
 		}
 		if (input[i] == '$' && (input[i + 1] && input[i + 1] == '?'))
-			_exit_status(data, &len, &i);
+			_exit_status(data, &i);
 	}
-	return (len);
 }
 
-void	_first_step(t_prompt *data, int *i, int *in, int len, char *input)
+void	_first_step(t_prompt *data, int *i, int *in, char *input)
 {
-	while (*i < len && input[*in] != '$' && input[*in])
+	while (*i < data->val_len && input[*in] != '$' && input[*in])
 	{
 		data->d_cmd[*i] = input[*in];
 		(*i)++;
@@ -62,24 +60,24 @@ void	_first_step(t_prompt *data, int *i, int *in, int len, char *input)
 	}
 }
 
-void	_d_var_to_d_cmd(t_prompt *data, int *i, int j, int len)
+void	_d_var_to_d_cmd(t_prompt *data, int *i, int j)
 {
 	int	ch;
 
 	ch = -1;
-	while (data->d_var[j] && data->d_var[j][++ch] && *i < len)
+	while (data->d_var[j] && data->d_var[j][++ch] && *i < data->val_len)
 	{
 		data->d_cmd[*i] = data->d_var[j][ch];
 		(*i)++;
 	}
 }
 
-void	_exit_status_to_d_cmd(t_prompt *data, int *i, int *in, int len)
+void	_exit_status_to_d_cmd(t_prompt *data, int *i, int *in)
 {
 	int	ch;
 
 	ch = -1;
-	while (data->exit_status[++ch] && *i < len)
+	while (data->exit_status[++ch] && *i < data->val_len)
 	{
 		data->d_cmd[*i] = data->exit_status[ch];
 		(*i)++;
@@ -94,7 +92,7 @@ void	_dollar_set(t_prompt *data, int *i, int *in)
 	(*in)++;
 }
 
-void	_command_attribute(char *input, t_prompt *data, int len)
+void	_command_attribute(char *input, t_prompt *data)
 {
 	int	i;
 	int	in;
@@ -103,12 +101,12 @@ void	_command_attribute(char *input, t_prompt *data, int len)
 	i = 0;
 	in = 0;
 	j = 0;
-	while (i < len)
+	while (i < data->val_len)
 	{
-		_first_step(data, &i, &in, len, input);
+		_first_step(data, &i, &in, input);
 		if (input[in] == '$' && input[in + 1] && _is_alpha(input[in + 1]))
 		{
-			_d_var_to_d_cmd(data, &i, j, len);
+			_d_var_to_d_cmd(data, &i, j);
 			in++;
 			while (input[in] && _is_alpha(input[in]))
 				in++;
@@ -119,7 +117,7 @@ void	_command_attribute(char *input, t_prompt *data, int len)
 			_dollar_set(data, &i, &in);
 		if (input[in] && input[in] == '$'
 			&& (input[in + 1] && input[in + 1] == '?'))
-			_exit_status_to_d_cmd(data, &i, &in, len);
+			_exit_status_to_d_cmd(data, &i, &in);
 	}
 }
 
@@ -143,23 +141,21 @@ void	_free_d_var(t_prompt *data)
 
 char	*_check_value(t_prompt *data, char *input)
 {
-	int		len;
-
 	data->d_var = NULL;
 	data->d_cmd = NULL;
-	if (data->dollar != data->question_mark)
+	if (data->dollar)
 	{
 		_init_d_var(data);
 		if (!data->d_var)
 			return (NULL);
 	}
-	len = _dollar_attribute(input, data);
-	data->d_cmd = malloc(sizeof(char) * len + 1);
+	_dollar_attribute(input, data);
+	data->d_cmd = malloc(sizeof(char) * data->val_len + 1);
 	if (!data->d_cmd)
 		return (NULL);
-	data->d_cmd[len] = '\0';
-	_command_attribute(input, data, len);
-	if (data->dollar != data->question_mark)
+	data->d_cmd[data->val_len] = '\0';
+	_command_attribute(input, data);
+	if (data->dollar)
 		_free_d_var(data);
 	return (data->d_cmd);
 }
