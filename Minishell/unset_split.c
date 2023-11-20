@@ -43,12 +43,9 @@ char	**_reset_env(t_prompt *data, t_run *run, char **new_env)
 	{
 		if (data->d_env[i] && !ft_strcomp(data->d_env[i], run->comp))
 		{
-			printf("[%d]\n", i);
 			new_env[j] = ft_strdup(data->d_env[i]);
 			j++;
 		}
-		else
-			printf("[%s] | [%s] | [%d]\n", data->d_env[i], run->comp, i);
 	}
 	new_env[j] = NULL;
 	i = -1;

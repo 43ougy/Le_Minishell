@@ -20,7 +20,8 @@ SRC = main.c					\
 		check_value_split.c		\
 		get_cmd_split.c			\
 		export_split.c			\
-		unset_split.c
+		unset_split.c			\
+		set_equals_split.c
 
 OBJ = $(SRC:.c=.o)
 

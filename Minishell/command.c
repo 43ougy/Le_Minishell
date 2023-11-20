@@ -53,60 +53,6 @@ void	run_cd(t_prompt *data, char **cmd)
 		perror(cmd[1]);
 }
 /*
-char	**run_unset(t_prompt *data, char *name)
-{
-	int		i;
-	int		j;
-	int		len;
-	char	**new_env;
-	char	*comp;
-
-	len = -1;
-	if (!name)
-		return (data->d_env);
-	while (data->d_env[++len])
-	{
-		j = 0;
-		while (data->d_env[len][j] && data->d_env[len][j] != '=')
-			j++;
-		comp = ft_substr(data->d_env[len], 0, j);
-		if (ft_strcomp(name, comp))
-		{
-			free(comp);
-			comp = ft_strdup(data->d_env[len]);
-			i = -1;
-			break ;
-		}
-		free(comp);
-	}
-	if (i != -1)
-		return (data->d_env);
-	len = 0;
-	while (data->d_env[len])
-		len++;
-	j = 0;
-	new_env = malloc(sizeof(char *) * len + 1);
-	if (!new_env)
-		return (NULL);
-	i = -1;
-	while (data->d_env[++i])
-	{
-		if (data->d_env[i] && !ft_strcomp(data->d_env[i], comp))
-		{
-			new_env[j] = ft_strdup(data->d_env[i]);
-			j++;
-		}
-	}
-	new_env[j] = NULL;
-	i = -1;
-	while (data->d_env[++i])
-		free(data->d_env[i]);
-	free(data->d_env);
-	free(comp);
-	data->d_env = NULL;
-	return (new_env);
-}*/
-
 char	**run_set_equals(t_prompt *data, char *input)
 {
 	char	**ret;
@@ -167,7 +113,7 @@ char	**run_set_equals(t_prompt *data, char *input)
 		return (NULL);
 	return (ret);
 }
-
+*/
 int	running(t_prompt *data)
 {
 	char	*env_path;
@@ -215,9 +161,7 @@ int	running(t_prompt *data)
 	}
 	data->path = NULL;
 	env_path = ft_getenv(data->d_env, "PATH");
-	if (!env_path)
-		return (1);
-	else
+	if (env_path)
 	{
 		data->path = give_path(env_path);
 		free(env_path);

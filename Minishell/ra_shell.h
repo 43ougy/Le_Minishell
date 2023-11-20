@@ -138,5 +138,6 @@ char	*get_line(int fd);
 //=============Run============//
 char	**run_export(t_prompt *data, char *name);
 char	**run_unset(t_prompt *data, char *name);
+char	**run_set_equals(t_prompt *data, char *input);
 
 #endif
