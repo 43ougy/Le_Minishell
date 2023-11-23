@@ -32,12 +32,7 @@ void	_isatty_check(t_prompt *data)
 int	_prompt_check(t_prompt *data)
 {
 	if (data->prompt[0] == '\0')
-	{
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
 		return (1);
-	}
 	return (0);
 }
 

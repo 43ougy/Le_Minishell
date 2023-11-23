@@ -53,7 +53,7 @@ void	run_cd(t_prompt *data, char **cmd)
 		perror(cmd[1]);
 }
 
-void	run_pwd(t_prompt *data)
+void	run_pwd(void)
 {
 	char	location[1024];
 

@@ -51,6 +51,8 @@ void	_child_process(t_prompt *data)
 			|| ft_strcomp(data->cmde[0].path, "exit")
 			|| ft_strcomp(data->cmde[0].path, "set_env")))
 		exit(0);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	execute(data, data->i);
 	_free_args(data, 0);
 }

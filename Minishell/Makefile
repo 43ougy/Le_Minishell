@@ -1,6 +1,6 @@
 CC = @gcc
 RM = @rm -f
-FLAG = -Wall -Wextra -Werror -g3
+FLAG = -Wall -Wextra -Werror
 NAME = minishell
 SRC = main.c					\
 		utils_1.c				\
@@ -38,7 +38,7 @@ SRC = main.c					\
 OBJ = $(SRC:.c=.o)
 
 .c.o	:
-	$(CC) -g3 -I . -c $< -o $(<:.c=.o)
+	$(CC) $(FLAG) -g3 -I . -c $< -o $(<:.c=.o)
 
 all : $(NAME)
 	

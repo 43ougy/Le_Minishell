@@ -29,10 +29,10 @@ int	_check_cmd_exec(t_prompt *data, int i)
 		|| ft_strcomp(data->cmde[i].cmd[0], "clear"))
 	{
 		if (ft_strcomp(data->cmde[i].path, "pwd"))
-			run_pwd(data);
+			run_pwd();
 		if (ft_strcomp(data->cmde[i].path, "echo"))
 			run_echo(data, i);
-		if (ft_strcomp(data->cmde[i].path, "clear"))
+		if (ft_strcomp(data->cmde[i].cmd[0], "clear"))
 			write(1, "\033c", 3);
 		return (1);
 	}

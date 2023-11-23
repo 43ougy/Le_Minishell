@@ -34,7 +34,7 @@ char	*ft_strdup(const char *s)
 {
 	size_t	i;
 	char	*dest;
-	int		len;
+	size_t		len;
 
 	i = -1;
 	len = 0;

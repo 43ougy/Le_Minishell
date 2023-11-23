@@ -140,7 +140,7 @@ char	**run_set_equals(t_prompt *data, char *input);
 int		running(t_prompt *data);
 void	run_env(t_prompt *data);
 void	run_cd(t_prompt *data, char **cmd);
-void	run_pwd(t_prompt *data);
+void	run_pwd(void);
 void	run_echo(t_prompt *data, int i);
 
 //========Check_value=========//

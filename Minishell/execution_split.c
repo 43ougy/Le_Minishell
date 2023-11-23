@@ -18,6 +18,11 @@ int	_set_status(t_prompt *data, int status)
 {
 	if (WIFEXITED(status))
 		data->status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		data->status = 130;
+		write(1, "\n", 1);
+	}
 	if (data->exit_status)
 		free(data->exit_status);
 	data->exit_status = ft_itoa(data->status);
