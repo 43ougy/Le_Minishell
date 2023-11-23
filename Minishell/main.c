@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:52 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/08 10:16:22 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 13:12:05 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	_init_data(t_prompt *data)
 	data->exit_status = ft_strdup("0");
 	data->set_env = NULL;
 	data->path = NULL;
+	data->cmde = NULL;
 }
 
 void	_free_all(t_prompt *data)
@@ -55,22 +56,24 @@ void	_free_all(t_prompt *data)
 int	main(int ac, char **av, char **env)
 {
 	t_prompt	data;
-	t_signal	sig_act;
+	//t_signal	sig_act;
 
+	(void)ac;
+	(void)av;
 	_init_data(&data);
 	if (_make_env(&data, env))
 		return (1);
 	write(1, "launching...\n", 13);
 	while (1)
 	{
-		if (signal(SIGINT, handle_signal) == SIG_ERR
-			|| signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-		{
+		signal(SIGINT, handle_signal);
+		signal(SIGQUIT, SIG_IGN);
+		/*{
 			sigaction(SIGINT, &sig_act.ctrl_c, NULL);
 			sigaction(SIGQUIT, &sig_act.ctrl_b, NULL);
-		}
+		}*/
 		if (!running(&data))
 			break ;
 	}
-	return (0);
+	return (_free_all(&data), 0);
 }

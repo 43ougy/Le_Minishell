@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/21 13:47:34 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 14:56:23 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct t_shell
 	char	**d_var;
 	char	*d_cmd;
 	char	*exit_status;
+	int		status;
 	int		append;
 	int		heredoc;
 	pid_t	proc;
@@ -102,19 +103,9 @@ char	*ft_strncpy(char *dest, char *src, int n);
 int		ft_atoi(char *str);
 void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t count, size_t size);
-
-//===========Prompt===========//
-int		running(t_prompt *data);
-void	execute(t_prompt *data, int i);
-void	run_env(t_prompt *data);
-void	run_cd(t_prompt *data, char **cmd);
-char	**run_export(t_prompt *data, char *name);
-char	**run_unset(t_prompt *data, char *name);
-char	**run_set_equals(t_prompt *data, char *input);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
-int		_execution(t_prompt *data);
 
 //===========Parser===========//
 int		_is_quotes(char c);
@@ -147,9 +138,10 @@ char	**run_export(t_prompt *data, char *name);
 char	**run_unset(t_prompt *data, char *name);
 char	**run_set_equals(t_prompt *data, char *input);
 int		running(t_prompt *data);
-
-//=========Execution==========//
-int		_execution(t_prompt *data);
+void	run_env(t_prompt *data);
+void	run_cd(t_prompt *data, char **cmd);
+void	run_pwd(t_prompt *data);
+void	run_echo(t_prompt *data, int i);
 
 //========Check_value=========//
 void	_environement_data(t_prompt *data, int *i, char *input, int *j);
@@ -162,6 +154,8 @@ void	_dollar_set(t_prompt *data, int *i, int *in);
 void	_command_attribute(char *input, t_prompt *data);
 
 //=========Execution==========//
+void	execute(t_prompt *data, int i);
+int		_execution(t_prompt *data);
 int		_infile_check(t_prompt *data);
 void	_outfile_check(t_prompt *data);
 void	_fd_check_in_pipe(t_prompt *data);

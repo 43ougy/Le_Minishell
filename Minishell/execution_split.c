@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:03:02 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/21 14:03:04 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 10:59:54 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,11 @@ extern int	g_sig_check;
 
 int	_set_status(t_prompt *data, int status)
 {
+	if (WIFEXITED(status))
+		data->status = WEXITSTATUS(status);
 	if (data->exit_status)
 		free(data->exit_status);
-	data->exit_status = ft_itoa(status);
+	data->exit_status = ft_itoa(data->status);
 	g_sig_check = 0;
 	if (!data->prompt)
 	{

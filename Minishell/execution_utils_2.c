@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:13:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/21 14:14:50 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 12:06:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	_exit_cmd(t_prompt *data, int status)
 		status = ft_atoi(data->cmde[0].cmd[1]);
 	if (data->exit_status)
 		free(data->exit_status);
-	data->exit_status = ft_itoa(status);
+	free(data->prompt);
 	_free_args(data, status);
 }
 

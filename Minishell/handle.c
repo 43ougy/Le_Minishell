@@ -16,8 +16,6 @@ extern int	g_sig_check;
 
 void	handle_signal(int signo)
 {
-	t_signal	sig_act;
-
 	if (signo == SIGINT)
 	{
 		rl_replace_line("", 0);

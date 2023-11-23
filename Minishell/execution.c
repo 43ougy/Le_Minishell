@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/20 15:29:04 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 14:07:14 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 extern int	g_sig_check;
 
-void	execute(t_prompt *data, int i)
+int	_check_cmd_exec(t_prompt *data, int i)
 {
-	int	check;
-
 	if (ft_strcomp(data->cmde[i].path, "cd")
 		|| ft_strcomp(data->cmde[i].path, "export")
 		|| ft_strcomp(data->cmde[i].path, "unset")
@@ -25,12 +23,28 @@ void	execute(t_prompt *data, int i)
 		|| ft_strcomp(data->cmde[i].path, "set_env")
 		|| ft_strcomp(data->cmde[i].path, "exit")
 		|| ft_strcomp(data->cmde[i].path, "env"))
-		return ;
-	if (ft_strcomp(data->cmde[i].cmd[0], "clear"))
+		return (1);
+	if (ft_strcomp(data->cmde[i].path, "pwd")
+		|| ft_strcomp(data->cmde[i].path, "echo")
+		|| ft_strcomp(data->cmde[i].cmd[0], "clear"))
 	{
-		write(1, "\033c", 3);
-		return ;
+		if (ft_strcomp(data->cmde[i].path, "pwd"))
+			run_pwd(data);
+		if (ft_strcomp(data->cmde[i].path, "echo"))
+			run_echo(data, i);
+		if (ft_strcomp(data->cmde[i].path, "clear"))
+			write(1, "\033c", 3);
+		return (1);
 	}
+	return (0);
+}
+
+void	execute(t_prompt *data, int i)
+{
+	int	check;
+
+	if (_check_cmd_exec(data, i))
+		return ;
 	check = 0;
 	if (ft_strcomp(data->cmde[i].path, "CMD"))
 		check = execve(data->cmde[i].cmd[0], data->cmde[i].cmd, data->d_env);

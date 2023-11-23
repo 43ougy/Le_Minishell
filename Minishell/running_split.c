@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:02:49 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/21 14:02:51 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 11:55:00 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	_isatty_check(t_prompt *data)
 		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
 		if (!data->prompt)
 		{
-			printf("exit\n");
+			write(1, "exit\n", 5);
 			_free_struct(data);
 			_free_args_nexit(data);
 			if (data->exit_status)
@@ -43,10 +43,17 @@ int	_prompt_check(t_prompt *data)
 
 void	_exit_prompt_check(t_prompt *data)
 {
+	int	i;
+
 	if (data->prompt[0] != '\0' && ft_strcomp("exit", data->prompt) == 1)
 	{
-		_free_struct(data);
-		_free_args_nexit(data);
+		if (data->path)
+		{
+			i = -1;
+			while (data->path[++i])
+				free(data->path[i]);
+			free(data->path);
+		}
 		if (data->prompt)
 			free(data->prompt);
 		if (data->exit_status)

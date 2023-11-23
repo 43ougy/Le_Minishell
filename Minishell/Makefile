@@ -37,6 +37,9 @@ SRC = main.c					\
 
 OBJ = $(SRC:.c=.o)
 
+.c.o	:
+	$(CC) -g3 -I . -c $< -o $(<:.c=.o)
+
 all : $(NAME)
 	
 $(NAME) : $(OBJ)

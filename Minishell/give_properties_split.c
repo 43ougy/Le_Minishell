@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:03:39 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/21 14:03:40 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/23 13:42:11 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ int	_command_path(t_prompt *data, int i)
 	if (!access(data->cmde[i].cmd[0], F_OK | X_OK))
 		data->cmde[i].path = "CMD";
 	else if (ft_strcomp(data->cmde[i].cmd[0], "cd")
+		|| ft_strcomp(data->cmde[i].cmd[0], "pwd")
+		|| ft_strcomp(data->cmde[i].cmd[0], "echo")
 		|| ft_strcomp(data->cmde[i].cmd[0], "export")
 		|| ft_strcomp(data->cmde[i].cmd[0], "unset")
 		|| ft_strcomp(data->cmde[i].cmd[0], "exit")
