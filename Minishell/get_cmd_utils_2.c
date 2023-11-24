@@ -15,6 +15,7 @@
 int	_quotes_dollar_check(t_prompt *data, char *input, int quotes)
 {
 	data->index++;
+	data->i_check = data->index;
 	while (input[++data->i_check] && input[data->i_check] != quotes)
 	{
 		if (input[data->i_check] == '$' && input[data->i_check + 1]
@@ -42,7 +43,7 @@ int	_quotes_dollar_check(t_prompt *data, char *input, int quotes)
 
 int	_when_quotes(t_prompt *data, char *input)
 {
-	data->i_check = data->index;
+	data->save_index++;
 	if (input[data->index] == 34 && _quotes_dollar_check(data, input, 34))
 		return (1);
 	else if (input[data->index] == 39 && _quotes_dollar_check(data, input, 39))
@@ -59,7 +60,7 @@ int	_when_quotes(t_prompt *data, char *input)
 	}
 	data->index++;
 	while ((!_is_whitespace(input[data->index]) || _is_char(input[data->index]))
-		&& !_is_quotes(input[data->index]))
+		&& !_is_quotes(input[data->index]) && input[data->index])
 		data->index++;
 	return (0);
 }

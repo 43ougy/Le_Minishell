@@ -77,9 +77,13 @@ void	run_echo(t_prompt *data, int i)
 		option = 1;
 	if (option)
 		print_index = 1;
-	while (++print_index < data->cmd_count)
+	while (data->cmde[i].cmd[++print_index])
+	{
 		write(1, data->cmde[i].cmd[print_index], \
 			ft_strlen(data->cmde[i].cmd[print_index]));
+		if (data->cmde[i].cmd[print_index + 1])
+			write(1, " ", 1);
+	}
 	if (!option)
 		write(1, "\n", 1);
 }

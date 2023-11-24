@@ -39,7 +39,7 @@ int	_get_cmd(t_prompt *data, char *input)
 				return (1);
 			else if (_dollar_equals_check(data, input))
 				return (1);
-			data->save_index = data->index;
+			//data->save_index = data->index;
 		}
 	}
 	if (_give_properties(data, input))

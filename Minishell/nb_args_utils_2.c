@@ -98,10 +98,10 @@ int	_input_check_error(char *input, t_prompt *data)
 				return (1);
 			else if (input[i] == '|' && _check_pipe_error(input, &i, data))
 				return (1);
-			if (_is_quotes(input[i])
-				&& _check_quotes_error(input, &i, check_char, data))
-				return (1);
 		}
+		if (_is_quotes(input[i])
+			&& _check_quotes_error(input, &i, check_char, data))
+			return (1);
 	}
 	return (0);
 }
