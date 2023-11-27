@@ -34,15 +34,18 @@ int	_nb_cmd(char *input, t_prompt *data)
 	int	i;
 
 	i = 0;
-	if (_is_quotes(input[i]))
-		if (_quotes(input, &i, &data->nb_inar))
-			return (1);
-	if (!_is_quotes(input[i]))
+	while (input[i])
 	{
-		_no_quotes(input, &i, data);
-		if (input[i] == 34 || input[i] == 39)
+		if (_is_quotes(input[i]))
 			if (_quotes(input, &i, &data->nb_inar))
 				return (1);
+		if (!_is_quotes(input[i]))
+		{
+			_no_quotes(input, &i, data);
+			if (input[i] == 34 || input[i] == 39)
+				if (_quotes(input, &i, &data->nb_inar))
+					return (1);
+		}
 	}
 	return (0);
 }
