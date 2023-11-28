@@ -77,8 +77,14 @@ int	_parser(t_prompt *data)
 	if (!data->prompt)
 		return (1);
 	if (_nb_args(data, data->prompt, 1))
+	{
+		free(data->prompt);
 		return (1);
+	}
 	if (_get_cmd(data, data->prompt))
+	{
+		free(data->prompt);
 		return (1);
+	}
 	return (0);
 }

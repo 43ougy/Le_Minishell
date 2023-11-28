@@ -16,12 +16,14 @@ void	_infile_chevron(t_prompt *data, int i)
 {
 	data->cmde[i + 1].infile = 1;
 	data->infile = data->cmde[i + 1].cmd[0];
+	data->cmde[i + 1].path = ft_strdup("infile");
 }
 
 void	_outfile_chevron(t_prompt *data, int i)
 {
 	data->cmde[i + 1].outfile = 1;
 	data->outfile = data->cmde[i + 1].cmd[0];
+	data->cmde[i + 1].path = ft_strdup("outfile");
 }
 
 void	_chevron_file(t_prompt *data, int i, int j, char *input)

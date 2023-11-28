@@ -97,7 +97,7 @@ int	_check_rchevron_error(char *input, int *j)
 
 void	_input_first_check(char *input, int *i, t_prompt *data)
 {
-	if (!_is_char(input[*i]) && !_is_quotes(input[*i]) && input[*i] != ' ')
+	if (_is_alpha(input[*i]))
 	{
 		data->nb_args++;
 		while (input[*i] && !_is_char(input[*i]) && !_is_quotes(input[*i]))
@@ -127,8 +127,6 @@ void	_cmd_pipe_input(char *input, char *new_input, t_prompt *data)
 	cmd_pipe[i - 1] = '\0';
 	free(data->prompt);
 	data->prompt = ft_strdup(cmd_pipe);
-	input = NULL;
-	input = cmd_pipe;
 	free(cmd_pipe);
 	free(new_input);
 }

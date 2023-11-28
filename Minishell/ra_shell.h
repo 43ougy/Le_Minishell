@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/23 14:56:23 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/28 15:12:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ typedef struct t_shell
 	int		status;
 	int		append;
 	int		heredoc;
+	int		quit_cmd_pipe;
+	int		input_len;
 	pid_t	proc;
 }	t_prompt;
 

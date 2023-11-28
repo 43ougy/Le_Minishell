@@ -16,6 +16,7 @@ void	_cmd_pipe(char *input, t_prompt *data)
 {
 	char	*new_input;
 
+	data->quit_cmd_pipe = 1;
 	write(1, "> ", 2);
 	new_input = get_line(0);
 	if (!new_input)
@@ -32,52 +33,21 @@ void	_cmd_pipe(char *input, t_prompt *data)
 		_cmd_pipe_input(input, new_input, data);
 }
 
-int	_check_pipe_error(char *input, int *i, t_prompt *data)
+void	_set_pipe_data(t_prompt *data, int *tmp, int *i)
 {
-	int	tmp;
-
-	tmp = (*i) + 1;
+	*tmp = (*i) + 1;
 	data->nb_pipe++;
-	while (input[tmp] && input[tmp] != '|')
-	{
-		if (input[tmp] != ' ' && !_is_char(input[tmp])
-			&& !_is_quotes(input[tmp]))
-		{
-			tmp = 0;
-			break ;
-		}
-		tmp++;
-	}
-	if (tmp)
-		_cmd_pipe(input, data);
-	(*i)++;
-	if (input[*i] == '|')
-	{
-		write(2, "Cash'Hell: syntax error ", 24);
-		write(2, "near unexpected token `|'\n", 26);
-		return (1);
-	}
-	return (0);
+	data->quit_cmd_pipe = 0;
 }
 
-int	_check_quotes_error(char *input, int *in, int check_char, t_prompt *data)
+int	_print_error(void)
 {
-	int	i;
-
-	i = *in;
-	if (_quotes(input, &i, &data->nb_args))
-		return (1);
-	if (!check_char && data->nb_args > 1)
-		data->nb_args -= 1;
-	*in = i;
-	while (input[*in] && !_is_char(input[*in]))
-		(*in)++;
-	while (input[*in] && (_is_char(input[*in]) || input[*in] == ' '))
-		(*in)++;
-	return (0);
+	write(2, "Cash'Hell: syntax error ", 24);
+	write(2, "near unexpected token `|'\n", 26);
+	return (1);
 }
 
-int	_input_check_error(char *input, t_prompt *data)
+int	_input_check_error_re_use(char *input, t_prompt *data)
 {
 	int	i;
 	int	check_char;
@@ -98,11 +68,52 @@ int	_input_check_error(char *input, t_prompt *data)
 				return (1);
 			else if (input[i] == '|' && _check_pipe_error(input, &i, data))
 				return (1);
+			else if (data->quit_cmd_pipe)
+				return (0);
 		}
 		if (_is_quotes(input[i])
 			&& _check_quotes_error(input, &i, check_char, data))
 			return (1);
 	}
+	return (0);
+}
+
+int	_add_args(t_prompt *data, char *input)
+{
+	if (_input_check_error_re_use(input + data->input_len, data))
+		return (1);
+	return (0);
+}
+
+int	_check_pipe_error(char *input, int *i, t_prompt *data)
+{
+	int	tmp;
+
+	data->input_len = 0;
+	_set_pipe_data(data, &tmp, i);
+	while (input[tmp] && input[tmp] != '|')
+	{
+		if (input[tmp] != ' ' && !_is_char(input[tmp])
+			&& !_is_quotes(input[tmp]))
+		{
+			tmp = 0;
+			break ;
+		}
+		tmp++;
+	}
+	(*i)++;
+	if (tmp)
+	{
+		data->input_len = ft_strlen(data->prompt);
+		_cmd_pipe(data->prompt, data);
+		input = NULL;
+		input = data->prompt;
+		if (_add_args(data, input))
+			return (1);
+	}
+	
+	if (data->prompt[*i] == '|')
+		return (_print_error());
 	return (0);
 }
 

@@ -46,7 +46,6 @@ void	_child_process(t_prompt *data)
 		&& (ft_strcomp(data->cmde[0].path, "cd")
 			|| ft_strcomp(data->cmde[0].path, "export")
 			|| ft_strcomp(data->cmde[0].path, "unset")
-		//	|| ft_strcomp(data->cmde[0].path, "env")
 			|| ft_strcomp(data->cmde[0].path, "bad_set_env")
 			|| ft_strcomp(data->cmde[0].path, "exit")
 			|| ft_strcomp(data->cmde[0].path, "set_env")))
@@ -99,8 +98,6 @@ void	_cmd_execution(t_prompt *data, int status)
 		data->d_env = run_export(data, data->cmde[0].cmd[1]);
 	if (ft_strcomp(data->cmde[0].path, "unset"))
 		data->d_env = run_unset(data, data->cmde[0].cmd[1]);
-/*	if (ft_strcomp(data->cmde[0].path, "env"))
-		run_env(data);*/
 	if (ft_strcomp(data->cmde[0].path, "set_env"))
 		data->set_env = run_set_equals(data, data->cmde[0].cmd[0]);
 	if (ft_strcomp(data->cmde[0].path, "exit"))

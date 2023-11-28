@@ -98,7 +98,7 @@ int	_cmd_init(t_prompt *data, char *input)
 
 int	_dollar_equals_check(t_prompt *data, char *input)
 {
-	if (input[data->save_index] && _is_quotes(input[data->save_index]))
+	if (_is_quotes(input[data->save_index]))
 		return (0);
 	data->i_check = data->save_index - 1;
 	while (input[++data->i_check] && input[data->i_check] != ' ')

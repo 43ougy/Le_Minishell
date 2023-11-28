@@ -21,6 +21,8 @@ int	_check_cmd_exec(t_prompt *data, int i)
 		|| ft_strcomp(data->cmde[i].path, "unset")
 		|| ft_strcomp(data->cmde[i].path, "bad_set_env")
 		|| ft_strcomp(data->cmde[i].path, "set_env")
+		|| ft_strcomp(data->cmde[i].path, "infile")
+		|| ft_strcomp(data->cmde[i].path, "outfile")
 		|| ft_strcomp(data->cmde[i].path, "exit"))
 		return (1);
 	if (ft_strcomp(data->cmde[i].path, "pwd")
