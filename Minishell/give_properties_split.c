@@ -89,7 +89,7 @@ int	_give_properties(t_prompt *data, char *input)
 	}
 	while (++i < data->nb_args)
 	{
-		while (input[j] && !_is_char(input[j])/* && !_is_quotes(input[j])*/)
+		while (input[j] && !_is_char(input[j]))
 			j++;
 		_chevron_file(data, i, j, input);
 		if (!data->cmde[i].infile && !data->cmde[i].outfile)

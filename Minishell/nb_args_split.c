@@ -29,37 +29,6 @@ int	_check_quotes_error(char *input, int *in, int check_char, t_prompt *data)
 	return (0);
 }
 
-int	_input_check_error(char *input, t_prompt *data)
-{
-	int	i;
-	int	check_char;
-
-	i = 0;
-	check_char = 0;
-	while (input[i])
-	{
-		_input_first_check(input, &i, data);
-		while (input[i] && !_is_quotes(input[i]) && _is_char(input[i]))
-		{
-			check_char++;
-			if (input[i] == '|' && input[i + 1] == '|')
-				return (1);
-			else if (input[i] == '>' && _check_chevron_error(input + i, &i))
-				return (1);
-			else if (input[i] == '<' && _check_rchevron_error(input + i, &i))
-				return (1);
-			else if (input[i] == '|' && _check_pipe_error(input, &i, data))
-				return (1);
-			else if (data->quit_cmd_pipe)
-				return (0);
-		}
-		if (_is_quotes(input[i])
-			&& _check_quotes_error(input, &i, check_char, data))
-			return (1);
-	}
-	return (0);
-}
-
 void	_no_quotes(char *input, int *i, t_prompt *data)
 {
 	while (input[*i] && !_is_char(input[*i]) && !_is_quotes(input[*i]))
@@ -105,9 +74,9 @@ int	_nb_args(t_prompt *data, char *input, int method)
 	{
 		if (_token_check_error(input, data))
 			return (1);
+		data->quit_cmd_pipe = 0;
 		if (_input_check_error(input, data))
 			return (1);
-		printf("in nb_args\n");
 		data->cmde = malloc(sizeof(t_cmd) * data->nb_args + 1);
 		if (!data->cmde)
 			return (1);

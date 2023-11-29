@@ -17,6 +17,7 @@ SRC = main.c					\
 		get_cmd_utils_2.c		\
 		nb_args_utils.c			\
 		nb_args_utils_2.c		\
+		nb_args_utils_3.c		\
 		ft_split.c				\
 		get_line.c				\
 		command.c				\
@@ -43,9 +44,7 @@ OBJ = $(SRC:.c=.o)
 all : $(NAME)
 	
 $(NAME) : $(OBJ)
-	@printf "\e[33mCompile...\n\e[0m"
 	$(CC) $(FLAG) -o $(NAME) $(OBJ) -lreadline
-	@printf "\e[33mCompile\e[0m \e[32mSUCCESS\n\e[0m"
 
 clean :
 	$(RM) $(OBJ)

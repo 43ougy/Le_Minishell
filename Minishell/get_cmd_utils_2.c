@@ -25,7 +25,7 @@ int	_quotes_dollar_check(t_prompt *data, char *input, int quotes)
 			&& input[data->i_check + 1] == '?')
 			data->question_mark++;
 	}
-	if (data->dollar > 0 || data->question_mark > 0)
+	if (quotes != 39 && (data->dollar > 0 || data->question_mark > 0))
 	{
 		if (_when_dollar(data, input, quotes))
 			return (1);

@@ -22,7 +22,6 @@ void	_set_data_value_while(t_prompt *data)
 
 int	_get_cmd(t_prompt *data, char *input)
 {
-	printf("input = [%s]\n", input);
 	_set_data_value(data);
 	if (_space_checker(data, input))
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/28 15:12:13 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/29 08:41:18 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,9 @@ int		_check_pipe_error(char *input, int *i, t_prompt *data);
 int		_check_quotes_error(char *input, int *in, \
 int check_char, t_prompt *data);
 int		_input_check_error(char *input, t_prompt *data);
+int		_input_check_error_re_use(char *input, t_prompt *data);
+int		_add_args(t_prompt *data, char *input);
+int		_check_input_error(t_prompt *data, char *input, int *i);
 void	_init_cmde(t_prompt *data);
 
 //======Give_properties======//

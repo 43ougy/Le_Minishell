@@ -37,7 +37,7 @@ void	_set_pipe_data(t_prompt *data, int *tmp, int *i)
 {
 	*tmp = (*i) + 1;
 	data->nb_pipe++;
-	data->quit_cmd_pipe = 0;
+	//data->quit_cmd_pipe = 0;
 }
 
 int	_print_error(void)
@@ -45,44 +45,6 @@ int	_print_error(void)
 	write(2, "Cash'Hell: syntax error ", 24);
 	write(2, "near unexpected token `|'\n", 26);
 	return (1);
-}
-
-int	_input_check_error_re_use(char *input, t_prompt *data)
-{
-	int	i;
-	int	check_char;
-
-	i = 0;
-	check_char = 0;
-	while (input[i])
-	{
-		_input_first_check(input, &i, data);
-		while (input[i] && !_is_quotes(input[i]) && _is_char(input[i]))
-		{
-			check_char++;
-			if (input[i] == '|' && input[i + 1] == '|')
-				return (1);
-			else if (input[i] == '>' && _check_chevron_error(input + i, &i))
-				return (1);
-			else if (input[i] == '<' && _check_rchevron_error(input + i, &i))
-				return (1);
-			else if (input[i] == '|' && _check_pipe_error(input, &i, data))
-				return (1);
-			else if (data->quit_cmd_pipe)
-				return (0);
-		}
-		if (_is_quotes(input[i])
-			&& _check_quotes_error(input, &i, check_char, data))
-			return (1);
-	}
-	return (0);
-}
-
-int	_add_args(t_prompt *data, char *input)
-{
-	if (_input_check_error_re_use(input + data->input_len, data))
-		return (1);
-	return (0);
 }
 
 int	_check_pipe_error(char *input, int *i, t_prompt *data)
@@ -93,8 +55,7 @@ int	_check_pipe_error(char *input, int *i, t_prompt *data)
 	_set_pipe_data(data, &tmp, i);
 	while (input[tmp] && input[tmp] != '|')
 	{
-		if (input[tmp] != ' ' && !_is_char(input[tmp])
-			&& !_is_quotes(input[tmp]))
+		if (_is_alpha(input[tmp]))
 		{
 			tmp = 0;
 			break ;
@@ -106,13 +67,11 @@ int	_check_pipe_error(char *input, int *i, t_prompt *data)
 	{
 		data->input_len = ft_strlen(data->prompt);
 		_cmd_pipe(data->prompt, data);
-		input = NULL;
-		input = data->prompt;
-		if (_add_args(data, input))
+		if (_add_args(data, data->prompt))
 			return (1);
 	}
-	
-	if (data->prompt[*i] == '|')
+	printf("[%s] | [%s] | [%c]\n", data->prompt, data->prompt + data->input_len, data->prompt[data->input_len]);
+	if (data->prompt[data->input_len] == '|')
 		return (_print_error());
 	return (0);
 }
