@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/29 08:41:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/01 11:06:55 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct t_run
 	int		j;
 	char	*comp;
 	char	*equal;
+	char	*name;
 }	t_run;
 
 typedef struct t_shell
@@ -124,6 +125,7 @@ int		_get_cmd(t_prompt *data, char *input);
 void	_free_args(t_prompt *data, int status);
 void	_free_args_nexit(t_prompt *data);
 void	_free_struct(t_prompt *data);
+void	_free_env(t_prompt *data);
 int		_quotes(char *input, int *i, int *len);
 int		_parser(t_prompt *data);
 

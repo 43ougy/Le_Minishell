@@ -37,7 +37,6 @@ void	_set_pipe_data(t_prompt *data, int *tmp, int *i)
 {
 	*tmp = (*i) + 1;
 	data->nb_pipe++;
-	//data->quit_cmd_pipe = 0;
 }
 
 int	_print_error(void)
@@ -70,7 +69,6 @@ int	_check_pipe_error(char *input, int *i, t_prompt *data)
 		if (_add_args(data, data->prompt))
 			return (1);
 	}
-	printf("[%s] | [%s] | [%c]\n", data->prompt, data->prompt + data->input_len, data->prompt[data->input_len]);
 	if (data->prompt[data->input_len] == '|')
 		return (_print_error());
 	return (0);

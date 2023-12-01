@@ -16,8 +16,6 @@ extern int	g_sig_check;
 
 int	_set_status(t_prompt *data, int status)
 {
-	char	*give_status;
-
 	if (WIFEXITED(status))
 		data->status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -28,9 +26,7 @@ int	_set_status(t_prompt *data, int status)
 	if (data->exit_status)
 		free(data->exit_status);
 	data->exit_status = NULL;
-	give_status = ft_itoa(data->status);
-	data->exit_status = ft_strdup(give_status);
-	free(give_status);
+	data->exit_status = ft_itoa(data->status);
 	g_sig_check = 0;
 	if (!data->prompt)
 	{

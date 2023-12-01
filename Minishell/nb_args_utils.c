@@ -36,6 +36,15 @@ int	_token_check_error(char *input, t_prompt *data)
 		data->exit_status = ft_strdup("2");
 		return (1);
 	}
+	if (_is_limiter(input[i]) || (input[i] == '$' && !input[i + 1]))
+	{
+		write(1, &input[i], 1);
+		write(1, ": command not found\n", 20);
+		if (data->exit_status)
+			free(data->exit_status);
+		data->exit_status = ft_itoa(127);
+		return (1);
+	}
 	return (0);
 }
 
@@ -99,6 +108,13 @@ void	_input_first_check(char *input, int *i, t_prompt *data)
 {
 	if (_is_alpha(input[*i]))
 	{
+		data->nb_args++;
+		while (input[*i] && !_is_char(input[*i]) && !_is_quotes(input[*i]))
+			(*i)++;
+	}
+	else if (input[*i] == '$' && input[*i + 1])
+	{
+		(*i)++;
 		data->nb_args++;
 		while (input[*i] && !_is_char(input[*i]) && !_is_quotes(input[*i]))
 			(*i)++;

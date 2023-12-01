@@ -37,7 +37,7 @@ int	_make_env(t_prompt *data, char **env)
 void	_init_data(t_prompt *data)
 {
 	data->check_exit = 0;
-	data->exit_status = ft_strdup("0");
+	data->exit_status = ft_itoa(0);
 	data->set_env = NULL;
 	data->path = NULL;
 	data->cmde = NULL;
@@ -45,12 +45,12 @@ void	_init_data(t_prompt *data)
 
 void	_free_all(t_prompt *data)
 {
-	_free_struct(data);
-	_free_args_nexit(data);
 	if (data->prompt)
 		free(data->prompt);
 	if (data->exit_status)
 		free(data->exit_status);
+	_free_args_nexit(data);
+	_free_struct(data);
 }
 
 int	main(int ac, char **av, char **env)

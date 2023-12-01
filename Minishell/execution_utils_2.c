@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:13:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/24 12:11:09 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/30 10:07:11 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ int	_heredoc_check(t_prompt *data)
 		if (ft_strcompn(line, data->cmde[1].cmd[0], ft_strlen(line)))
 		{
 			if (_heredoc_command(data, ret))
+			{
+				free(line);
+				free(ret);
 				return (1);
+			}
 			free(line);
 			free(ret);
 			break ;
@@ -49,10 +53,17 @@ void	_child_process(t_prompt *data)
 			|| ft_strcomp(data->cmde[0].path, "bad_set_env")
 			|| ft_strcomp(data->cmde[0].path, "exit")
 			|| ft_strcomp(data->cmde[0].path, "set_env")))
-		exit(0);
+	{
+		if (data->exit_status)
+			free(data->exit_status);
+		_free_env(data);
+		_free_args(data, 0);
+	}
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
 	execute(data, data->i);
+	if (data->exit_status)
+		free(data->exit_status);
 	_free_args(data, 0);
 }
 

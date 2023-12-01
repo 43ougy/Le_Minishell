@@ -6,11 +6,24 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:45 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/24 12:00:03 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/30 08:39:10 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
+
+void	_free_env(t_prompt *data)
+{
+	int	i;
+
+	i = -1;
+	if (data->set_env)
+	{
+		while (data->set_env[++i])
+			free(data->set_env[i]);
+		free(data->set_env);
+	}	
+}
 
 void	_free_struct(t_prompt *data)
 {

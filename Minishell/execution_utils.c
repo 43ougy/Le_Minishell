@@ -75,23 +75,29 @@ int	_when_no_line(t_prompt *data, char *ret)
 	if (ft_strcomp(data->cmde[0].cmd[0], "cat") && ret)
 	{
 		write(1, ret, ft_strlen(ret));
-		data->exit_status = ft_strdup("0");
+		data->exit_status = ft_itoa(0);
 	}
 	return (1);
 }
 
 int	_heredoc_command(t_prompt *data, char *ret)
 {
-	if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
+	if (!ret)
+		return (0);
+	else if (ft_strcomp(data->cmde[0].cmd[0], "cat"))
 	{
 		write(1, ret, ft_strlen(ret));
-		data->exit_status = ft_strdup("0");
+		if (data->exit_status)
+			free(data->exit_status);
+		data->exit_status = ft_itoa(0);
 		return (1);
 	}
 	else if (ft_strcomp(data->cmde[0].cmd[0], "echo"))
 	{
 		write(1, "\n", 1);
-		data->exit_status = ft_strdup("0");
+		if (data->exit_status)
+			free(data->exit_status);
+		data->exit_status = ft_itoa(0);
 		return (1);
 	}
 	return (0);

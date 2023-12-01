@@ -6,13 +6,25 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:46:01 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/24 12:12:18 by abougy           ###   ########.fr       */
+/*   Updated: 2023/11/30 08:41:37 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
 extern int	g_sig_check;
+
+void	_run_cmd(t_prompt *data, int i)
+{
+	if (ft_strcomp(data->cmde[i].path, "pwd"))
+		run_pwd();
+	if (ft_strcomp(data->cmde[i].path, "echo"))
+		run_echo(data, i);
+	if (ft_strcomp(data->cmde[i].path, "env"))
+		run_env(data);
+	if (ft_strcomp(data->cmde[i].cmd[0], "clear"))
+		write(1, "\033c", 3);
+}
 
 int	_check_cmd_exec(t_prompt *data, int i)
 {
@@ -30,14 +42,8 @@ int	_check_cmd_exec(t_prompt *data, int i)
 		|| ft_strcomp(data->cmde[i].cmd[0], "clear")
 		|| ft_strcomp(data->cmde[i].path, "env"))
 	{
-		if (ft_strcomp(data->cmde[i].path, "pwd"))
-			run_pwd();
-		if (ft_strcomp(data->cmde[i].path, "echo"))
-			run_echo(data, i);
-		if (ft_strcomp(data->cmde[i].path, "env"))
-			run_env(data);
-		if (ft_strcomp(data->cmde[i].cmd[0], "clear"))
-			write(1, "\033c", 3);
+		_run_cmd(data, i);
+		_free_env(data);
 		return (1);
 	}
 	return (0);
