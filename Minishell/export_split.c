@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 14:03:26 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/01 11:38:01 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/01 16:13:23 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,11 @@ char	**run_export(t_prompt *data, char *name)
 	int		j;
 
 	new_env = NULL;
+	run.comp = NULL;
 	run.i = 0;
 	j = 0;
+	if (!name)
+		printf("no arguments\n");
 	if (data->equals)
 	{
 		while (name[j] != '=')
@@ -141,16 +144,24 @@ char	**run_export(t_prompt *data, char *name)
 		}
 		if (data->d_env)
 		{
+			if (!run.comp)
+				run.comp = ft_strdup(name);
+//			printf("comp = [%s]\n", run.comp);
 			_comp_env(data, &run, run.name);
 			if (run.i == -1)
+			{
+				free(run.name);
 				return (data->d_env);
+			}
 		}
 		_env_len(data, &run);
 		new_env = malloc(sizeof(char *) * (run.len + 1));
 		if (!new_env)
 			return (NULL);
-		run.comp = ft_strdup(name);
+		if (!run.comp)
+			run.comp = ft_strdup(name);
 		new_env = _set_export_env(data, &run, new_env);
+		free(run.name);
 	}
 	else
 	{
