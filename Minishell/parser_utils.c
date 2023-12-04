@@ -22,7 +22,7 @@ void	_free_env(t_prompt *data)
 		while (data->set_env[++i])
 			free(data->set_env[i]);
 		free(data->set_env);
-	}	
+	}
 }
 
 void	_free_struct(t_prompt *data)

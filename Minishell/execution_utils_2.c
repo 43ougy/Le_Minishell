@@ -98,6 +98,7 @@ void	_exit_cmd(t_prompt *data, int status)
 	if (data->exit_status)
 		free(data->exit_status);
 	free(data->prompt);
+	_free_env(data);
 	_free_args(data, status);
 }
 

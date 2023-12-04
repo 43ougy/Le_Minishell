@@ -22,6 +22,7 @@ void	_isatty_check(t_prompt *data)
 			write(1, "exit\n", 5);
 			if (data->exit_status)
 				free(data->exit_status);
+			_free_env(data);
 			_free_args(data, 0);
 		}
 	}
@@ -42,6 +43,7 @@ void	_exit_prompt_check(t_prompt *data)
 			free(data->prompt);
 		if (data->exit_status)
 			free(data->exit_status);
+		_free_env(data);
 		_free_args(data, 0);
 	}
 }

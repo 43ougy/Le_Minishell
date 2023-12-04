@@ -69,7 +69,7 @@ void	run_pwd(void)
 int	_check_option(t_prompt *data, int i, int *print_index)
 {
 	int	j;
-	
+
 	j = 0;
 	if (ft_strcomp(data->cmde[i].cmd[1], "-n")
 		&& ft_strcomp(data->cmde[i].cmd[1], "-n"))
@@ -85,7 +85,6 @@ int	_check_option(t_prompt *data, int i, int *print_index)
 				return (0);
 		(*print_index)++;
 		return (1);
-		
 	}
 	return (0);
 }

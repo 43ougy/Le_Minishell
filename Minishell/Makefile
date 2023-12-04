@@ -6,6 +6,7 @@ SRC = main.c					\
 		utils_1.c				\
 		utils_2.c				\
 		utils_3.c				\
+		utils_4.c				\
 		parser_utils.c			\
 		get_line_utils.c		\
 		give_properties_utils.c	\

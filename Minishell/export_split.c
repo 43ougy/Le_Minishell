@@ -116,6 +116,68 @@ char	**run_export(t_prompt *data, char *name)
 	return (new_env);
 }*/
 
+char	**_new_env(t_prompt *data)
+{
+	char	**new_env;
+	int		i;
+	int		len;
+	
+	i = -1;
+	len = 0;
+	while (data->d_env[len])
+		len++;
+	new_env = malloc(sizeof(char *) * (len + 1));
+	while (data->d_env[++i])
+		new_env[i] = ft_strdup(data->d_env[i]);
+	new_env[i] = NULL;
+	return (new_env);
+}
+
+char	**_sort_new_env(char **new_env)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+	
+	i = -1;
+	while (new_env[++i])
+	{
+		j = -1;
+		while (new_env[++j + 1])
+		{
+			if (_comp(new_env[i], new_env[j]) < 0)
+			{
+				tmp = new_env[i];
+				new_env[i] = new_env[j];
+				new_env[j] = tmp;
+			}
+		}
+	}
+	return (new_env);
+}
+
+void	_sort_env(t_prompt *data)
+{
+	char	**new_env;
+	int		i;
+
+	i = -1;
+	if (!data->d_env)
+		return ;
+	new_env = _new_env(data);
+	if (!new_env)
+		return ;
+	new_env = _sort_new_env(new_env);
+	while (new_env[++i])
+	{
+		write(1, "declare -x ", 11);
+		write(1, new_env[i], ft_strlen(new_env[i]));
+		write(1, "\n", 1);
+		free(new_env[i]);
+	}
+	free(new_env);
+}
+
 char	**run_export(t_prompt *data, char *name)
 {
 	t_run	run;
@@ -127,8 +189,11 @@ char	**run_export(t_prompt *data, char *name)
 	run.i = 0;
 	j = 0;
 	if (!name)
-		printf("no arguments\n");
-	if (data->equals)
+	{
+		_sort_env(data);
+		return (data->d_env);
+	}
+	else if (data->equals)
 	{
 		while (name[j] != '=')
 			j++;
@@ -146,7 +211,6 @@ char	**run_export(t_prompt *data, char *name)
 		{
 			if (!run.comp)
 				run.comp = ft_strdup(name);
-//			printf("comp = [%s]\n", run.comp);
 			_comp_env(data, &run, run.name);
 			if (run.i == -1)
 			{

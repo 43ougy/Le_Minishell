@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/01 11:06:55 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/04 11:15:32 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ typedef struct t_cmd
 
 typedef struct t_run
 {
-	int		len;
-	int		i;
-	int		j;
 	char	*comp;
 	char	*equal;
 	char	*name;
+	int		len;
+	int		i;
+	int		j;
 }	t_run;
 
 typedef struct t_shell
@@ -80,10 +80,10 @@ typedef struct t_shell
 	int		val_len;
 	int		dollar;
 	int		equals;
-	int		nb_pipe;
 	char	**d_var;
 	char	*d_cmd;
 	char	*exit_status;
+	int		nb_pipe;
 	int		status;
 	int		append;
 	int		heredoc;
@@ -109,6 +109,7 @@ void	*ft_calloc(size_t count, size_t size);
 void	handle_signal(int signo);
 char	*ft_getenv(char **env, char *path_name);
 char	**give_path(char *path);
+int		_comp(char *s1, char *s2);
 
 //===========Parser===========//
 int		_is_quotes(char c);
