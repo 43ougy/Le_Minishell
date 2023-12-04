@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:45:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/17 11:59:59 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/04 13:28:06 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ int	_parser(t_prompt *data)
 		free(data->prompt);
 		return (1);
 	}
+	printf("nb_args -> %d\n", data->nb_args);
+	fflush(stdout);
 	if (_get_cmd(data, data->prompt))
 	{
 		free(data->prompt);

@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 08:49:06 by abougy            #+#    #+#             */
-/*   Updated: 2023/11/18 16:47:02 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/04 14:10:44 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
 
-int	ft_strcomp(char *s1, char *s2)
+int	_strcomp(char *s1, char *s2)
 {
 	int	i;
 	int	len;
 
 	i = 0;
-	if (ft_strlen(s1) > ft_strlen(s2))
-		len = ft_strlen(s1);
+	if (_strlen(s1) > _strlen(s2))
+		len = _strlen(s1);
 	else
-		len = ft_strlen(s2);
+		len = _strlen(s2);
 	while (i < len)
 	{
 		if (s1[i] != s2[i])
@@ -31,7 +31,7 @@ int	ft_strcomp(char *s1, char *s2)
 	return (1);
 }
 
-int	ft_strcompn(char *s1, char *s2, int n)
+int	_strcompn(char *s1, char *s2, int n)
 {
 	int	i;
 
@@ -45,7 +45,7 @@ int	ft_strcompn(char *s1, char *s2, int n)
 	return (1);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*_strjoin(char *s1, char *s2)
 {
 	int		len;
 	char	*ret;
@@ -61,7 +61,7 @@ char	*ft_strjoin(char *s1, char *s2)
 			return (NULL);
 		s1[0] = '\0';
 	}
-	len = ft_strlen(s1) + ft_strlen(s2);
+	len = _strlen(s1) + _strlen(s2);
 	ret = malloc(sizeof(char) * len + 1);
 	while (s1[++i] && s1[i])
 		ret[i] = s1[i];
@@ -71,26 +71,26 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (ret);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*_substr(char const *s, unsigned int start, size_t len)
 {
 	char	*s2;
 	size_t	nlen;
 
 	if (!s)
 		return (NULL);
-	if (ft_strlen(s) < start)
-		return (ft_strdup(""));
-	nlen = ft_strlen(s + start);
+	if (_strlen(s) < start)
+		return (_strdup(""));
+	nlen = _strlen(s + start);
 	if (nlen < len)
 		len = nlen;
 	s2 = malloc(sizeof(*s2) * (len + 1));
 	if (!s2)
 		return (NULL);
-	ft_strlcpy(s2, s + start, len + 1);
+	_strlcpy(s2, s + start, len + 1);
 	return (s2);
 }
 
-int	ft_atoi(char *str)
+int	_atoi(char *str)
 {
 	long	nb;
 	int		sig;

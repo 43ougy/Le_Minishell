@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ra_shell.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 10:30:18 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/04 11:15:32 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/04 13:17:01 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 # include <dirent.h>
 # include <fcntl.h>
 
-typedef struct t_signal
+typedef struct s_signal
 {
 	const struct sigaction	ctrl_c;
 	const struct sigaction	ctrl_b;
 }	t_signal;
 
-typedef struct t_cmd
+typedef struct s_cmd
 {
 	char	**cmd;
 	char	*path;
@@ -40,7 +40,7 @@ typedef struct t_cmd
 	int		n_inarg;
 }	t_cmd;
 
-typedef struct t_run
+typedef struct s_run
 {
 	char	*comp;
 	char	*equal;
@@ -50,7 +50,7 @@ typedef struct t_run
 	int		j;
 }	t_run;
 
-typedef struct t_shell
+typedef struct s_shell
 {
 	char	*prompt;
 	char	**path;
