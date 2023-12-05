@@ -5,10 +5,12 @@ SRC =	$(DIR)main.c						\
 		$(DIR)running.c						\
 		$(UTILS_DIR)_itoa.c  				\
 		$(UTILS_DIR)_split.c  				\
-		$(UTILS_DIR)utils_1.c  				\
-		$(UTILS_DIR)utils_2.c  				\
-		$(UTILS_DIR)utils_3.c				\
-		$(UTILS_DIR)utils_4.c
+		$(UTILS_DIR)alloc_utils.c 			\
+		$(UTILS_DIR)check_char_utils.c 		\
+		$(UTILS_DIR)check_char_utils_2.c	\
+		$(UTILS_DIR)string_utils.c 			\
+		$(UTILS_DIR)string_utils_2.c 		\
+		$(UTILS_DIR)utils.c
 
 CC = gcc
 RM = rm -f

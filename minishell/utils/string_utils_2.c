@@ -49,16 +49,6 @@ char	*_strdup(const char *s)
 	return (dest);
 }
 
-size_t	_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
 char	*_strncpy(char *dest, char *src, int n)
 {
 	int	i;
@@ -68,11 +58,4 @@ char	*_strncpy(char *dest, char *src, int n)
 		dest[i] = src[i];
 	dest[n] = '\0';
 	return (dest);
-}
-
-int	_is_num(char c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
 }

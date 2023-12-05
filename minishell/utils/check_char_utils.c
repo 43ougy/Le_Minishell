@@ -12,7 +12,7 @@
 
 #include "ra_shell.h"
 
-int	_is_char(char c)
+int	_is_special_char(char c)
 {
 	if (c == '|' || c == '<' || c == '>')
 		return (1);

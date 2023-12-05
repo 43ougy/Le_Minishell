@@ -22,6 +22,10 @@ int		_is_alpha(char c);
 int		_is_limiter(char c);
 int		_is_whitespace(char c);
 char	**_duplicate_tab(char **tab);
+//void	_free_args(t_prompt *data, int status);
 void	_free_tab(char **tab);
+void	_free(char *string);
+char	*_getenv(char **env, char *path_name);
+char	**_give_path(char *path);
 
 #endif

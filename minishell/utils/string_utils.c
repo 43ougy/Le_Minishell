@@ -45,6 +45,16 @@ int	_strcompn(char *s1, char *s2, int n)
 	return (1);
 }
 
+int	_comp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
+}
+
 char	*_strjoin(char *s1, char *s2)
 {
 	int		len;
@@ -88,26 +98,4 @@ char	*_substr(char const *s, unsigned int start, size_t len)
 		return (NULL);
 	_strlcpy(s2, s + start, len + 1);
 	return (s2);
-}
-
-int	_atoi(char *str)
-{
-	long	nb;
-	int		sig;
-
-	nb = 0;
-	sig = 1;
-	if (*str == '-')
-		sig = -1;
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str)
-	{
-		if (!_is_num(*str))
-			return (-1);
-		nb = nb * 10 + (*str++ - '0');
-	}
-	if (nb * sig <= 0 || nb * sig > 2147483647)
-		return (-1);
-	return (nb);
 }

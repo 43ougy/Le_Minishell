@@ -28,13 +28,11 @@ static void	_init_data(t_prompt *data)
 
 static int	end_prog(t_prompt *data)
 {
-	// if (data->prompt)
-	// 	free(data->prompt);
-	// if (data->exit_status)
-	// 	free(data->exit_status);
-	// _free_args_nexit(data);
-	// _free_struct(data);
+	_free(data->prompt);
+	//_free(data->exit_status);
+	//_free_args_nexit(data);
 	_free_tab(data->d_env);
+	_free_tab(data->path);
 	return (0);
 }
 
@@ -52,7 +50,7 @@ int	main(int ac, char **av, char **env)
 	{
 		signal(SIGINT, handle_signal);
 		signal(SIGQUIT, SIG_IGN);
-		if (!running(&data))
+		if (running(&data))
 			break ;
 	}
 	return (end_prog(&data));
