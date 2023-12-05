@@ -49,3 +49,30 @@ void	_free_args(t_prompt *data, int status)
 	_free_tab(data->path);
 	exit(status);
 }
+
+char	**_endtab_push(char **tab, char *to_add)
+{
+	int		len;
+	char	**ret;
+
+	len = 0;
+	while (tab && tab[len])
+		len++;
+	ret = malloc(sizeof(char *) * (len + 2));
+	if (!ret)
+		return (NULL);
+	len = 0;
+	while (tab && tab[len])
+	{
+		ret[len] = tab[len];
+		if (!ret[len++])
+			return (_free_tab(ret));
+	}
+	ret[len] = _strdup(to_add);
+	if (!ret[len++])
+		return (_free_tab(ret));
+	ret[len] = NULL;
+	if (tab)
+		free(tab);
+	return (ret);
+}

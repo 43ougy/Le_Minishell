@@ -31,7 +31,7 @@ t_parse	*parse(t_prompt *data, char *ret_value)
 }
 
 
-char	**extract_cdm(t_prompt *data, int *pos, t_red **red)
+char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 {
 	char	**cmd;
 

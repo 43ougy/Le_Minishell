@@ -30,6 +30,7 @@ int		_is_whitespace(char c);
 void	_free_tab(char **tab);
 void	_free(char *string);
 void	*_calloc(size_t count, size_t size);
+char	**_endtab_push(char **tab, char *to_add);
 
 /*=============== path ===================*/
 char	*_getenv(char **env, char *path_name);
