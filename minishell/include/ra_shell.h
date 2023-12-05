@@ -14,6 +14,7 @@
 # include <fcntl.h>
 
 # include "utils.h"
+# include "parsing.h"
 
 /* ===================== struct ==================== */
 typedef struct s_cmd

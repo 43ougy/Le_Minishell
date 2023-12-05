@@ -1,5 +1,5 @@
 DIR = ./srcs/
-UTILS_DIR = ./utils/
+UTILS_DIR = ./srcs/utils/
 
 SRC =	$(DIR)main.c						\
 		$(DIR)running.c						\
