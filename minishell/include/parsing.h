@@ -18,7 +18,7 @@ typedef struct s_redirection
 
 typedef struct s_parse
 {
-	int				indice;
+	int				pipe_type; /* 0 -> first | 1 -> middle | 2 -> last */
 	int				list_size;
 	t_red			*red;
 	char			**cmds;
@@ -42,6 +42,9 @@ t_parse		*add_parse(t_parse *begin, t_red *red, char **cmd);
 
 
 /* ================== PLAN ================== */
+
+// before:
+// 	->	prompt_verif() for the quote
 
 // extract_parse(); // 1
 

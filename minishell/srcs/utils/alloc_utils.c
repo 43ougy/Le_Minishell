@@ -15,7 +15,7 @@ void	*_calloc(size_t count, size_t size)
 	return (tab);
 }
 
-void	_free_tab(char **tab)
+void	*_free_tab(char **tab)
 {
 	int	i;
 
@@ -23,6 +23,7 @@ void	_free_tab(char **tab)
 	while (tab && tab[++i])
 		free(tab[i]);
 	free(tab);
+	return (NULL);
 }
 
 void	_free(char *string)
@@ -56,6 +57,8 @@ char	**_endtab_push(char **tab, char *to_add)
 	char	**ret;
 
 	len = 0;
+	if (!to_add)
+		return (tab);
 	while (tab && tab[len])
 		len++;
 	ret = malloc(sizeof(char *) * (len + 2));

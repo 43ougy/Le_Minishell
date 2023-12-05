@@ -11,7 +11,7 @@ t_parse	*new_node(t_red *red, char **cmd)
 		return (NULL);
 	while (cmd && cmd[cmd_size])
 		cmd_size++;
-	new_node->indice = pos;
+	new_node->pipe_type = 0;
 	new_node->list_size = cmd_size;
 	new_node->red = red;
 	new_node->cmd = cmd;

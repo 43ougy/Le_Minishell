@@ -27,7 +27,7 @@ int		_is_whitespace(char c);
 
 /*=============== alloc ==================*/
 //void	_free_args(t_prompt *data, int status);
-void	_free_tab(char **tab);
+void	*_free_tab(char **tab);
 void	_free(char *string);
 void	*_calloc(size_t count, size_t size);
 char	**_endtab_push(char **tab, char *to_add);
