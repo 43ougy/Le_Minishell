@@ -62,3 +62,35 @@ t_parse	*add_parse(t_parse *begin, t_red *red, char **cmd)
 	act->next = new;
 	return (begin);
 }
+
+
+// to remove
+void	print_address()
+{
+	while (ptr)
+	{
+		printf("cmd 1\n");
+		// print tokens
+		for (int i = 0; ll->cmds && ll->cmds[i]; i++)
+			printf("[%s] ", ll->cmds[i]);
+		printf("\nredirection:");
+		// print red
+		for (int i = 0; i < 4; i++)
+		{
+			printf("\nred[%d]", i);
+			char	**tab = (char **)(&ll->red) + (sizeof(char **) + i);
+			if (!tab)
+			{
+				printf("NULL")
+				break ;
+			}
+			for (int j = 0; tab[j]; j++)
+				printf("[%s] ", tab[j]);
+			printf("\n");
+		}
+		ptr = ptr->next;
+	}
+}
+
+
+
