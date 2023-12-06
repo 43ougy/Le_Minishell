@@ -7,6 +7,7 @@ static char	modified_edge(char edge, char c)
 	return (c);
 }
 
+// checker les |
 // si $ continue jusqu'a > or <
 // echo "$PA>test" -> (>test) -> one token
 // echo "test | test" -> (test | test) -> one token
@@ -30,8 +31,9 @@ char	*extract_token(char *prompt, int *pos)
 	token = malloc(sizeof(char) * (len + 1));
 	if (!token)
 		return (NULL);
+	token = _strncpy(token, &prompt[*pos], len);
 	(*pos) += len;
-	return (_strncpy(token, &prompt[*pos], len));
+	return (token);
 }
 
 char	*modified_token(char *token, t_red *red, int *status)
@@ -40,3 +42,9 @@ char	*modified_token(char *token, t_red *red, int *status)
 
 	ret = NULL;
 }
+
+
+
+
+
+

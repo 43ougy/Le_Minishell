@@ -42,22 +42,8 @@ t_parse		*add_parse(t_parse *begin, t_red *red, char **cmd);
 char		*extract_token(char *prompt, int *pos);
 char		*modified_token(char *token, t_red *red, int *status);
 
-
-
-
-/* ================== PLAN ================== */
-
-// before:
-// 	->	prompt_verif() for the quote
-
-// extract_parse(); // 1
-
-// 		extract_list(); // 2 -> return (list + t_red)
-
-// 			char *extract_token(...);
-// 			char *modified_token(...);
-// 			int	add_token(t_token *list, char *token, bool replace);
-
-// 		int	add_list(t_parse *parse, t_token *list, t_red *red);
+// token_ext.c
+char		*add_str(char *src, char *str);
+char		*add_char(char *src, char c);
 
 #endif

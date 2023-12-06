@@ -11,6 +11,10 @@ static bool	error_in_parsing(t_red *red, char **cmd)
 	return (false);
 }
 
+// ls -l>test| pwd | cat
+// [ls][-l]
+// red -> outup1 [test] 
+
 t_parse	*parse(t_prompt *data, char *ret_value)
 {
 	int		pos;
@@ -46,6 +50,7 @@ void	*print_parse_error(char *prompt, int pos, char **cmd)
 	return (NULL);
 }
 
+// agrandir la fonction + incrementer pos pour le pipe
 char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 {
 	int		len;
@@ -61,7 +66,8 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 			(*pos)++;
 		if (!data->prompt[*pos] || data->prompt[*pos] != '|') // nothing on line
 			return (print_parse_error(data->prompt, *pos, cmd))
-		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha')
+		// go up
+		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha'>file1)
 		if (!token)
 			return (_free_tab(cmd));
 		token = modified_token(token, red, &status); // set red
@@ -85,11 +91,11 @@ bool	quote_check(char *prompt)
 	{
 		if (edge == prompt[i])
 			edge = 0;
-		else
+		else if (prompt[i] == '\'' || prompt[i] == '\"')
 			edge = prompt[i];
 	}
 	if (edge == 0)
 		return (true);
-	write(2, "^\nunexpected quote\n", 19);
+	write(2, "unexpected quote\n", 17);
 	return (false);
 }
