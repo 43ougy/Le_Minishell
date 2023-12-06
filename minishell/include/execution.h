@@ -8,11 +8,11 @@ int		_execute(t_parse *parse, int fd_in, int fd_out);
 
 /*=============== builtins ===============*/
 int		_cd(t_prompt *data, char **cmd);
-int		_echo(t_prompt *data, int i);
-int		_env(t_prompt *data);
-int		_export(int nb_args, char **args);
+int		_echo(char *cmd);
+int		_env(char **env);
+int		_export(t_prompt *data, int nb_args, char **args);
 int		_pwd(void);
-int		_unset(int nb_args, char **args);
-void	_exit(t_prompt *data, int status);
+int		_unset(t_prompt *data, int nb_args, char **args);
+void	_exit(t_parse *parse);
 
 #endif

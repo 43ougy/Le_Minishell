@@ -38,7 +38,7 @@ static void	_sort_env(t_prompt *data)
 	while (new_env[++i])
 	{
 		write(1, "declare -x ", 11);
-		write(1, new_env[i], ft_strlen(new_env[i]));
+		write(1, new_env[i], _strlen(new_env[i]));
 		write(1, "\n", 1);
 		free(new_env[i]);
 	}
@@ -59,12 +59,12 @@ static int	_valid_args(char *str)
 	return(1)
 }
 
-int	_export(int nb_args, char **args)
+int	_export(t_prompt *data, int nb_args, char **args)
 {
 	if (nb_args > 2)
 		return (1);
 	if (nb_args == 1)
-		r_sort_env();
+		_sort_env(data);
 	else if (!_valid_args(args[1]))
 		data->d_env = _endtab_push(data->d_env, args[1]);
 	else

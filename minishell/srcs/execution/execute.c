@@ -19,22 +19,22 @@ static int	is_builtin(char *cmd)
 	return (0);
 }
 
-static int	exec_builtin(t_parse *parse, int builtin)
+static int	exec_builtin(t_parse *parse, t_prompt *data, int builtin)
 {
 	if (builtin == 1)
-		return (_cd());
+		return (_cd(data, parse->cmd));
 	else if (builtin == 2)
-		return (_echo());
+		return (_echo(parse->cmd));
 	else if (builtin == 3)
 		return (_pwd());
 	else if (builtin == 4)
-		return (_export());
+		return (_export(data, parse->list_size, parse->cmd));
 	else if (builtin == 5)
-		return (_unset());
+		return (_unset(data, parse->list_size, parse->cmd));
 	else if (builtin == 6)
-		return (_env());
+		return (_env(data->d_env));
 	else if (builtin == 7)
-		_exit();
+		_exit(parse);
 }
 
 static void	exit_cmd(int sig)
@@ -42,40 +42,40 @@ static void	exit_cmd(int sig)
 	write(1, "\n", 1);
 	//need to assign pid to something like g_var or struct
 	//kill current process if CTRL^C is pressed (wc for exemple)
-	kill(pid, SIGKILL);
+	kill(data->proc, SIGKILL);
 }
 
-void	_exec(t_parse *parse)
+void	_exec(t_parse *parse, t_prompt *data)
 {
 	char	*path;
 
 	if (!access(parse->cmd[0], F_OK | X_OK))
 	{
-		if (execve(parse->cmd[0], parse->cmd, env) == -1)
+		if (execve(parse->cmd[0], parse->cmd, data->d_env) == -1)
 			perror(parse->cmd[0])
 	}
 	else
 	{
-		path = _get_path(parse->cmd[0], env);
+		path = _get_path(parse->cmd[0], data->d_env);
 		if (!path)
 			perror(path);
-		if (exeve(path, parse->cmd, env) == -1)
+		if (exeve(path, parse->cmd, data->d_env) == -1)
 			perror(path);
 		free(path);
 	}
 }
 
-int	_execute(t_parse *parse, int fd_in, int fd_out)
+int	_execute(t_parse *parse, t_prompt *data,int fd_in, int fd_out)
 {
 	int		builtin;
-	int		status;
+	int		status; //maybe change it to data->status or smthg else
 	pid_t	pid;
 
 	builtin = is_builtin(parse->cmd[0])
 	if (builtin)
 		return (exec_builtin(parse, builtin))
-	pid = fork();
-	if (!pid)
+	data->proc = fork();
+	if (!data->proc)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -85,7 +85,7 @@ int	_execute(t_parse *parse, int fd_in, int fd_out)
 		exit(0);
 	}
 	signal(SIGINT, &exit_cmd);
-	waitpid(pid, status, 0);
+	waitpid(data->proc, status, 0);
 	if (!WIFEXITED(status))
 		return(-1);
 	return (WEXITSTATUS(status));

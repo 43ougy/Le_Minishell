@@ -1,13 +1,13 @@
 #include "execution.h"
 
-int	_env(t_prompt *data)
+int	_env(char **env)
 {
 	int	i;
 
 	i = -1;
-	while (data->d_env[++i])
+	while (env[++i])
 	{
-		write(1, data->d_env[i], ft_strlen(data->d_env[i]));
+		write(1, env[i], ft_strlen(env[i]));
 		write(1, "\n", 1);
 	}
 	return (0);
