@@ -12,24 +12,29 @@ static int	is_builtin(char *cmd)
 		return (4);
 	else if (_strcomp(cmd, "unset"))
 		return (5);
-	else if (_strcomp(cmd, "exit"))
+	else if (_strcomp(cmd, "env"))
 		return (6);
+	else if (_strcomp(cmd, "exit"))
+		return (7);
+	return (0);
 }
 
 static int	exec_builtin(t_parse *parse, int builtin)
 {
 	if (builtin == 1)
-		return (cd());
+		return (_cd());
 	else if (builtin == 2)
-		return (echo());
+		return (_echo());
 	else if (builtin == 3)
-		return (pwd());
+		return (_pwd());
 	else if (builtin == 4)
-		return (export());
+		return (_export());
 	else if (builtin == 5)
-		return (unset());
+		return (_unset());
 	else if (builtin == 6)
-		return (exit());
+		return (_env());
+	else if (builtin == 7)
+		_exit();
 }
 
 static void	exit_cmd(int sig)

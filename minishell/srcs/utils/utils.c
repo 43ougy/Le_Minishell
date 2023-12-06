@@ -37,12 +37,11 @@ char	**_duplicate_tab(char **tab)
 
 	i = -1;
 	len = 0;
-	while (tab[++i])
+	while (tab[len])
 		len++;
 	new_tab = malloc(sizeof(char *) * (len + 1));
 	if (!new_tab)
 		return (NULL);
-	i = -1;
 	while (tab[++i])
 		new_tab[i] = _strdup(tab[i]);
 	new_tab[len] = NULL;
