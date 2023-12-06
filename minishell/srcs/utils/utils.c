@@ -10,6 +10,16 @@ size_t	_strlen(const char *s)
 	return (i);
 }
 
+int	_tblen(char **tab)
+{
+	int	len;
+
+	len = 0;
+	while (tab[len])
+		len++;
+	return (len);
+}
+
 void	_bzero(void *s, size_t n)
 {
 	size_t	i;

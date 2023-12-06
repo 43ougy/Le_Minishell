@@ -16,6 +16,7 @@ int		_atoi(char *str);
 void	_bzero(void *s, size_t n);
 size_t	_strlen(const char *s);
 char	**_duplicate_tab(char **tab);
+int		_tblen(char **tab);
 
 /*=============== check_char =============*/
 int		_is_quotes(char c);
@@ -35,6 +36,7 @@ char	**_endtab_push(char **tab, char *to_add);
 /*=============== path ===================*/
 char	*_getenv(char **env, char *path_name);
 char	**_give_path(char *path);
+char	*_get_path(char *cmd, char **env);
 
 char	*get_line(int fd);
 char	**_split(char const *s, char c);
