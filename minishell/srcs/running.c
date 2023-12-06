@@ -54,7 +54,7 @@ int	running(t_prompt *data)
 	if (!parse)
 		return (0);
 
-	// if (!_execution(data))
+	// if (global_launcher(parse, data))
 	// 	return (1);
 
 	printf("%s\n", data->prompt);

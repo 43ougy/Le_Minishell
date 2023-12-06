@@ -1,6 +1,6 @@
 #include "execution.h"
 
-void	_cmd_laucher(t_parse *parse, t_prompt *data)
+void	_cmd_launcher(t_parse *parse, t_prompt *data)
 {
 	t_red	red;
 	int		fd_in;
