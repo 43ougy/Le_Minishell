@@ -1,5 +1,6 @@
 DIR = ./srcs/
 UTILS_DIR = ./srcs/utils/
+PARSE_DIR = ./srcs/parsing/
 
 SRC =	$(DIR)main.c						\
 		$(DIR)running.c						\
@@ -10,7 +11,10 @@ SRC =	$(DIR)main.c						\
 		$(UTILS_DIR)check_char_utils_2.c	\
 		$(UTILS_DIR)string_utils.c 			\
 		$(UTILS_DIR)string_utils_2.c 		\
-		$(UTILS_DIR)utils.c
+		$(UTILS_DIR)utils.c					\
+		$(PARSE_DIR)linked_list.c			\
+		$(PARSE_DIR)parsing.c				\
+		$(PARSE_DIR)token.c
 
 CC = gcc
 RM = rm -f

@@ -30,6 +30,7 @@ typedef struct s_parse
 // parsing.c
 t_parse		*parse(t_prompt *data, char *ret_value);
 char		**extract_cmd(t_prompt *data, int *pos, t_red **red);
+bool		quote_check(char *prompt);
 
 // linked_list.c
 t_parse		*new_node(t_red *red, char **cmd);
@@ -37,6 +38,9 @@ void		*free_list(t_parse *ptr, int option);
 t_parse		*give_at(t_parse *begin, int pos);
 t_parse		*add_parse(t_parse *begin, t_red *red, char **cmd);
 
+// token.c
+char		*extract_token(char *prompt, int *pos);
+char		*modified_token(char *token, t_red *red, int *status);
 
 
 

@@ -62,6 +62,8 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 		if (!data->prompt[*pos] || data->prompt[*pos] != '|') // nothing on line
 			return (print_parse_error(data->prompt, *pos, cmd))
 		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha')
+		if (!token)
+			return (_free_tab(cmd));
 		token = modified_token(token, red, &status); // set red
 		if (!status) // if extract token failed
 			return (_free_tab(cmd));
@@ -72,20 +74,22 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 	return (cmd);
 }
 
-// si $ continue jusqu'a > or <
-// echo "$PA>test" -> (>test) -> one token
-// echo "test | test" -> (test | test) -> one token
-char	*extract_token(char *prompt, int *pos)
+bool	quote_check(char *prompt)
 {
-	char	*token;
+	int		i;
 	char	edge;
 
-	edge = ' ';
-	token = NULL;
-	return (token);
-}
-
-char	*modified_token(char *token, t_red *red, int *status)
-{
-	// to do
+	i = -1;
+	edge = 0;
+	while (prompt && prompt[++i])
+	{
+		if (edge == prompt[i])
+			edge = 0;
+		else
+			edge = prompt[i];
+	}
+	if (edge == 0)
+		return (true);
+	write(2, "^\nunexpected quote\n", 19);
+	return (false);
 }
