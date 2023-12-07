@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:57 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 11:50:31 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:19:28 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,13 @@ char	*add_char(char *src, char c)
 	ret[i] = c;
 	ret[i + 1] = 0;
 	free(src);
+	return (ret);
+}
+
+// echo $?trt -> 0trt
+// echo $PATHtrt -> 
+char	*replace_env(char *ret, t_prompt data, char *str, int *pos)
+{
+	// to do
 	return (ret);
 }

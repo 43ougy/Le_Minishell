@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:38 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 12:40:15 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:32:05 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,18 @@
 
 # include "ra_shell.h"
 
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 30
+# endif
+
 /* ===================== struct ==================== */
 
 typedef struct s_redirection
 {
-	char	**input1;
-	char	**input2;
-	char	**output1;
-	char	**output2;
+	char	**input1; // 1
+	char	**input2; // 2
+	char	**output1; // 3
+	char	**output2; // 4
 }	t_red;
 
 typedef struct s_parse
@@ -40,6 +44,7 @@ typedef struct s_parse
 t_parse		*parse(t_prompt *data, char *ret_value);
 char		**extract_cmd(t_prompt *data, int *pos, t_red **red);
 bool		quote_check(char *prompt);
+// bool		red_check(char *prompt);
 
 // linked_list.c
 t_parse		*new_node(t_red *red, char **cmd);
@@ -52,7 +57,7 @@ void		assign_pipe_type(t_parse *parse);
 char		*extract_token(char *prompt, int *pos);
 char		*modified_token(t_prompt data, char *token, t_red **red);
 char		*replace_env(char *ret, t_prompt data, char *str, int *pos); // to do (advance pos till an edge " < > | )
-bool		extract_red(t_red **red, char *str, int *pos); // to do
+void		extract_red(t_red **red, char *str, int *pos);
 
 // token_ext.c
 char		*add_str(char *src, char *str);
