@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:38 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 14:32:05 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:16:26 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,15 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 30
+# endif
+
+# ifndef _BOOL_
+#  define _BOOL_
+
+#  define bool int
+#  define true 1
+#  define false 0
+
 # endif
 
 /* ===================== struct ==================== */
@@ -62,5 +71,7 @@ void		extract_red(t_red **red, char *str, int *pos);
 // token_ext.c
 char		*add_str(char *src, char *str);
 char		*add_char(char *src, char c);
+
+bool		parse_check(char *prompt);
 
 #endif

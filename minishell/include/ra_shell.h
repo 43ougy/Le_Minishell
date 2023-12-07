@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:47 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 12:47:59 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:14:29 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 # include <fcntl.h>
 
 # include "utils.h"
-# include "parsing.h"
 
 /* ===================== struct ==================== */
 typedef struct s_cmd
@@ -91,6 +90,7 @@ typedef struct s_shell
 	pid_t	proc;
 }	t_prompt;
 
+# include "parsing.h"
 /* ===================== proto ===================== */
 int	running(t_prompt *data);
 

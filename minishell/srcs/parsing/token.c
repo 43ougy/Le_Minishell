@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:50 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 14:41:12 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:25:07 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ char	*modified_token(t_prompt data, char *token, t_red **red)
 // echo test >test"alpha" -> file_name = testalpha
 void	extract_red(t_red **red, char *str, int *pos)
 {
+	char	edge;
 	int		len;
 	int		red_type;
 	char	buff[BUFFER_SIZE];
@@ -91,9 +92,9 @@ void	extract_red(t_red **red, char *str, int *pos)
 	red_type = find_red_type(str, *pos);
 	if (red_type == 4 || red_type == 2)
 		(*pos)++;
-	while (str[*pos + len] && str[*pos + len] != '<' && str[*pos + len] != '>'
-		&& str[*pos + len] != '\"')
+	while (str[*pos + len])
 	{
+		if (str[*pos + len] == )
 		buff[len] = str[*pos + len];
 		len++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:16:56 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 15:49:19 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ char	*_strdup(const char *s);
 size_t	_strlcpy(char *dst, const char *src, size_t size);
 char	*_strncpy(char *dest, char *src, int n);
 int		_comp(char *s1, char *s2);
+void	_putstr(const char *str, int fd);
 
 /*=============== utils ==================*/
 int		_atoi(char *str);

@@ -3,14 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   string_utils_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:21:59 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:22:00 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 15:49:07 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ra_shell.h"
+
+void	_putstr(const char *str, int fd)
+{
+	write(fd, str, _strlen(str));
+}
 
 size_t	_strlcpy(char *dst, const char *src, size_t size)
 {

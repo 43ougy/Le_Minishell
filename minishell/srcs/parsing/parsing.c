@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:43 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 14:10:29 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:37:51 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,24 +85,4 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 	if (data->prompt[*pos] == '|')
 		(*pos)++; // skip the pipe
 	return (cmd);
-}
-
-bool	quote_check(char *prompt)
-{
-	int		i;
-	char	edge;
-
-	i = -1;
-	edge = 0;
-	while (prompt && prompt[++i])
-	{
-		if (edge == prompt[i])
-			edge = 0;
-		else if (prompt[i] == '\'' || prompt[i] == '\"')
-			edge = prompt[i];
-	}
-	if (edge == 0)
-		return (true);
-	write(2, "unexpected quote\n", 17);
-	return (false);
 }

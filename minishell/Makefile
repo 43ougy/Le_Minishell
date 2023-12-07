@@ -12,9 +12,7 @@ SRC =	$(DIR)main.c						\
 		$(UTILS_DIR)string_utils.c 			\
 		$(UTILS_DIR)string_utils_2.c 		\
 		$(UTILS_DIR)utils.c					\
-		$(PARSE_DIR)linked_list.c			\
-		$(PARSE_DIR)parsing.c				\
-		$(PARSE_DIR)token.c
+		$(PARSE_DIR)check_parse.c
 
 CC = gcc
 RM = rm -f

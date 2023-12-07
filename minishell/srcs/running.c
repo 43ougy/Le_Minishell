@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   running.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:22:41 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:22:43 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 16:37:08 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,23 @@ static int	first_prompt_check(t_prompt *data)
 
 int	running(t_prompt *data)
 {
-	t_parse	*parse;
+	//t_parse	*parse;
 
 	if (first_prompt_check(data))
 		return (0);
 	add_history(data->prompt);
-	// foo() for | in end of line
-	if (!quote_check(data->prompt))
+	if (!parse_check(data->prompt))
 		return (0);
-	parse = parse(data, "1");
-	if (!parse)
-		return (0);
+	// parse = parse(data, "1");
+	// if (!parse)
+	// 	return (0);
 
 	// if (global_launcher(parse, data))
 	// 	return (1);
 
 	printf("%s\n", data->prompt);
 	// print_list(parse);
-	free_list(parse, 0);
+	// free_list(parse, 0);
 	_free(data->prompt);
 	return (0);
 }
