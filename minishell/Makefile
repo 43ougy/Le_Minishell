@@ -12,7 +12,8 @@ SRC =	$(DIR)main.c						\
 		$(UTILS_DIR)string_utils.c 			\
 		$(UTILS_DIR)string_utils_2.c 		\
 		$(UTILS_DIR)utils.c					\
-		$(PARSE_DIR)check_parse.c
+		$(PARSE_DIR)check_parse.c			\
+		$(PARSE_DIR)linked_list.c
 
 CC = gcc
 RM = rm -f

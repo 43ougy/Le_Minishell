@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:43 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 15:37:51 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 17:00:28 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,6 @@ static bool	error_in_parsing(t_red *red, char **cmd)
 		return (true);
 	}
 	return (false);
-}
-
-static void	*print_parse_error(char *prompt, int pos, char **cmd)
-{
-	int	i;
-
-	i = -1;
-	if (prompt[pos] == '|')
-	{
-		write(2, &prompt[0], _strlen(prompt));
-		while (++i < pos)
-			write(2, " ", 1);
-		write(2, "^\nnothing between pipe\n", 23);
-	}
-	_free_tab(cmd);
-	return (NULL);
 }
 
 t_parse	*parse(t_prompt *data, char *ret_value)
@@ -68,8 +52,6 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 	cmd = NULL;
 	while (data->prompt && _is_whitespace(data->prompt[*pos]))
 		(*pos)++;
-	if (!data->prompt[*pos] || data->prompt[*pos] != '|') // nothing on line
-		return (print_parse_error(data->prompt, *pos, cmd));
 	while (data->prompt && data->prompt[*pos] != '|')
 	{
 		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha'>file1)

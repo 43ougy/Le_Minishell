@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:34 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 14:10:30 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:47:23 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,21 @@ void	assign_pipe_type(t_parse *parse)
 {
 	if (!parse || !parse->pipe_type)
 		return ;
-	parse->pipe_type = 1; // begin
+	parse->pipe_type = 1;
 	parse = parse->next;
 	while (parse)
 	{
 		if (!parse->next)
-			parse->pipe_type = 3; // end
+			parse->pipe_type = 3;
 		else
-			parse->pipe_type = 2; // middle
+			parse->pipe_type = 2;
 		parse = parse->next;
 	}
 }
 
 
 // to remove
-/* ======================================================= */
+/* 
 void	print_address()
 {
 	while (ptr)
@@ -120,4 +120,4 @@ void	print_address()
 		ptr = ptr->next;
 	}
 }
-/* ======================================================= */
+*/

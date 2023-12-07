@@ -6,7 +6,7 @@
 /*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:38 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 16:16:26 by nbeaufil         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:48:16 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,12 @@ typedef struct s_parse
 
 /* ===================== protos ==================== */
 
+//check_parse.c
+bool		parse_check(char *prompt);
+
 // parsing.c
 t_parse		*parse(t_prompt *data, char *ret_value);
 char		**extract_cmd(t_prompt *data, int *pos, t_red **red);
-bool		quote_check(char *prompt);
-// bool		red_check(char *prompt);
 
 // linked_list.c
 t_parse		*new_node(t_red *red, char **cmd);
@@ -72,6 +73,5 @@ void		extract_red(t_red **red, char *str, int *pos);
 char		*add_str(char *src, char *str);
 char		*add_char(char *src, char c);
 
-bool		parse_check(char *prompt);
 
 #endif
