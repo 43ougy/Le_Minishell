@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:17:43 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:17:48 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 static char	**_sort_new_env(char **new_env)
@@ -5,7 +17,7 @@ static char	**_sort_new_env(char **new_env)
 	int		i;
 	int		j;
 	char	*tmp;
-	
+
 	i = -1;
 	while (new_env[++i])
 	{
@@ -56,7 +68,7 @@ static int	_valid_args(char *str)
 		i++;
 	if (str[i])
 		return (0);
-	return(1)
+	return (1);
 }
 
 int	_export(t_prompt *data, int nb_args, char **args)

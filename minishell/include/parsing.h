@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:16:38 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:16:40 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSING_H
 # define PARSING_H
 
-#include "ra_shell.h"
+# include "ra_shell.h"
 
 // between quotes, other quotes aren't interpret
 // ec"ho" $"PA$PATHTH"test -> PAtest

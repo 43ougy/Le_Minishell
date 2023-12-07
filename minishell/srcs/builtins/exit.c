@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:17:37 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:17:38 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 void	_exit(t_parse *parse)
 {
 	int	i;
-	int	status
+	int	status;
 
 	i = -1;
 	write(1, "exit\n", 5);
@@ -12,8 +24,7 @@ void	_exit(t_parse *parse)
 		if (_is_alpha(parse->cmd[1][i]))
 		{
 			write(1, "bash: exit: ", 12);
-			write(1, parse->cmd[1],
-				_strlen(parse->cmd[1]));
+			write(1, parse->cmd[1], _strlen(parse->cmd[1]));
 			write(1, ": numeric argument required\n", 28);
 			status = 2;
 			break ;
@@ -21,11 +32,4 @@ void	_exit(t_parse *parse)
 	}
 	if (_is_num(parse->cmd[1][0]))
 		status = _atoi(parse->cmd[1]);
-
-	//free(all);
-
-	//_free(data->exit_status);
-	//_free(data->prompt);
-	//_free_tab(data);
-	//_free_args(data, status);
 }

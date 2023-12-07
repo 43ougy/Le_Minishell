@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   linked_list.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:19:34 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:19:36 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ra_shell.h"
 
 t_parse	*new_node(t_red *red, char **cmd)
@@ -53,7 +65,7 @@ t_parse	*add_parse(t_parse *begin, t_red *red, char **cmd)
 
 	act = begin;
 	if (!begin)
-		return (new_node(red, cmd))
+		return (new_node(red, cmd));
 	while (act->next)
 		act = act->next;
 	new = new_node(red, cmd);
@@ -62,7 +74,6 @@ t_parse	*add_parse(t_parse *begin, t_red *red, char **cmd)
 	act->next = new;
 	return (begin);
 }
-
 
 // to remove
 void	print_address()
@@ -91,6 +102,3 @@ void	print_address()
 		ptr = ptr->next;
 	}
 }
-
-
-

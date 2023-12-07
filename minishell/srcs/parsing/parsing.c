@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:19:43 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:19:45 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ra_shell.h"
 
 static bool	error_in_parsing(t_red *red, char **cmd)
@@ -24,7 +36,8 @@ t_parse	*parse(t_prompt *data, char *ret_value)
 
 	loop = 0;
 	parse = NULL;
-	while (pos < _strlen(data->prompt)) {
+	while (pos < _strlen(data->prompt))
+	{
 		red = NULL;
 		cmd = extract_cmd(data, &pos, &red);
 		if (error_in_parsing(red, cmd))
@@ -65,7 +78,7 @@ char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
 		while (data->prompt && _is_whitespace(data->prompt[*pos]))
 			(*pos)++;
 		if (!data->prompt[*pos] || data->prompt[*pos] != '|') // nothing on line
-			return (print_parse_error(data->prompt, *pos, cmd))
+			return (print_parse_error(data->prompt, *pos, cmd));
 		// go up
 		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha'>file1)
 		if (!token)

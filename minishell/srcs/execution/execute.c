@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:18:37 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:18:40 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
 static int	is_builtin(char *cmd)
@@ -45,7 +57,7 @@ static void	exit_cmd(int sig)
 	kill(data->proc, SIGKILL);
 }
 
-void	_exec(t_parse *parse, t_prompt *data)
+static void	_exec(t_parse *parse, t_prompt *data)
 {
 	char	*path;
 
@@ -65,7 +77,7 @@ void	_exec(t_parse *parse, t_prompt *data)
 	}
 }
 
-int	_execute(t_parse *parse, t_prompt *data,int fd_in, int fd_out)
+int	_execute(t_parse *parse, t_prompt *data, int fd_in, int fd_out)
 {
 	int		builtin;
 	int		status; //maybe change it to data->status or smthg else

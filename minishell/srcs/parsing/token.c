@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/07 10:19:50 by abougy            #+#    #+#             */
+/*   Updated: 2023/12/07 10:19:51 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ra_shell.h"
 
 static char	modified_edge(char edge, char c)
 {
 	if (edge == c)
-		return (' ')
+		return (' ');
 	return (c);
 }
 
@@ -42,9 +54,3 @@ char	*modified_token(char *token, t_red *red, int *status)
 
 	ret = NULL;
 }
-
-
-
-
-
-
