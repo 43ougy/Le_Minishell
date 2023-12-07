@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:16:38 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:16:40 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 12:40:15 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 # define PARSING_H
 
 # include "ra_shell.h"
-
-// between quotes, other quotes aren't interpret
-// ec"ho" $"PA$PATHTH"test -> PAtest
 
 /* ===================== struct ==================== */
 
@@ -30,7 +27,7 @@ typedef struct s_redirection
 
 typedef struct s_parse
 {
-	int				pipe_type; /* 0 -> first | 1 -> middle | 2 -> last */
+	int				pipe_type; /* 0 -> none | 1 -> first | 2 -> middle | 3 -> last */
 	int				list_size;
 	t_red			*red;
 	char			**cmds;
@@ -49,10 +46,13 @@ t_parse		*new_node(t_red *red, char **cmd);
 void		*free_list(t_parse *ptr, int option);
 t_parse		*give_at(t_parse *begin, int pos);
 t_parse		*add_parse(t_parse *begin, t_red *red, char **cmd);
+void		assign_pipe_type(t_parse *parse);
 
 // token.c
 char		*extract_token(char *prompt, int *pos);
-char		*modified_token(char *token, t_red *red, int *status);
+char		*modified_token(t_prompt data, char *token, t_red **red);
+char		*replace_env(char *ret, t_prompt data, char *str, int *pos); // to do (advance pos till an edge " < > | )
+bool		extract_red(t_red **red, char *str, int *pos); // to do
 
 // token_ext.c
 char		*add_str(char *src, char *str);

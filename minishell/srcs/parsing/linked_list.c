@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linked_list.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:19:34 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:19:36 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 12:33:07 by nbeaufil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,25 @@ t_parse	*add_parse(t_parse *begin, t_red *red, char **cmd)
 	return (begin);
 }
 
+void	assign_pipe_type(t_parse *parse)
+{
+	if (!parse || !parse->pipe_type)
+		return ;
+	parse->pipe_type = 1; // begin
+	parse = parse->next;
+	while (parse)
+	{
+		if (!parse->next)
+			parse->pipe_type = 3; // end
+		else
+			parse->pipe_type = 2; // middle
+		parse = parse->next;
+	}
+}
+
+
 // to remove
+/* ======================================================= */
 void	print_address()
 {
 	while (ptr)
@@ -102,3 +120,4 @@ void	print_address()
 		ptr = ptr->next;
 	}
 }
+/* ======================================================= */
