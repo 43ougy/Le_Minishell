@@ -6,7 +6,7 @@
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 10:18:37 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:18:40 by abougy           ###   ########.fr       */
+/*   Updated: 2023/12/07 10:26:44 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ static int	exec_builtin(t_parse *parse, t_prompt *data, int builtin)
 
 static void	exit_cmd(int sig)
 {
+	(void)sig;
 	write(1, "\n", 1);
-	//need to assign pid to something like g_var or struct
 	//kill current process if CTRL^C is pressed (wc for exemple)
 	kill(data->proc, SIGKILL);
 }
@@ -64,7 +64,7 @@ static void	_exec(t_parse *parse, t_prompt *data)
 	if (!access(parse->cmd[0], F_OK | X_OK))
 	{
 		if (execve(parse->cmd[0], parse->cmd, data->d_env) == -1)
-			perror(parse->cmd[0])
+			perror(parse->cmd[0]);
 	}
 	else
 	{
@@ -83,9 +83,9 @@ int	_execute(t_parse *parse, t_prompt *data, int fd_in, int fd_out)
 	int		status; //maybe change it to data->status or smthg else
 	pid_t	pid;
 
-	builtin = is_builtin(parse->cmd[0])
+	builtin = is_builtin(parse->cmd[0]);
 	if (builtin)
-		return (exec_builtin(parse, builtin))
+		return (exec_builtin(parse, builtin));
 	data->proc = fork();
 	if (!data->proc)
 	{
@@ -99,6 +99,6 @@ int	_execute(t_parse *parse, t_prompt *data, int fd_in, int fd_out)
 	signal(SIGINT, &exit_cmd);
 	waitpid(data->proc, status, 0);
 	if (!WIFEXITED(status))
-		return(-1);
+		return (-1);
 	return (WEXITSTATUS(status));
 }

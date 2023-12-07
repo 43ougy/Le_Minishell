@@ -12,7 +12,7 @@
 
 #include "execution.h"
 
-void	_cmd_launcher(t_parse *parse, t_prompt *data)
+int	_cmd_launcher(t_parse *parse, t_prompt *data)
 {
 	t_red	red;
 	int		fd_in;
@@ -20,6 +20,8 @@ void	_cmd_launcher(t_parse *parse, t_prompt *data)
 	int		status;
 
 	fd_out = _out_red(red);
+	if (fd_out[0] == -1)
+		return (1);
 	fd_in = _in_red(red);
 	status = _execute(parse, data, fd_in, fd_out[0]);
 	return (status);

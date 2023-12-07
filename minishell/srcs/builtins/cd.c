@@ -28,7 +28,7 @@ int	_cd(t_prompt *data, char **cmd)
 	}
 	if (!cmd[1])
 	{
-		home = ft_getenv(data->d_env, "HOME");
+		home = _getenv(data->d_env, "HOME");
 		if (!home)
 			write(2, "home doesn't exist\n", 19);
 		if (chdir(home) != 0)

@@ -15,7 +15,7 @@
 
 # include "ra_shell.h"
 
-void	_cmd_launcher(t_parse *parse, t_prompt *data);
+int		_cmd_launcher(t_parse *parse, t_prompt *data);
 int		_execute(t_parse *parse, t_prompt *data, int fd_in, int fd_out);
 
 /*=============== builtins ===============*/
@@ -29,5 +29,6 @@ void	_exit(t_parse *parse);
 
 /*=============== redirect ===============*/
 int		*_out_red(t_red *red);
+int		_in_red(t_red *red);
 
 #endif
