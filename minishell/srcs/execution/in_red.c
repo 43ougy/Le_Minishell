@@ -32,19 +32,21 @@ static void	write_file_input(char *file, int fd, int bytes)
 	close(input);
 }
 
-static void	write_in_pipe(int fd, t_red *red, int pipe_type)
+static void	write_in_pipe(t_prompt *data, int fd, t_red *red, int pipe_type)
 {
 	int	index;
 
 	index = -1;
 	if (pipe_type == 1 || pipe_type == 3)
 		read_input(fd);
-	//do here doc if red->in2
+	while (red->input2 && red->input2[++index])
+	_heredoc(fd, red->input2[index], red, data)
+	index = -1;
 	while (red->input1 && red->input1[++index])
 		write_file_input(red->input1, fd, 1);
 }
 
-int	_in_red(t_red *red)
+int	_in_red(t_prompt *data, t_red *red)
 {
 	//pipe_type will be add
 	int		pipe_fd[2];
@@ -63,7 +65,7 @@ int	_in_red(t_red *red)
 		close(pipe_fd[0]);
 		//why write on file ?
 		//free red and all
-		write_in_pipe(pipe_fd[1], red, pipe_type);
+		write_in_pipe(data, pipe_fd[1], red, pipe_type);
 		close(pipe_fd[1]);
 		exit(0);
 	}

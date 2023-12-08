@@ -20,9 +20,18 @@ int	_cmd_launcher(t_parse *parse, t_prompt *data)
 	int		status;
 
 	fd_out = _out_red(red);
-	if (fd_out[0] == -1)
+	if (!fd_out)
 		return (1);
-	fd_in = _in_red(red);
+	fd_in = _in_red(data, red);
+	//free redirection
 	status = _execute(parse, data, fd_in, fd_out[0]);
+	_delete_file(".tmp");
 	return (status);
+}
+
+void	_delete_file(char *file)
+{
+	if (access(file, F_OK) == -1)
+		return ;
+	unlink(file);
 }

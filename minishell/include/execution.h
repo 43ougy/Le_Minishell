@@ -29,6 +29,7 @@ void	_exit(t_parse *parse);
 
 /*=============== redirect ===============*/
 int		*_out_red(t_red *red);
-int		_in_red(t_red *red);
+int		_in_red(t_prompt *data, t_red *red);
+void	_heredoc(int fd, char *delimiter, t_red *red);
 
 #endif
