@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
+
+void	_heredoc(int fd, char *delimiter);
+/* -----------------------------------------*/
 
 static void	write_file_input(char *file, int fd, int bytes)
 {
@@ -20,19 +23,34 @@ static void	write_file_input(char *file, int fd, int bytes)
 	input = open(file, O_RDONLY);
 	if (input == -1)
 	{
-		perror(file)
+		perror(file);
 		return ;
 	}
 	while (bytes > 0)
 	{
 		bytes = read(input, buff, 256);
-		buff[bytes = 0];
-		write(fd, buff, _strlen(buff))
+		buff[bytes] = 0;
+		write(fd, buff, m_strlen(buff));
 	}
 	close(input);
 }
 
-static void	write_in_pipe(t_prompt *data, int fd, t_red *red, int pipe_type)
+static void	read_input(int fd)
+{
+	int		rd_bytes;
+	char	buff[256];
+
+	rd_bytes = read(0, buff, 255);
+	buff[rd_bytes] = 0;
+	while (rd_bytes > 0)
+	{
+		write(fd, buff, m_strlen(buff));
+		rd_bytes = read(0, buff, 256);
+		buff[rd_bytes] = 0;
+	}
+}
+
+static void	write_in_pipe(int fd, t_red *red, int pipe_type)
 {
 	int	index;
 
@@ -40,19 +58,18 @@ static void	write_in_pipe(t_prompt *data, int fd, t_red *red, int pipe_type)
 	if (pipe_type == 1 || pipe_type == 3)
 		read_input(fd);
 	while (red->input2 && red->input2[++index])
-	_heredoc(fd, red->input2[index], red, data)
+		_heredoc(fd, red->input2[index]);
 	index = -1;
 	while (red->input1 && red->input1[++index])
-		write_file_input(red->input1, fd, 1);
+		write_file_input(red->input1[index], fd, 1);
 }
 
-int	_in_red(t_prompt *data, t_red *red)
+int	in_red(t_red *red, int pipe_type)
 {
-	//pipe_type will be add
 	int		pipe_fd[2];
 	pid_t	pipe_id;
 
-	if (!(_tblen(red->input1) + _tblen(red->input2))
+	if (!(m_tablen(red->input1) + m_tablen(red->input2))
 		&& (pipe_type != 1 || pipe_type != 3))
 		return (0);
 	if (pipe(pipe_fd) == -1)
@@ -65,7 +82,8 @@ int	_in_red(t_prompt *data, t_red *red)
 		close(pipe_fd[0]);
 		//why write on file ?
 		//free red and all
-		write_in_pipe(data, pipe_fd[1], red, pipe_type);
+		free_red(red);
+		write_in_pipe(pipe_fd[1], red, pipe_type);
 		close(pipe_fd[1]);
 		exit(0);
 	}

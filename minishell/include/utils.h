@@ -3,56 +3,60 @@
 /*                                                        :::      ::::::::   */
 /*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:16:54 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 15:49:19 by nbeaufil         ###   ########.fr       */
+/*   Created: 2024/01/02 15:29:00 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:29:02 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_H
 # define UTILS_H
 
-/*=============== string =================*/
-int		_strcomp(char *s1, char *s2);
-int		_strcompn(char *s1, char *s2, int n);
-char	*_strjoin(char *s1, char *s2);
-char	*_substr(char const *s, unsigned int start, size_t len);
-char	*_strdup(const char *s);
-size_t	_strlcpy(char *dst, const char *src, size_t size);
-char	*_strncpy(char *dest, char *src, int n);
-int		_comp(char *s1, char *s2);
-void	_putstr(const char *str, int fd);
+/* ==================== include ==================== */
 
-/*=============== utils ==================*/
-int		_atoi(char *str);
-void	_bzero(void *s, size_t n);
-size_t	_strlen(const char *s);
-char	**_duplicate_tab(char **tab);
-int		_tblen(char **tab);
+# include <stdlib.h> /* allocation */
+# include <unistd.h> /* input - output */
 
-/*=============== check_char =============*/
-int		_is_quotes(char c);
-int		_is_char(char c);
-int		_is_num(char c);
-int		_is_alpha(char c);
-int		_is_limiter(char c);
-int		_is_whitespace(char c);
+/* ===================== proto ===================== */
 
-/*=============== alloc ==================*/
-//void	_free_args(t_prompt *data, int status);
-void	*_free_tab(char **tab);
-void	_free(char *string);
-void	*_calloc(size_t count, size_t size);
-char	**_endtab_push(char **tab, char *to_add);
+// utils 1
+void	*m_freetab(char **tab);
+int		m_strlen(const char *s);
+char	*m_strdup(const char *s);
+void	m_putstr(const char *str, int fd);
+char	**m_duplicatetab(char **tab);
 
-/*=============== path ===================*/
+// utils 2
+int		m_iswhitespace(char c);
+void	m_bzero(void *s, int n);
+char	*m_strncpy(char *dest, char *src, int n);
+int		m_strncmp(const char *s1, const char *s2, int n);
+int		m_strcmp(char *s1, char *s2);
+
+// utils 3
+char	*m_itoa(int n);
+char	**m_split(char const *s, char c);
+
+// utils 4
+int		m_tablen(char **tab);
+char	**m_endtabpush(char **tab, const char *to_add);
+
+// utils 5
 char	*_getenv(char **env, char *path_name);
 char	**_give_path(char *path);
 char	*_get_path(char *cmd, char **env);
+char	*m_strjoin(char *s1, char *s2);
+size_t	m_strlcpy(char *dst, const char *src, size_t size);
 
-char	*get_line(int fd);
-char	**_split(char const *s, char c);
-char	*_itoa(int n);
+// utils 6
+char	*m_getline(int fd);
+
+// utils 7
+int		m_atoi(char *str);
+int		m_isalpha(char c);
+int		m_isnum(char c);
+char	*m_substr(char const *s, unsigned int start, size_t len);
+void	*m_calloc(size_t count, size_t size);
 
 #endif

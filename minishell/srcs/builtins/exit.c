@@ -10,26 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
-void	_exit(t_parse *parse)
+void	m_exit(t_parse *parse)
 {
 	int	i;
 	int	status;
 
 	i = -1;
 	write(1, "exit\n", 5);
-	while (parse->cmd[1][++i])
+	while (parse->cmds[1][++i])
 	{
-		if (_is_alpha(parse->cmd[1][i]))
+		if (m_isalpha(parse->cmds[1][i]))
 		{
 			write(1, "bash: exit: ", 12);
-			write(1, parse->cmd[1], _strlen(parse->cmd[1]));
+			write(1, parse->cmds[1], m_strlen(parse->cmds[1]));
 			write(1, ": numeric argument required\n", 28);
 			status = 2;
 			break ;
 		}
 	}
-	if (_is_num(parse->cmd[1][0]))
-		status = _atoi(parse->cmd[1]);
+	if (m_isnum(parse->cmds[1][0]))
+		status = m_atoi(parse->cmds[1]);
+	exit (status);
 }

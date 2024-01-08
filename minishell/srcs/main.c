@@ -5,59 +5,50 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:22:33 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:22:35 by abougy           ###   ########.fr       */
+/*   Created: 2024/01/02 15:29:12 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:29:13 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "minishell.h"
 
-int	g_sig_check;
+bool	running(t_shell *data);
+/* ----------------------------------------- */
+
+static void	init_data(t_shell *data, char *env[])
+{
+	data->env = m_duplicatetab(env);
+	if (!data->env)
+		exit (1);
+	data->ret_value = 0;
+	data->begin_list = NULL;
+}
 
 void	handle_signal(int signo)
 {
 	if (signo == SIGINT)
 	{
 		rl_replace_line("", 0);
-		if (!g_sig_check)
-		{
-			write(1, "\n", 1);
-			rl_on_new_line();
-			rl_redisplay();
-		}
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
-static void	_init_data(t_prompt *data)
+void	free_shell(t_shell *data)
 {
-	(void)data;
-	// data->check_exit = 0;
-	// data->exit_status = ft_itoa(0);
-	// data->set_env = NULL;
-	// data->path = NULL;
-	// data->cmde = NULL;
+	free(data->prompt);
+	m_freetab(data->env);
+	free_list(data->begin_list, 0);
 }
 
-static int	end_prog(t_prompt *data)
+int	main(int ac, char *av[], char *env[])
 {
-	_free(data->prompt);
-	//_free(data->exit_status);
-	//_free_args_nexit(data);
-	_free_tab(data->d_env);
-	_free_tab(data->path);
-	return (0);
-}
-
-int	main(int ac, char **av, char **env)
-{
-	t_prompt	data;
+	t_shell	data;
 
 	(void)ac;
 	(void)av;
-	_init_data(&data);
-	data.d_env = _duplicate_tab(env);
-	if (!data.d_env)
-		return (1);
+	init_data(&data, env);
 	while (1)
 	{
 		signal(SIGINT, handle_signal);
@@ -65,5 +56,6 @@ int	main(int ac, char **av, char **env)
 		if (running(&data))
 			break ;
 	}
-	return (end_prog(&data));
+	free_shell(&data);
+	return (0);
 }

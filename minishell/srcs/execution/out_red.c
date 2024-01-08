@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
 static int	open_file(int index, t_red *red)
 {
@@ -19,13 +19,14 @@ static int	open_file(int index, t_red *red)
 	char	*file;
 
 	append = 0;
-	if (index >= _tblen(red->output1))
+	if (index >= m_tablen(red->output1))
 	{
-		file = red->output2[index - _tblen(red->output1)];
+		file = red->output2[index - m_tablen(red->output1)];
 		append = 1;
 	}
 	else
 		file = red->output1[index];
+	printf("file = %s\n", file);
 	if (append)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
@@ -35,17 +36,18 @@ static int	open_file(int index, t_red *red)
 	return (fd);
 }
 
-static int	*init_fdout(t_red *red, int len, int *i)
+static int	*init_fdout(int len, int *i)
 {
 	int	*ret;
 
 	if (len > 1)
-		(*i)++;
+		len++;
 	ret = malloc(sizeof(int) * (len + 2));
 	if (!ret)
 		return (NULL);
 	if (len > 1)
 	{
+		printf("creation of.tmp\n");
 		ret[(*i)++] = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (ret[(*i) - 1] == -1)
 		{
@@ -56,7 +58,7 @@ static int	*init_fdout(t_red *red, int len, int *i)
 	return (ret);
 }
 
-int	*_out_red(t_red *red)
+int	*out_red(t_red *red)
 {
 	int	len;
 	int	*ret;
@@ -64,8 +66,9 @@ int	*_out_red(t_red *red)
 	int	j;
 
 	j = 0;
-	len = _tblen(red->output1) + _tblen(red->output2) + 1;
-	ret = init_fdout(red, len, &i);
+	i = 0;
+	len = m_tablen(red->output1) + m_tablen(red->output2) + 1;
+	ret = init_fdout(len, &i);
 	if (!ret)
 		return (NULL);
 	while (j < len - 1)
@@ -79,4 +82,31 @@ int	*_out_red(t_red *red)
 		ret[i++] = 1;
 	ret[i++] = -1;
 	return (ret);
+}
+
+void	write_to_file(int *fdout)
+{
+	char	buff[256];
+	int		bytes;
+	int		fd;
+	int		i;
+
+	i = 0;
+	while (fdout[++i] != -1)
+	{
+		printf("fdout[i] = %d\n", fdout[i]);
+		fd = open(".tmp", O_RDONLY);
+		if (fd == -1)
+			continue ;
+		bytes = read(fd, buff, 255);
+		buff[bytes] = 0;
+		while (bytes > 0)
+		{
+			write(fdout[i], buff, bytes);
+			bytes = read(fd, buff, 255);
+			buff[bytes] = 0;
+		}
+		if (fd > 2)
+			close(fd);
+	}
 }

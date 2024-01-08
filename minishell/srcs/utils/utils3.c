@@ -1,16 +1,59 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   _split.c                                           :+:      :+:    :+:   */
+/*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:21:40 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:21:43 by abougy           ###   ########.fr       */
+/*   Created: 2024/01/02 15:31:18 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:31:20 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "utils.h"
+
+static void	reverse_tab(char *tab, int size)
+{
+	int		i;
+	char	tmp;
+
+	i = -1;
+	while (++i < size / 2)
+	{
+		tmp = tab[i];
+		tab[i] = tab[size - i - 1];
+		tab[size - i - 1] = tmp;
+	}
+}
+
+char	*m_itoa(int n)
+{
+	int			i;
+	int			sign;
+	char		buff[33];
+	long int	nb;
+
+	i = 0;
+	sign = 0;
+	nb = (long int)n;
+	if (!n)
+		return (m_strdup("0"));
+	if (nb < 0)
+	{
+		sign = 1;
+		nb = -nb;
+	}
+	while (nb)
+	{
+		buff[i++] = (nb % 10) + 48;
+		nb /= 10;
+	}
+	if (sign)
+		buff[i++] = '-';
+	buff[i] = 0;
+	reverse_tab(buff, m_strlen(buff));
+	return (m_strdup(buff));
+}
 
 static int	len_sep_string(const char *s, char c)
 {
@@ -19,14 +62,14 @@ static int	len_sep_string(const char *s, char c)
 
 	i = 0;
 	counter = 0;
-	while (s[i])
+	while (s && s[i])
 	{
-		while (s[i] == c)
+		while (s[i] && s[i] == c)
 			i++;
-		if (s[i] != c && s[i])
+		if (s[i])
 		{
 			counter++;
-			while (s[i] != c && s[i])
+			while (s[i] && s[i] != c)
 				i++;
 		}
 	}
@@ -43,7 +86,7 @@ static char	*get_next_word(int *index, const char *s, char c)
 	len = 0;
 	while (s[*index] == c)
 		(*index)++;
-	while (s[*index + len] != c && s[*index + len])
+	while (s[*index + len] && s[*index + len] != c)
 		len++;
 	ret = malloc((len + 1) * sizeof(char));
 	if (!ret)
@@ -54,21 +97,23 @@ static char	*get_next_word(int *index, const char *s, char c)
 	return (ret);
 }
 
-char	**_split(char const *s, char c)
+char	**m_split(char const *s, char c)
 {
 	int		i;
-	int		j;
-	int		ac;
+	int		idx;
+	int		len;
 	char	**ret;
 
 	i = 0;
-	j = 0;
-	ac = len_sep_string(s, c);
-	ret = malloc(ac * sizeof(char *));
+	idx = 0;
+	if (!s)
+		return (NULL);
+	len = len_sep_string(s, c);
+	ret = malloc(len * sizeof(char *));
 	if (!ret)
 		return (NULL);
-	while (i < ac - 1)
-		ret[i++] = get_next_word(&j, s, c);
+	while (i < len - 1)
+		ret[i++] = get_next_word(&idx, s, c);
 	ret[i] = NULL;
 	return (ret);
 }

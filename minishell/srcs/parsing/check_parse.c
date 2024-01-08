@@ -1,34 +1,60 @@
-#include "parsing.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_parse.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/02 15:30:12 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:30:13 by abougy           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static bool	check_pipe(char *prompt, int i)
+#include "minishell.h"
+
+static bool	nothing_after(const char *prompt, int code)
+{
+	int	i;
+
+	i = 0;
+	while (prompt[i] && m_iswhitespace(prompt[i]))
+		i++;
+	if (code)
+	{
+		if (!prompt[i] || prompt[i] == '|'
+			|| ((prompt[i] == '<' || prompt[i] == '>') && i))
+			return (true);
+	}
+	else
+		if (!prompt[i] || prompt[i] == '|')
+			return (true);
+	return (false);
+}
+
+// check the pipes
+static bool	check_pipe(const char *prompt, int i)
 {
 	int	len;
 
-	len = i + 1;
-	while ((!_is_whitespace(prompt[len]) && prompt[len] != '|') && prompt[len])
-		len++;
-	if (len == (int)_strlen(prompt) || prompt[len] == '|')
+	len = i - 1;
+	while (len > -1 && m_iswhitespace(prompt[len]))
+		len--;
+	if (len == -1 || prompt[len] == '|' || nothing_after(&prompt[i + 1], 0))
 	{
-		_putstr("bash: parse error near `|'\n", 2);
-		return (false);
-	}
-	i--;
-	while ((!_is_whitespace(prompt[i]) && prompt[i] != '|') && i > -1)
-		i--;
-	if (i == -1 || prompt[i] == '|')
-	{
-		_putstr("bash: parse error near `|'\n", 2);
+		m_putstr("bash: parse error near `|'\n", 2);
 		return (false);
 	}
 	return (true);
 }
 
-static bool	check_red(char *prompt, int *i)
+// check the redirections
+static bool	check_red(const char *prompt, int *i)
 {
 	bool	status;
 
 	status = true;
-	if (!prompt[(*i) + 1] || prompt[(*i) + 1] == '|')
+	if (!prompt[(*i) + 1] || prompt[(*i) + 1] == '|'
+		|| nothing_after(&prompt[(*i) + 1], 1))
 		status = false;
 	else if (prompt[(*i) + 1] == '<' || prompt[(*i) + 1] == '>')
 	{
@@ -36,15 +62,17 @@ static bool	check_red(char *prompt, int *i)
 		if (prompt[(*i)] != prompt[(*i) - 1])
 			status = false;
 		else if (!prompt[(*i) + 1] || prompt[(*i) + 1] == '|'
-			|| prompt[(*i) + 1] == '>' || prompt[(*i) + 1] == '<')
+			|| prompt[(*i) + 1] == '>' || prompt[(*i) + 1] == '<'
+			|| nothing_after(&prompt[(*i) + 1], 1))
 			status = false;
 	}
 	if (!status)
-		_putstr("bash: parse error near `redirection\n", 2);
+		m_putstr("bash: parse error near `redirection\n", 2);
 	return (status);
 }
 
-static bool	check_c(char *prompt, int *i, char *edge)
+// looks at the char to call the correct verification function
+static bool	check_c(const char *prompt, int *i, char *edge)
 {
 	if (*edge == prompt[*i])
 		*edge = 0;
@@ -57,18 +85,19 @@ static bool	check_c(char *prompt, int *i, char *edge)
 	return (true);
 }
 
-bool	parse_check(char *prompt)
+// check error from quotes, redirections, and pipe
+bool	parse_check(const char *prompt)
 {
 	int		i;
 	char	edge;
 
 	i = -1;
 	edge = 0;
-	while (prompt && ++i < (int)_strlen(prompt))
+	while (prompt && ++i < m_strlen(prompt))
 		if (!check_c(prompt, &i, &edge))
 			return (false);
 	if (edge == 0)
 		return (true);
-	_putstr("bash: parse error near quote\n", 2);
+	m_putstr("bash: parse error near quote\n", 2);
 	return (false);
 }

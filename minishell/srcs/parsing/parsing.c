@@ -3,68 +3,94 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:19:43 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 17:00:28 by nbeaufil         ###   ########.fr       */
+/*   Created: 2024/01/02 15:30:30 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:30:32 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "minishell.h"
 
-static bool	error_in_parsing(t_red *red, char **cmd)
+char	**tabremoveempty(char **cmd);
+char	*extract_token(char *prompt, int *pos);
+bool	modified_token(t_shell *data, char **token, t_red *red);
+/* ----------------------------------------- */
+
+static bool	t_redinit(t_red **red)
+{
+	if (!red)
+		return (false);
+	*red = malloc(sizeof(t_red));
+	if (!(*red))
+		return (false);
+	(*red)->input1 = NULL;
+	(*red)->input2 = NULL;
+	(*red)->output1 = NULL;
+	(*red)->output2 = NULL;
+	return (true);
+}
+
+// this function aims to extract the commands (multiple tokens)
+char	**extract_cmd(t_shell *data, int *pos, t_red **red)
+{
+	char	**cmd;
+	char	*token;
+
+	cmd = NULL;
+	if (!t_redinit(red))
+		return (NULL);
+	while (data->prompt && m_iswhitespace(data->prompt[*pos]))
+		(*pos)++;
+	while (data->prompt && data->prompt[*pos] && data->prompt[*pos] != '|')
+	{
+		token = extract_token(data->prompt, pos);
+		if (!token || !modified_token(data, &token, *red))
+			return (m_freetab(cmd));
+		cmd = m_endtabpush(cmd, token);
+		free(token);
+		while (data->prompt[*pos] && m_iswhitespace(data->prompt[*pos]))
+			(*pos)++;
+	}
+	if (data->prompt[*pos] == '|')
+		(*pos)++;
+	return (cmd);
+}
+
+// It check if an errors occurs during the parsing
+static bool	check_extract_error(char **cmd, t_red *red)
 {
 	if (!red || !cmd)
 	{
 		free_red(red);
-		_free_tab(cmd);
-		return (true);
+		m_freetab(cmd);
+		m_putstr("error: failed during allocation\n", 2);
+		return (false);
 	}
-	return (false);
+	return (true);
 }
 
-t_parse	*parse(t_prompt *data, char *ret_value)
+/*
+	this function create the linked list by extracting
+	a string array, and a structure for the redirections
+*/
+t_parse	*parse(t_shell *data)
 {
 	int		pos;
 	char	**cmd;
 	t_red	*red;
-	t_parse	*parse;
+	t_parse	*begin;
 
-	loop = 0;
-	parse = NULL;
-	while (pos < _strlen(data->prompt))
+	pos = 0;
+	begin = NULL;
+	while (pos < m_strlen(data->prompt))
 	{
 		red = NULL;
 		cmd = extract_cmd(data, &pos, &red);
-		if (error_in_parsing(red, cmd))
-			return (free_list(begin, 0));
-		parse = add_parse(parse, red, cmd);
+		cmd = tabremoveempty(cmd);
+		if (!check_extract_error(cmd, red))
+			return (NULL);
+		begin = add_parse(begin, red, cmd);
 	}
-	return (parse);
-}
-
-char	**extract_cmd(t_prompt *data, int *pos, t_red **red)
-{
-	int		len;
-	char	*token;
-	char	**cmd;
-
-	cmd = NULL;
-	while (data->prompt && _is_whitespace(data->prompt[*pos]))
-		(*pos)++;
-	while (data->prompt && data->prompt[*pos] != '|')
-	{
-		token = extract_token(data->prompt, pos); // extract the token (tes"$PATH >alpha"'alpha'>file1)
-		if (!token)
-			return (_free_tab(cmd));
-		token = modified_token(data, token, red); // set red
-		cmd = _endtab_push(cmd, token); // add the token to the tab
-		if (!cmd)
-			return (_free_tab(cmd));
-		while (data->prompt && _is_whitespace(data->prompt[*pos]))
-			(*pos)++;
-	}
-	if (data->prompt[*pos] == '|')
-		(*pos)++; // skip the pipe
-	return (cmd);
+	return (begin);
 }

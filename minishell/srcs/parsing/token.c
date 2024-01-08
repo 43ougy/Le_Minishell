@@ -3,43 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:19:50 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 17:02:50 by nbeaufil         ###   ########.fr       */
+/*   Created: 2024/01/02 15:30:44 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:30:46 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "minishell.h"
 
-static char	modified_edge(char edge, char c)
-{
-	if (edge == c)
-		return (' ');
-	return (c);
-}
+char	*find_var(char **env, char *token, int len);
+char	*manage_var(t_shell *data, char	*token);
+char	*manage_red(t_red *red, char *token);
+/* ----------------------------------------- */
 
-static int	find_red_type(char *str, int pos)
-{
-	if (str[pos + 1] == '>')
-		return (4);
-	else if (str[pos + 1] == '<')
-		return (2);
-	else if (str[pos] == '>')
-		return (3);
-	else if (str[pos] == '<')
-		return (1);
-	return (0);
-}
-
+// extract a token (from *pos to pipe or space)
 char	*extract_token(char *prompt, int *pos)
 {
+	char	c;
 	int		len;
 	char	edge;
-	char	c;
+	char	*token;
 
 	len = 0;
 	edge = ' ';
+	token = NULL;
 	while (prompt && prompt[(*pos) + len])
 	{
 		c = prompt[(*pos) + len];
@@ -52,51 +40,77 @@ char	*extract_token(char *prompt, int *pos)
 	token = malloc(sizeof(char) * (len + 1));
 	if (!token)
 		return (NULL);
-	token = _strncpy(token, &prompt[*pos], len);
+	token = m_strncpy(token, &prompt[*pos], len);
 	(*pos) += len;
 	return (token);
 }
 
-char	*modified_token(t_prompt data, char *token, t_red **red)
+/*
+	this function transforms the token by replacing $ with
+	the corresponding variable and removing redirections
+*/
+bool	modified_token(t_shell *data, char **token, t_red *red)
 {
-	int		pos;
-	char	*ret;
-	char	edge;
+	char	*str;
 
-	pos = 0;
-	ret = NULL;
-	edge = ' ';
-	while (token && token[pos])
+	str = manage_var(data, *token);
+	free(*token);
+	if (!str)
+		return (false);
+	*token = manage_red(red, str);
+	free(str);
+	if (!(*token))
+		return (false);
+	if (!m_strlen(*token))
 	{
-		if (token[pos] == '\"' || token[pos] == '\'')
-			edge = modified_edge(edge, token[pos]);
-		else if (token[pos] == '$' && edge != '\'')
-			ret = replace_env(ret, data, token, &pos);
-		else if (edge == ' ' && (token[pos] == '>' || token[pos] == '<'))
-			extract_red(red, token, &pos);
-		else
-			ret = add_char(ret, token[pos++]);
+		free(*token);
+		*token = NULL;
 	}
-	return (ret);
+	return (true);
 }
 
-// echo test >test"alpha" -> file_name = testalpha
-void	extract_red(t_red **red, char *str, int *pos)
+// find the variable name (ex: $PATH -> PATH)
+static int	get_var_name(t_shell *data, t_var *var, char *token)
 {
-	char	edge;
 	int		len;
-	int		red_type;
-	char	buff[BUFFER_SIZE];
+	char	*replace;
 
-	_bzero((void *)&buff[0], BUFFER_SIZE);
-	red_type = find_red_type(str, *pos);
-	if (red_type == 4 || red_type == 2)
-		(*pos)++;
-	while (str[*pos + len])
+	len = 0;
+	if (token[1] != '?')
+		while ((token && token[++len]))
+			if (token[len] == ' ' || token[len] == '\'' || token[len] == '\"')
+				break ;
+	if (len == 0 && token[1] == '?')
 	{
-		if (str[*pos + len] == )
-		buff[len] = str[*pos + len];
-		len++;
+		replace = m_itoa(data->ret_value);
+		len = 2;
 	}
-	// tab = _endtab_push(tab, buff);
+	else
+		replace = find_var(data->env, &token[1], len - 1);
+	if (!replace)
+		return (len - 1);
+	m_strncpy(&var->new_token[var->idx], replace, m_strlen(replace));
+	var->idx += m_strlen(replace);
+	free(replace);
+	return (len - 1);
+}
+
+// Transform $ by the corresponding variable
+char	*manage_var(t_shell *data, char *token)
+{
+	int		i;
+	t_var	var;
+
+	i = -1;
+	t_varinit(&var);
+	while (token[++i] && var.idx < TOKEN_MAX_SZ)
+	{
+		if (token[i] == '\"' || token[i] == '\'')
+			var.edge = modified_edge(var.edge, token[i]);
+		if (token[i] == '$' && var.edge != '\'' && token[i + 1])
+			i += get_var_name(data, &var, &token[i]);
+		else
+			var.new_token[var.idx++] = token[i];
+	}
+	return (m_strdup(var.new_token));
 }

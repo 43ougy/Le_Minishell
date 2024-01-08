@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_line_utils.c                                   :+:      :+:    :+:   */
+/*   utils6.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:21:02 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 10:21:04 by abougy           ###   ########.fr       */
+/*   Created: 2024/01/04 09:25:19 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/04 09:25:20 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "utils.h"
 
 static char	*_free_buffer(char *buffer, char *buf)
 {
 	char	*temp;
 
-	temp = ft_strjoin(buffer, buf);
+	temp = m_strjoin(buffer, buf);
 	free(buffer);
 	return (temp);
 }
@@ -31,7 +31,7 @@ static char	*cat_line(char *line)
 		return (NULL);
 	while (line[i] && line[i] != '\n')
 		i++;
-	ret = ft_calloc(sizeof(char), i + 2);
+	ret = m_calloc(sizeof(char), i + 2);
 	if (!ret)
 		return (NULL);
 	i = 0;
@@ -52,8 +52,8 @@ static char	*read_stdin(int fd, char *line)
 	int		bytes;
 
 	if (!line)
-		line = ft_calloc(1, 1);
-	buff = ft_calloc(sizeof(char), 2);
+		line = m_calloc(1, 1);
+	buff = m_calloc(sizeof(char), 2);
 	bytes = 1;
 	while (bytes > 0)
 	{
@@ -72,11 +72,11 @@ static char	*read_stdin(int fd, char *line)
 	return (line);
 }
 
-char	*get_line(int fd)
+char	*m_getline(int fd)
 {
 	char	*line;
 
-	line = ft_calloc(1, 1);
+	line = m_calloc(1, 1);
 	line = read_stdin(fd, line);
 	if (!line)
 		return (NULL);

@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
-int	_pwd(void)
+int	m_pwd(void)
 {
 	char	location[1024];
 
@@ -21,7 +21,7 @@ int	_pwd(void)
 		perror("pwd");
 		return (1);
 	}
-	write(1, location, ft_strlen(location));
+	write(1, location, m_strlen(location));
 	write(1, "\n", 1);
 	return (0);
 }

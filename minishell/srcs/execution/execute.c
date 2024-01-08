@@ -10,95 +10,105 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
+
+extern pid_t	g_proc;
 
 static int	is_builtin(char *cmd)
 {
-	if (_strcomp(cmd, "cd"))
+	if (m_strcmp(cmd, "cd"))
 		return (1);
-	else if (_strcomp(cmd, "echo"))
+	else if (m_strcmp(cmd, "echo"))
 		return (2);
-	else if (_strcomp(cmd, "pwd"))
+	else if (m_strcmp(cmd, "pwd"))
 		return (3);
-	else if (_strcomp(cmd, "export"))
+	else if (m_strcmp(cmd, "export"))
 		return (4);
-	else if (_strcomp(cmd, "unset"))
+	else if (m_strcmp(cmd, "unset"))
 		return (5);
-	else if (_strcomp(cmd, "env"))
+	else if (m_strcmp(cmd, "env"))
 		return (6);
-	else if (_strcomp(cmd, "exit"))
+	else if (m_strcmp(cmd, "exit"))
 		return (7);
 	return (0);
 }
 
-static int	exec_builtin(t_parse *parse, t_prompt *data, int builtin)
+static int	exec_builtin(t_parse *parse, t_shell *data, int builtin)
 {
 	if (builtin == 1)
-		return (_cd(data, parse->cmd));
+		return (m_cd(data, parse->cmds));
 	else if (builtin == 2)
-		return (_echo(parse->cmd));
+		return (m_echo(parse->cmds));
 	else if (builtin == 3)
-		return (_pwd());
+		return (m_pwd());
 	else if (builtin == 4)
-		return (_export(data, parse->list_size, parse->cmd));
+		return (m_export(data, parse->list_size, parse->cmds));
 	else if (builtin == 5)
-		return (_unset(data, parse->list_size, parse->cmd));
+		return (m_unset(data, parse->list_size, parse->cmds));
 	else if (builtin == 6)
-		return (_env(data->d_env));
+		return (m_env(data->env));
 	else if (builtin == 7)
-		_exit(parse);
+		m_exit(parse);
+	return (-1);
 }
 
+//kill current process if CTRL^C is pressed (wc for exemple)
 static void	exit_cmd(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
-	//kill current process if CTRL^C is pressed (wc for exemple)
-	kill(data->proc, SIGKILL);
+	kill(g_proc, SIGKILL);
 }
 
-static void	_exec(t_parse *parse, t_prompt *data)
+static void	exec(t_parse *parse, t_shell *data)
 {
 	char	*path;
 
-	if (!access(parse->cmd[0], F_OK | X_OK))
+	if (!access(parse->cmds[0], F_OK | X_OK))
 	{
-		if (execve(parse->cmd[0], parse->cmd, data->d_env) == -1)
-			perror(parse->cmd[0]);
+		if (execve(parse->cmds[0], parse->cmds, data->env) == -1)
+			perror(parse->cmds[0]);
 	}
 	else
 	{
-		path = _get_path(parse->cmd[0], data->d_env);
+		path = _get_path(parse->cmds[0], data->env);
 		if (!path)
 			perror(path);
-		if (exeve(path, parse->cmd, data->d_env) == -1)
+		if (execve(path, parse->cmds, data->env) == -1)
 			perror(path);
+		/* here */
 		free(path);
 	}
 }
 
-int	_execute(t_parse *parse, t_prompt *data, int fd_in, int fd_out)
+int	_execute(t_parse *parse, t_shell *data, int fd_in, int *fd_out)
 {
 	int		builtin;
-	int		status; //maybe change it to data->status or smthg else
-	pid_t	pid;
+	int		status;
+	int		ret;
 
-	builtin = is_builtin(parse->cmd[0]);
+	//status = 0;
+	builtin = is_builtin(parse->cmds[0]);
 	if (builtin)
-		return (exec_builtin(parse, builtin));
-	data->proc = fork();
-	if (!data->proc)
+		return (exec_builtin(parse, data, builtin));
+	g_proc = fork();
+	if (!g_proc)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		dup2(fd_in, 0);
-		dup2(fd_out, 1);
-		exec(parse);
-		exit(0);
+		dup2(fd_out[0], 1);
+		exec(parse, data);
+		free(fd_out);
+		free(data->prompt);
+		m_freetab(data->env);
+		free_list(data->begin_list, 0);
+		exit(127);
 	}
 	signal(SIGINT, &exit_cmd);
-	waitpid(data->proc, status, 0);
+	waitpid(g_proc, &status, 0);
 	if (!WIFEXITED(status))
 		return (-1);
-	return (WEXITSTATUS(status));
+	ret = WEXITSTATUS(status);
+	return (ret);
 }

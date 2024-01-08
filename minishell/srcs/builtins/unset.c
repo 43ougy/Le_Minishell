@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
 static int	is_env(char *env, char *name)
 {
@@ -24,27 +24,27 @@ static int	is_env(char *env, char *name)
 	return (1);
 }
 
-static void	remove_env(t_prompt *data, int i)
+static void	remove_env(t_shell *data, int i)
 {
 	free(data->env[i]);
-	while (data->d_env[i + 1])
+	while (data->env[i + 1])
 	{
-		data->d_env[idx] = data->d_env[i + 1];
+		data->env[i] = data->env[i + 1];
 		i++;
 	}
-	data->d_env[i] = NULL;
+	data->env[i] = NULL;
 }
 
-int	_unset(t_prompt *data, int nb_args, char **args)
+int	m_unset(t_shell *data, int nb_args, char **args)
 {
 	int	i;
 
 	i = 0;
 	if (nb_args != 2)
 		return (1);
-	while (data->d_env[i] && !is_env(data->d_env[i], args[1]))
+	while (data->env[i] && !is_env(data->env[i], args[1]))
 		i++;
-	if (!data->d_env[i])
+	if (!data->env[i])
 		return (1);
 	remove_env(data, i);
 	return (0);

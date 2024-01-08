@@ -10,21 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
-static void	_read_heredoc(int fd, char *delimiter, t_red *red)
+char	*m_getline(int fd);
+extern pid_t	g_proc;
+/* --------------------------------------- */
+
+static void	read_heredoc(int fd, char *delimiter)
 {
 	char	*line;
 
 	while (1)
 	{
 		write(1, "> ", 2);
-		line = _get_line(0);
+		line = m_getline(0);
 		if (!line)
 			exit(1);
-		if (_strcomp(line, delimiter))
+		if (m_strcmp(line, delimiter))
 			break ;
-		write(fd, line, _strlen(line));
+		write(fd, line, m_strlen(line));
 		free(line);
 	}
 	free(line);
@@ -36,10 +40,10 @@ static void	exit_heredoc(int sig)
 {
 	(void)sig;
 	//kill current process if CTRL^C is pressed (wc for exemple)
-	kill(data->proc_heredoc, SIGKILL);
+	kill(g_proc, SIGKILL);
 }
 
-void	_heredoc(int fd, char *delimiter, t_red *red)
+void	_heredoc(int fd, char *delimiter)
 {
 	int		pipe_fd[2];
 	int		bytes;
@@ -50,17 +54,17 @@ void	_heredoc(int fd, char *delimiter, t_red *red)
 	bytes = 1;
 	if (pipe(pipe_fd) == -1)
 		return ;
-	data->heredoc_proc = fork();
-	if (!data->heredoc_proc)
-		_read_heredoc(pipe_fd[1], delimiter, red);
+	g_proc = fork();
+	if (!g_proc)
+		read_heredoc(pipe_fd[1], delimiter);
 	signal(SIGINT, &exit_heredoc);
-	waitpid(data->proc_heredoc, &status, 0)
+	waitpid(g_proc, &status, 0);
 	close(pipe_fd[1]);
-	while (!status && blytes > 0)
+	while (!status && bytes > 0)
 	{
 		bytes = read(pipe_fd[0], buff, 256);
 		buff[bytes] = 0;
-		write(fd, buff, _strlen(buff));
+		write(fd, buff, m_strlen(buff));
 	}
 	close(pipe_fd[0]);
 }

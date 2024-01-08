@@ -3,74 +3,120 @@
 /*                                                        :::      ::::::::   */
 /*   running.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nbeaufil <nbeaufil@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abougy <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/07 10:22:41 by abougy            #+#    #+#             */
-/*   Updated: 2023/12/07 16:37:08 by nbeaufil         ###   ########.fr       */
+/*   Created: 2024/01/02 15:29:18 by abougy            #+#    #+#             */
+/*   Updated: 2024/01/02 15:29:19 by abougy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ra_shell.h"
+#include "minishell.h"
 
-/*static void	_path_running_check(t_prompt *data)
+bool		parse_check(char *prompt, t_shell *data);
+t_parse		*parse(t_shell *data);
+void		execlist(t_shell *data);
+/* ----------------------------------------- */
+
+/* ================== to remove ================== */
+/*void	print_red(char **red, int i)
 {
-	char	*env_path;
+	printf("red[%d]=", i);
+	if (!red)
+		printf("NULL");
+	else
+		for (int j = 0; red && red[j]; j++)
+			printf("[%s] ", red[j]);
+	printf("\n");
+}
 
-	_free_tab(data->path);
-	env_path = _getenv(data->d_env, "PATH");
-	if (env_path)
+void	print_list(t_parse *ll)
+{
+	int	idx = 0;
+	while (ll)
 	{
-		data->path = _give_path(env_path);
-		free(env_path);
+		printf("cmd %d:\n", idx++);
+		for (int i = 0; ll->cmds && ll->cmds[i]; i++)
+			printf("[%s] ", ll->cmds[i]);
+		printf("\n");
+		print_red(ll->red->input1, 1);
+		print_red(ll->red->input2, 2);
+		print_red(ll->red->output1, 3);
+		print_red(ll->red->output2, 4);
+		ll = ll->next;
 	}
 }*/
+/* =============================================== */
 
-static int	first_prompt_check(t_prompt *data)
+// check for readline() errors
+static int	prompt_check(t_shell *data)
 {
 	if (isatty(0) && isatty(2))
 	{
-		data->prompt = readline("\x1B[32mCash'Hell$ \x1B[0m");
+		data->prompt = readline("\x1B[1m\x1B[41mHell$\x1B[0m ");
 		if (!data->prompt)
 		{
-			write(1, "exit\n", 5);
-			//_free(data->exit_status);
-			_free_tab(data->d_env);
-			//_free_args(data, 0);
-			exit (0);
+			m_putstr("exit\n", 1);
+			m_freetab(data->env);
+			exit(0);
 		}
 	}
-	if (data->prompt[0] == '\0')
+	if (!data->prompt[0])
 		return (1);
-	else if (data->prompt[0] != '\0' && _strcomp("exit", data->prompt))
-	{
-		_free(data->prompt);
-		//_free(data->exit_status);
-		_free_tab(data->d_env);
-		//_free_args(data, 0);
-		exit (0);
-	}
 	return (0);
 }
 
-int	running(t_prompt *data)
+// remove space before redirection { > or < }
+static void	parse_prep(t_shell *data)
 {
-	//t_parse	*parse;
+	int		i;
+	int		idx;
+	int		red;
+	char	ret[PROMPT_MAX_SZ];
 
-	if (first_prompt_check(data))
-		return (0);
+	i = -1;
+	idx = 0;
+	red = 0;
+	m_bzero(&ret, PROMPT_MAX_SZ);
+	while (data->prompt && data->prompt[++i])
+	{
+		if (data->prompt[i] == '<' || data->prompt[i] == '>')
+			red = 1;
+		else if (data->prompt[i] != ' ' && data->prompt[i] != '<'
+			&& data->prompt[i] != '>')
+			red = 0;
+		if (m_iswhitespace(data->prompt[i]) && red)
+			continue ;
+		ret[idx++] = data->prompt[i];
+	}
+	free(data->prompt);
+	data->prompt = m_strdup(ret);
+}
+
+/* 
+	The running() function will call all different functions 
+	needed for the parsing and the execution
+*/
+bool	running(t_shell *data)
+{
+	t_parse	*cmds;
+
+	if (prompt_check(data))
+		return (false);
 	add_history(data->prompt);
-	if (!parse_check(data->prompt))
-		return (0);
-	// parse = parse(data, "1");
-	// if (!parse)
-	// 	return (0);
-
-	// if (global_launcher(parse, data))
-	// 	return (1);
-
-	printf("%s\n", data->prompt);
-	// print_list(parse);
-	// free_list(parse, 0);
-	_free(data->prompt);
-	return (0);
+	if (!parse_check(data->prompt, data))
+		return (false);
+	parse_prep(data);
+	if (!data->prompt)
+		return (true);
+	cmds = parse(data);
+	assign_pipe_type(cmds);
+	/* ============== */
+	//print_list(cmds);
+	/* ============== */
+	data->begin_list = cmds;
+	execlist(data);
+	free_list(cmds, 0);
+	free(data->prompt);
+	data->begin_list = NULL;
+	return (false);
 }

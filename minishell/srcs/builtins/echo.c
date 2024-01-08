@@ -10,17 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execution.h"
+#include "minishell.h"
 
-static int	_check_option(char *cmd, int *index)
+static int	_check_option(char **cmd, int *index)
 {
 	int	j;
 
 	j = 0;
-	if (_strcomp(cmd[1], "-n")
-		&& _strcomp(cmd[1], "-n"))
+	if (m_strcmp(cmd[1], "-n")
+		&& m_strcmp(cmd[1], "-n"))
 	{
-		while (_strcomp(cmd[++j], "-n"))
+		while (m_strcmp(cmd[++j], "-n"))
 			(*index)++;
 		return (1);
 	}
@@ -35,7 +35,7 @@ static int	_check_option(char *cmd, int *index)
 	return (0);
 }
 
-int	_echo(char *cmd)
+int	m_echo(char **cmd)
 {
 	int	option;
 	int	index;
@@ -46,7 +46,7 @@ int	_echo(char *cmd)
 	while (cmd[++index])
 	{
 		write(1, cmd[index], \
-			_strlen(cmd[index]));
+			m_strlen(cmd[index]));
 		if (cmd[index + 1])
 			write(1, " ", 1);
 	}
