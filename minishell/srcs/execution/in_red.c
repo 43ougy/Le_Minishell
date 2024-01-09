@@ -80,10 +80,7 @@ int	in_red(t_parse *parse, t_shell *data, int *fd_out)
 	if (!pipe_id)
 	{
 		close(pipe_fd[0]);
-		//why write on file ?
-		//free red and all
 		write_in_pipe(pipe_fd[1], parse, data, fd_out);
-		//free_red(red);
 		free_shell(data);
 		free(fd_out);
 		close(pipe_fd[1]);

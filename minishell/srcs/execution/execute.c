@@ -100,10 +100,7 @@ int	_execute(t_parse *parse, t_shell *data, int fd_in, int *fd_out)
 		dup2(fd_in, 0);
 		dup2(fd_out[0], 1);
 		exec(parse, data, builtin);
-		free(fd_out);
-		free(data->prompt);
-		m_freetab(data->env);
-		free_list(data->begin_list, 0);
+		free_all(data, fd_out);
 		exit(127);
 	}
 	signal(SIGINT, &exit_cmd);
