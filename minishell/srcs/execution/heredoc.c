@@ -16,7 +16,7 @@ char	*m_getline(int fd);
 extern pid_t	g_proc;
 /* --------------------------------------- */
 
-static void	read_heredoc(int fd, char *delimiter)
+static void	read_heredoc(int fd, char *delimiter, t_shell *data, int * fd_out)
 {
 	char	*line;
 
@@ -25,14 +25,19 @@ static void	read_heredoc(int fd, char *delimiter)
 		write(1, "> ", 2);
 		line = m_getline(0);
 		if (!line)
+		{
+			free_shell(data);
+			free(fd_out);
 			exit(1);
-		if (m_strcmp(line, delimiter))
+		}
+		if (!m_strncmp(line, delimiter, m_strlen(line)))
 			break ;
 		write(fd, line, m_strlen(line));
 		free(line);
 	}
 	free(line);
-	//free_all();
+	free_shell(data);
+	free(fd_out);
 	exit(0);
 }
 
@@ -43,7 +48,7 @@ static void	exit_heredoc(int sig)
 	kill(g_proc, SIGKILL);
 }
 
-void	_heredoc(int fd, char *delimiter)
+void	_heredoc(int fd, char *delimiter, t_shell *data, int *fd_out)
 {
 	int		pipe_fd[2];
 	int		bytes;
@@ -56,7 +61,7 @@ void	_heredoc(int fd, char *delimiter)
 		return ;
 	g_proc = fork();
 	if (!g_proc)
-		read_heredoc(pipe_fd[1], delimiter);
+		read_heredoc(pipe_fd[1], delimiter, data, fd_out);
 	signal(SIGINT, &exit_heredoc);
 	waitpid(g_proc, &status, 0);
 	close(pipe_fd[1]);

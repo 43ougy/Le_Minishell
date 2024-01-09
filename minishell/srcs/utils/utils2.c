@@ -52,10 +52,10 @@ int	m_strncmp(const char *s1, const char *s2, int n)
 			return (1);
 		i++;
 	}
-	if (i < n && s1[i] != s2[i])
-		return (1);
-	if (s1[i])
-		return (1);
+	//if (i < n && s1[i] != s2[i])
+	//	return (1);
+	//if (s1[i])
+	//	return (1);
 	return (0);
 }
 

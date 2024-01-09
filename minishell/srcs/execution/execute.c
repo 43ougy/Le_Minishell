@@ -33,7 +33,7 @@ static int	is_builtin(char *cmd)
 	return (0);
 }
 
-static int	exec_builtin(t_parse *parse, t_shell *data, int builtin)
+static int	exec_builtin(t_parse *parse, t_shell *data, int builtin, int fd)
 {
 	if (builtin == 1)
 		return (m_cd(data, parse->cmds));
@@ -42,7 +42,7 @@ static int	exec_builtin(t_parse *parse, t_shell *data, int builtin)
 	else if (builtin == 3)
 		return (m_pwd());
 	else if (builtin == 4)
-		return (m_export(data, parse->list_size, parse->cmds));
+		return (m_export(data, parse->list_size, parse->cmds, fd));
 	else if (builtin == 5)
 		return (m_unset(data, parse->list_size, parse->cmds));
 	else if (builtin == 6)
@@ -60,11 +60,13 @@ static void	exit_cmd(int sig)
 	kill(g_proc, SIGKILL);
 }
 
-static void	exec(t_parse *parse, t_shell *data)
+static void	exec(t_parse *parse, t_shell *data, int builtin)
 {
 	char	*path;
 
-	if (!access(parse->cmds[0], F_OK | X_OK))
+	if (builtin)
+		exec_builtin(parse, data, builtin, 0);
+	else if (!access(parse->cmds[0], F_OK | X_OK))
 	{
 		if (execve(parse->cmds[0], parse->cmds, data->env) == -1)
 			perror(parse->cmds[0]);
@@ -87,10 +89,9 @@ int	_execute(t_parse *parse, t_shell *data, int fd_in, int *fd_out)
 	int		status;
 	int		ret;
 
-	//status = 0;
 	builtin = is_builtin(parse->cmds[0]);
-	if (builtin)
-		return (exec_builtin(parse, data, builtin));
+	if (builtin == 4)
+		return (exec_builtin(parse, data, builtin, fd_out[0]));
 	g_proc = fork();
 	if (!g_proc)
 	{
@@ -98,7 +99,7 @@ int	_execute(t_parse *parse, t_shell *data, int fd_in, int *fd_out)
 		signal(SIGQUIT, SIG_DFL);
 		dup2(fd_in, 0);
 		dup2(fd_out[0], 1);
-		exec(parse, data);
+		exec(parse, data, builtin);
 		free(fd_out);
 		free(data->prompt);
 		m_freetab(data->env);

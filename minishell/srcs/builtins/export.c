@@ -35,7 +35,7 @@ static char	**_sort_new_env(char **new_env)
 	return (new_env);
 }
 
-static void	_sort_env(t_shell *data)
+static void	_sort_env(t_shell *data, int fd)
 {
 	char	**new_env;
 	int		i;
@@ -49,9 +49,9 @@ static void	_sort_env(t_shell *data)
 	new_env = _sort_new_env(new_env);
 	while (new_env[++i])
 	{
-		write(1, "declare -x ", 11);
-		write(1, new_env[i], m_strlen(new_env[i]));
-		write(1, "\n", 1);
+		write(fd, "declare -x ", 11);
+		write(fd, new_env[i], m_strlen(new_env[i]));
+		write(fd, "\n", 1);
 		free(new_env[i]);
 	}
 	free(new_env);
@@ -71,12 +71,12 @@ static int	_valid_args(char *str)
 	return (1);
 }
 
-int	m_export(t_shell *data, int nb_args, char **args)
+int	m_export(t_shell *data, int nb_args, char **args, int fd)
 {
 	if (nb_args > 2)
 		return (1);
 	if (nb_args == 1)
-		_sort_env(data);
+		_sort_env(data, fd);
 	else if (!_valid_args(args[1]))
 		data->env = m_endtabpush(data->env, args[1]);
 	else

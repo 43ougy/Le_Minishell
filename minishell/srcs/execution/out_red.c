@@ -26,7 +26,6 @@ static int	open_file(int index, t_red *red)
 	}
 	else
 		file = red->output1[index];
-	printf("file = %s\n", file);
 	if (append)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
@@ -47,7 +46,6 @@ static int	*init_fdout(int len, int *i)
 		return (NULL);
 	if (len > 1)
 	{
-		printf("creation of.tmp\n");
 		ret[(*i)++] = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (ret[(*i) - 1] == -1)
 		{
@@ -94,7 +92,6 @@ void	write_to_file(int *fdout)
 	i = 0;
 	while (fdout[++i] != -1)
 	{
-		printf("fdout[i] = %d\n", fdout[i]);
 		fd = open(".tmp", O_RDONLY);
 		if (fd == -1)
 			continue ;

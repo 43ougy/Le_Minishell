@@ -31,13 +31,9 @@ static int	launcher(t_parse *parse, t_shell *data)
 	int		status;
 
 	fd_out = out_red(parse->red);
-	for (int i = 0; fd_out[i] != -1; i++)
-	{
-		printf("fdout = %d\n", fd_out[i]);
-	}
 	if (!fd_out)
 		return (1);
-	fd_in = in_red(parse->red, parse->pipe_type);
+	fd_in = in_red(parse, data, fd_out);
 	status = _execute(parse, data, fd_in, fd_out);
 	write_to_file(fd_out);
 	_delete_file(".tmp");
@@ -61,10 +57,7 @@ void	execlist(t_shell *data)
 	fd_in = 0;
 	cmd = data->begin_list;
 	if (!cmd->pipe_type)
-	{
-		printf("single command\n");
 		data->ret_value = launcher(cmd, data);
-	}
 	else
 	{
 		while (cmd)

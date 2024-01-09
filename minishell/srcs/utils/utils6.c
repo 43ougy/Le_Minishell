@@ -28,7 +28,10 @@ static char	*cat_line(char *line)
 
 	i = 0;
 	if (!line[i])
+	{
+		free(line);
 		return (NULL);
+	}
 	while (line[i] && line[i] != '\n')
 		i++;
 	ret = m_calloc(sizeof(char), i + 2);

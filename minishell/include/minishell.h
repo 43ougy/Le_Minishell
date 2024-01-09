@@ -90,13 +90,13 @@ int			*out_red(t_red *red);
 void		write_to_file(int *fdout);
 
 // in_red.c
-int			in_red(t_red *red, int pipe_type);
+int			in_red(t_parse *parse, t_shell *data, int *fd_out);
 
 // builtins
 int			m_cd(t_shell *data, char **cmd);
 int			m_echo(char **cmd);
 int			m_env(char **env);
-int			m_export(t_shell *data, int nb_args, char **args);
+int			m_export(t_shell *data, int nb_args, char **args, int fd);
 int			m_pwd(void);
 int			m_unset(t_shell *data, int nb_args, char **args);
 void		m_exit(t_parse *parse);
