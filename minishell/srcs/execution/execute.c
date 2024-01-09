@@ -90,7 +90,7 @@ int	_execute(t_parse *parse, t_shell *data, int fd_in, int *fd_out)
 	int		ret;
 
 	builtin = is_builtin(parse->cmds[0]);
-	if (builtin == 4)
+	if (builtin == 4 || builtin == 5 || builtin == 1)
 		return (exec_builtin(parse, data, builtin, fd_out[0]));
 	g_proc = fork();
 	if (!g_proc)
